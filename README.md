@@ -12,4 +12,4 @@ MIT
 
 ## Citation
 
-* Song, H. F. & Wang, X.-J. Reward-based training of recurrent neural networks for diverse cognitive and value-based tasks. (2016)
+* Song, H. F. & Wang, X.-J. (2016) Reward-based training of recurrent neural networks for diverse cognitive and value-based tasks.
