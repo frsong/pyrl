@@ -55,16 +55,16 @@ print("SUFFIX:    " + suffix)
 
 # Location of script
 here   = utils.get_here(__file__)
-prefix = os.path.basename(here)
+parent = utils.get_parent(here)
 
 # Name to use
 name = os.path.splitext(os.path.basename(modelfile))[0] + suffix
 
 # Scratch
-scratchroot = os.environ.get('SCRATCH')
-if scratchroot is None:
-    scratchroot = os.path.join(os.environ['HOME'], 'scratch')
-scratchpath = os.path.join(scratchroot, 'work', prefix, name)
+scratchpath = os.environ.get('SCRATCH')
+if scratchpath is None:
+    scratchpath = os.path.join(os.environ['HOME'], 'scratch')
+trialspath = os.path.join(scratchpath, 'work', parent, name)
 
 # Paths
 workpath = os.path.join(here,     'work')
@@ -72,7 +72,7 @@ datapath = os.path.join(workpath, 'data', name)
 figspath = os.path.join(workpath, 'figs', name)
 
 # Create necessary directories
-for path in [datapath, figspath, scratchpath]:
+for path in [datapath, figspath, trialspath]:
     utils.mkdir_p(path)
 
 # File to store model in
@@ -161,7 +161,8 @@ elif action == 'run':
         'savefile':    savefile_copy,
         'datapath':    datapath,
         'figspath':    figspath,
-        'scratchpath': scratchpath
+        'scratchpath': trialspath,
+        'trialspath':  trialspath
         }
 
     if dt > 0:

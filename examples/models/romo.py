@@ -31,7 +31,7 @@ n_validation = 20*n_conditions
 # Time step (ms)
 #dt = 10
 
-dt = 25
+#dt = 25
 
 # Input noise
 sigma = np.sqrt(2*100*0.0001)
@@ -93,7 +93,7 @@ def get_condition(rng, dt, context={}):
 
 # Rewards
 R_ABORTED = -1
-R_CORRECT = 1
+R_CORRECT = +1
 
 # Input scaling
 fall = np.ravel(fpairs)

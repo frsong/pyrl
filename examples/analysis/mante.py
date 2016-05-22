@@ -10,10 +10,6 @@ from pyrl.policygradient import PolicyGradient
 
 #/////////////////////////////////////////////////////////////////////////////////////////
 
-THIS = "examples.analysis.mante"
-
-#/////////////////////////////////////////////////////////////////////////////////////////
-
 def plot_trial(pg, m, init, init_b, rng, figspath, name):
     context = {}
     if 0 not in m.cohs:
@@ -237,26 +233,26 @@ def sort_func(s, preferred_targets, target, trial):
     else:
         raise ValueError
 
-def sort(trialsfile, all_plots, units=None, network='policy', **kwargs):
+def sort(trialsfile, all_plots, units=None, network='p', **kwargs):
     """
     Sort trials.
 
     """
     # Load trials
-    trials, U, Z, A, rho, M, perf, r_policy, r_value = utils.load(trialsfile)
+    trials, U, Z, A, P, M, perf, r_p, r_v = utils.load(trialsfile)
 
     # Which network?
-    if network == 'policy':
-        r = r_policy
+    if network == 'p':
+        r = r_p
     else:
-        r = r_value
+        r = r_v
 
-    # Data shape
-    Ntime = r.shape[0]
-    N     = r.shape[-1]
+    # Number of units
+    N = r.shape[-1]
 
     # Same for every trial
-    time = trials[0]['time']
+    time  = trials[0]['time']
+    Ntime = len(time)
 
     # Aligned time
     time_a  = np.concatenate((-time[1:][::-1], time))
@@ -628,6 +624,8 @@ def performance(savefile, plot, **kwargs):
     plot.xlabel(r'Number of trials ($\times$ 10$^2$)')
     plot.ylabel('Percent correct')
 
+#/////////////////////////////////////////////////////////////////////////////////////////
+
 def do(action, args, config):
     """
     Manage tasks.
@@ -635,6 +633,8 @@ def do(action, args, config):
     """
     print("ACTION*:   " + str(action))
     print("ARGS*:     " + str(args))
+
+    #=====================================================================================
 
     if action == 'performance':
         fig  = Figure(axislabelsize=10, ticklabelsize=9)
@@ -645,8 +645,10 @@ def do(action, args, config):
         fig.save(path=config['figspath'], name='performance')
         fig.close()
 
+    #=====================================================================================
+
     elif action == 'psychometric':
-        trialsfile = os.path.join(config['scratchpath'], 'trials_behavior.pkl')
+        trialsfile = runtools.behaviorfile(config['scratchpath'])
 
         fig = Figure(w=6, h=2.5)
 
@@ -654,10 +656,10 @@ def do(action, args, config):
         y0 = 0.2
         w  = 0.36
         h  = 0.7
-        dx = 1.3*w
+        dx = 0.1
 
         fig.add('m', [x0, y0, w, h])
-        fig.add('c', [x0+dx, y0, w, h])
+        fig.add('c', [fig[-1].right+dx, y0, w, h])
 
         psychometric(trialsfile, fig.plots)
 
@@ -665,62 +667,51 @@ def do(action, args, config):
         fig['m'].ylabel('Percent right')
         fig['c'].xlabel('Percent color coherence')
 
-        fig.save('psychometric', config['figspath'])
+        fig.save(path=config['figspath'], name='psychometric')
+        fig.close()
 
-    elif action in ['trials-b', 'trials-a']:
+    #=====================================================================================
+
+    elif 'trials' in action:
         try:
             trials_per_condition = int(args[0])
         except:
             trials_per_condition = 1000
 
         model = config['model']
-        m     = config['model'].m
-        pg    = model.get_pg(config['savefile'], config['seed'], dt=config['dt'])
-        rng   = np.random.RandomState(1)
+        pg    = model.get_pg(config['savefile'], config['seed'], config['dt'])
 
-        # Conditions
-        mcs         = m.contexts
-        cohs        = m.cohs
-        left_rights = m.left_rights
-
-        # Number of conditions, trials
-        n_conditions = m.n_conditions
+        spec         = model.spec
+        mcs          = spec.contexts
+        cohs         = spec.cohs
+        left_rights  = spec.left_rights
+        n_conditions = spec.n_conditions
         n_trials     = n_conditions * trials_per_condition
 
-        # Task
-        task = model.Task()
-
-        print("Generating {} trial conditions ...".format(n_trials))
+        print("{} trials".format(n_trials))
+        task   = model.Task()
         trials = []
         for n in xrange(n_trials):
-            k = tasktools.unravel_index(
-                    n % n_conditions,
-                    (len(mcs), len(left_rights), len(cohs), len(left_rights), len(cohs))
-                    )
-
-            mc           = mcs[k[0]]
-            left_right_m = left_rights[k[1]]
-            coh_m        = cohs[k[2]]
-            left_right_c = left_rights[k[3]]
-            coh_c        = cohs[k[4]]
-
+            k = tasktools.unravel_index(n, (len(mcs),
+                                            len(left_rights), len(left_rights),
+                                            len(cohs), len(cohs)))
             context = {
-                'context':       [mc],
-                'left_rights_m': [left_right_m],
-                'cohs_c':        [coh_m],
-                'left_rights_m': [left_right_c],
-                'cohs_c':        [coh_c]
+                'context':       mcs[k.pop(0)],
+                'left_rights_m': left_rights[k.pop(0)],
+                'left_rights_c': left_rights[k.pop(0)],
+                'cohs_m':        cohs[k.pop(0)],
+                'cohs_c':        cohs[k.pop(0)]
                 }
-            trial = task.get_condition(rng, pg.config['dt'], context)
-
-            trials.append(trial)
+            trials.append(task.get_condition(pg.rng, pg.dt, context))
         runtools.run(action, trials, pg, config['scratchpath'])
+
+    #=====================================================================================
 
     elif action == 'sort':
         if 'value' in args:
-            network = 'value'
+            network = 'v'
         else:
-            network = 'policy'
+            network = 'v'
 
-        trialsfile = os.path.join(config['scratchpath'], 'trials_activity.pkl')
+        trialsfile = runtools.activityfile(config['scratchpath'])
         sort(trialsfile, (config['figspath'], 'sorted'), network=network)

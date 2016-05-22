@@ -235,7 +235,7 @@ plot.ylabel('Probability correct')
 
 plot = fig['on-stimulus']
 
-unit = 13
+unit = 11
 
 kwargs = {'on-stimulus-tmin': -200, 'on-stimulus-tmax': 400, 'colors': 'kiani',
           'dashes': [3.5, 2]}

@@ -44,14 +44,15 @@ R_ABORTED = -1
 R_CORRECT = +1
 
 # Epoch durations
-fixation_min = 250
-fixation_max = 750
-stimulus     = 750
-delay_min    = 300
-delay_mean   = 300
-delay_max    = 1200
-decision     = 500
-tmax         = fixation_max + stimulus + delay_min + delay_max + decision
+fixation_min  = 250
+fixation_mean = 150
+fixation_max  = 500
+stimulus      = 750
+delay_min     = 300
+delay_mean    = 300
+delay_max     = 1200
+decision      = 500
+tmax          = fixation_min + fixation_max + stimulus + delay_min + delay_max + decision
 
 def get_condition(rng, dt, context={}):
     #-------------------------------------------------------------------------------------
@@ -60,7 +61,9 @@ def get_condition(rng, dt, context={}):
 
     fixation = context.get('fixation')
     if fixation is None:
-        fixation = tasktools.uniform(rng, dt, fixation_min, fixation_max)
+        #fixation = tasktools.uniform(rng, dt, fixation_min, fixation_max)
+        fixation = fixation_min + tasktools.truncated_exponential(rng, dt, fixation_mean,
+                                                                  xmax=fixation_max)
 
     delay = context.get('delay')
     if delay is None:
@@ -80,21 +83,21 @@ def get_condition(rng, dt, context={}):
     # Trial
     #-------------------------------------------------------------------------------------
 
-    contexts_      = context.get('context',      contexts)
-    left_rights_m_ = context.get('left_right_m', left_rights)
-    left_rights_c_ = context.get('left_right_c', left_rights)
-    cohs_m_        = context.get('coh_m',        cohs)
-    cohs_c_        = context.get('coh_c',        cohs)
+    context_     = context.get('context',      rng.choice(contexts))
+    left_right_m = context.get('left_right_m', rng.choice(left_rights))
+    left_right_c = context.get('left_right_c', rng.choice(left_rights))
+    coh_m        = context.get('coh_m',        rng.choice(cohs))
+    coh_c        = context.get('coh_c',        rng.choice(cohs))
 
     return {
         'durations':    durations,
         'time':         time,
         'epochs':       epochs,
-        'context':      rng.choice(contexts_),
-        'left_right_m': rng.choice(left_rights_m_),
-        'left_right_c': rng.choice(left_rights_c_),
-        'coh_m':        rng.choice(cohs_m_),
-        'coh_c':        rng.choice(cohs_c_)
+        'context':      context_,
+        'left_right_m': left_right_m,
+        'left_right_c': left_right_c,
+        'coh_m':        coh_m,
+        'coh_c':        coh_c
         }
 
 # Input scaling
@@ -106,7 +109,6 @@ def get_step(rng, dt, trial, t, a):
     # Reward
     #-------------------------------------------------------------------------------------
 
-    time   = trial['time']
     epochs = trial['epochs']
     status = {'continue': True}
     reward = 0
@@ -119,7 +121,7 @@ def get_step(rng, dt, trial, t, a):
         if a == actions['CHOOSE-LEFT']:
             status['continue'] = False
             status['choice']   = 'L'
-            status['t_choice'] = time[t-1]
+            status['t_choice'] = t-1
             if trial['context'] == 'm':
                 if trial['left_right_m'] < 0:
                     status['correct'] = True
@@ -135,7 +137,7 @@ def get_step(rng, dt, trial, t, a):
         elif a == actions['CHOOSE-RIGHT']:
             status['continue'] = False
             status['choice']   = 'R'
-            status['t_choice'] = time[t-1]
+            status['t_choice'] = t-1
             if trial['context'] == 'm':
                 if trial['left_right_m'] > 0:
                     status['correct'] = True

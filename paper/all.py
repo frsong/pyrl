@@ -115,8 +115,8 @@ if 'rdm_fixed' in args:
     #train('rdm_fixed')
     #trials('b', 'rdm_fixed', 2500)
     #do_action('rdm_fixed', 'correct_stimulus_duration')
-    #trials('a', 'rdm_fixed', 200)
-    do_action('rdm_fixed', 'sort')
+    trials('a', 'rdm_fixed', 200)
+    #do_action('rdm_fixed', 'sort')
 
 if 'rdm_fixed-seeds' in args:
     print("=> Perceptual decision-making (FD) (additional)")
@@ -135,11 +135,16 @@ if 'rdm_rt' in args:
     do_action('rdm_rt', 'sort')#, args='value')
     #do_action('rdm_rt', 'sort', args='value')
 
+#-----------------------------------------------------------------------------------------
+# Context-dependent integration
+#-----------------------------------------------------------------------------------------
+
 if 'mante' in args:
     print("=> Context-dependent integration")
     #clean('mante')
     #train('mante')
-
+    trials('b', 'mante', 200)
+    do_action('mante', 'psychometric')
     trials('a', 'mante', 20)
     do_action('mante', 'sort')
 
@@ -147,14 +152,26 @@ if 'mante' in args:
     #do_action('mante', 'units')
     #figure('fig_mante')
 
+if 'mante-seeds' in args:
+    print("=> Context-dependent integration (additional)")
+    train_seeds('mante', n_train=5)
+
+#-----------------------------------------------------------------------------------------
+# Multisensory integration
+#-----------------------------------------------------------------------------------------
+
 if 'multisensory' in args:
     print("=> Multisensory integration")
     trials('b', 'multisensory', 200)
     #trials('a', 'multisensory', 100)
     #do_action('multisensory', 'sort')
 
+if 'multisensory-seeds' in args:
+    print("=> Multisensory integration (additional)")
+    train_seeds('multisensory', n_train=5)
+
 #-----------------------------------------------------------------------------------------
-# Romo
+# Parametric working memory
 #-----------------------------------------------------------------------------------------
 
 if 'romo' in args:
@@ -179,7 +196,7 @@ if 'postdecisionwager' in args:
     print("=> Postdecision wagering")
     #train('postdecisionwager2')
     #trials('b', 'postdecisionwager', 20, analysis='postdecisionwager'); exit()
-    trials('b', 'postdecisionwager', 2000, analysis='postdecisionwager')
+    trials('b', 'postdecisionwager', 2500, analysis='postdecisionwager')
     do_action('postdecisionwager', 'sure_stimulus_duration', analysis='postdecisionwager')
     do_action('postdecisionwager', 'correct_stimulus_duration', analysis='postdecisionwager')
     trials('a', 'postdecisionwager', 100, analysis='postdecisionwager')

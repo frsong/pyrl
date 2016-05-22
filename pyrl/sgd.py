@@ -25,7 +25,7 @@ class Adam(object):
 
         return [means, vars_, time]
 
-    def get_updates(self, loss, lr, max_norm=1, beta1=0.9, beta2=0.999,
+    def get_updates(self, loss, lr, max_norm=2, beta1=0.9, beta2=0.999,
                     epsilon=1e-8, grads=None):
         # Gradients
         if grads is None:
@@ -55,4 +55,4 @@ class Adam(object):
         updates += [(v, v_t) for v, v_t in zip(self.vars, vars_t)]
         updates += [(self.time, t)]
 
-        return grads, updates
+        return norm, grads, updates

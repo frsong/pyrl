@@ -16,38 +16,35 @@ class Model(object):
     def __init__(self, modelfile):
         # Load model specification as module
         try:
-            self.m = imp.load_source('model', modelfile)
+            self.spec = imp.load_source('model', modelfile)
         except IOError:
             print("Couldn't load model file {}".format(modelfile))
             sys.exit()
 
-        # Model specification
-        self.spec = self.m
-
         # Task definition
-        if 'Task' in vars(self.m):
-            self.Task = self.m.Task
-            self.task = self.m.Task()
+        if 'Task' in vars(self.spec):
+            self.Task = self.spec.Task
+            self.task = self.spec.Task()
         else:
             class Task(object):
                 def __init__(_self):
-                    setattr(_self, 'get_condition', self.m.get_condition)
-                    setattr(_self, 'get_step',      self.m.get_step)
+                    setattr(_self, 'get_condition', self.spec.get_condition)
+                    setattr(_self, 'get_step',      self.spec.get_step)
 
-                    if 'terminate' in vars(self.m):
-                        setattr(_self, 'terminate', self.m.terminate)
+                    if 'terminate' in vars(self.spec):
+                        setattr(_self, 'terminate', self.spec.terminate)
             self.Task = Task
             self.task = Task()
 
         # Fill in missing info
         self.config = {}
         for k in configs.required:
-            if k not in vars(self.m):
+            if k not in vars(self.spec):
                 print("[ Model ] Error: {} is required.".format(k))
                 sys.exit()
-            self.config[k] = vars(self.m)[k]
+            self.config[k] = vars(self.spec)[k]
         for k in configs.default:
-            self.config[k] = vars(self.m).get(k, configs.default[k])
+            self.config[k] = vars(self.spec).get(k, configs.default[k])
 
         # Inputs
         self.config['Nin']  = len(self.config['inputs'])

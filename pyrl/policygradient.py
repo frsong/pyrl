@@ -413,9 +413,9 @@ class PolicyGradient(object):
             i = self.policy_net.index('Wrec')
             grads = tensor.grad(obj, self.policy_net.trainables)
             grads[i] += self.policy_net.get_dOmega_dWrec(-J, r)
-            grads, updates = self.policy_sgd.get_updates(obj, lr, grads=grads)
+            norm, grads, updates = self.policy_sgd.get_updates(obj, lr, grads=grads)
         else:
-            grads, updates = self.policy_sgd.get_updates(obj, lr)
+            norm, grads, updates = self.policy_sgd.get_updates(obj, lr)
 
         if use_x0:
             args = [x0_]
@@ -423,7 +423,7 @@ class PolicyGradient(object):
             args = []
         args += [U, noise, A, R, b, M, lr]
 
-        return theano.function(args, updates=updates)
+        return theano.function(args, norm, updates=updates)
 
     def func_update_baseline(self, use_x0=False, accumulators=None):
         U  = tensor.tensor3('U')
@@ -459,9 +459,9 @@ class PolicyGradient(object):
             i = self.baseline_net.index('Wrec')
             grads = tensor.grad(obj, self.baseline_net.trainables)
             grads[i] += self.baseline_net.get_dOmega_dWrec(L2, r)
-            grads, updates = self.baseline_sgd.get_updates(obj, lr, grads=grads)
+            norm, grads, updates = self.baseline_sgd.get_updates(obj, lr, grads=grads)
         else:
-            grads, updates = self.baseline_sgd.get_updates(obj, lr)
+            norm, grads, updates = self.baseline_sgd.get_updates(obj, lr)
 
         if use_x0:
             args = [x0_]
@@ -469,7 +469,7 @@ class PolicyGradient(object):
             args = []
         args += [U, noise, R, M, lr]
 
-        return theano.function(args, z_all[:,:,0], updates=updates)
+        return theano.function(args, [z_all[:,:,0], norm], updates=updates)
 
     def train(self, savefile, recover=False):
         """
@@ -570,6 +570,9 @@ class PolicyGradient(object):
         if hasattr(self.task, 'start_session'):
             self.task.start_session(self.rng)
 
+        grad_norms_policy   = []
+        grad_norms_baseline = []
+
         tstart = datetime.datetime.now()
         try:
             for iter in xrange(iter_start, max_iter):
@@ -656,6 +659,15 @@ class PolicyGradient(object):
                         error = np.sqrt(np.sum((Z_b - V)**2*M)/np.sum(M))
                         items['Prediction error'] = '{}'.format(error)
 
+                        # Gradient norms
+                        if len(grad_norms_policy) > 0:
+                            items['|grad| (policy)']   = [f(grad_norms_policy)
+                                                          for f in [np.min, np.max, np.mean]]
+                            items['|grad| (baseline)'] = [f(grad_norms_baseline)
+                                                          for f in [np.min, np.max, np.mean]]
+                            grad_norms_policy   = []
+                            grad_norms_baseline = []
+
                         # Print
                         utils.print_dict(items)
 
@@ -735,7 +747,9 @@ class PolicyGradient(object):
                 else:
                     args = []
                 args += [baseline_inputs[:-1], Q_b, R_b, M, baseline_lr]
-                b = update_baseline(*args)
+                b, norm_b = update_baseline(*args)
+
+                grad_norms_baseline.append(float(norm_b))
 
                 #-------------------------------------------------------------------------
                 # Update parameters
@@ -746,8 +760,9 @@ class PolicyGradient(object):
                 else:
                     args = []
                 args += [U[:-1], Q, A, R, b, M, lr]
-                info = update_policy(*args)
-                #print(info)
+                norm = update_policy(*args)
+
+                grad_norms_policy.append(float(norm))
 
                 trials_tot += n_gradient
 
