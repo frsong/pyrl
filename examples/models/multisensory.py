@@ -62,8 +62,8 @@ def get_condition(rng, dt, context={}):
 
     #-------------------------------------------------------------------------------------
 
-    mods_  = context.get('mods',  mods)
-    freqs_ = context.get('freqs', freqs)
+    mod  = context.get('mods',  rng.choice(mods))
+    freq = context.get('freqs', rng.choice(freqs))
 
     return {
         'durations': durations,
@@ -95,12 +95,11 @@ def get_step(rng, dt, trial, t, a):
     # Reward
     #-------------------------------------------------------------------------------------
 
-    time   = trial['time']
     epochs = trial['epochs']
     status = {'continue': True}
     reward = 0
 
-    if t-1 in epochs['fixation'] or t-1 in epochs['stimulus']:
+    if t-1 not in epochs['decision']:
         if a != actions['FIXATE']:
             status['continue'] = False
             reward = R_ABORTED
@@ -108,7 +107,7 @@ def get_step(rng, dt, trial, t, a):
         if a == actions['CHOOSE-LOW']:
             status['continue'] = False
             status['choice']   = 'L'
-            status['t_choice'] = time[t-1]
+            status['t_choice'] = t-1
             if trial['freq'] < boundary:
                 status['correct'] = True
                 reward = R_CORRECT
@@ -117,7 +116,7 @@ def get_step(rng, dt, trial, t, a):
         elif a == actions['CHOOSE-HIGH']:
             status['continue'] = False
             status['choice']   = 'H'
-            status['t_choice'] = time[t-1]
+            status['t_choice'] = t-1
             if trial['freq'] > boundary:
                 status['correct'] = True
                 reward = R_CORRECT

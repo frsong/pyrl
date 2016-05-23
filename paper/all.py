@@ -143,10 +143,10 @@ if 'mante' in args:
     print("=> Context-dependent integration")
     #clean('mante')
     #train('mante')
-    #trials('b', 'mante', 50)
-    #do_action('mante', 'psychometric')
+    trials('b', 'mante', 50)
+    do_action('mante', 'psychometric')
     #trials('a', 'mante', 20)
-    do_action('mante', 'sort')
+    #do_action('mante', 'sort')
 
     #do_action('mante', 'regress')
     #do_action('mante', 'units')

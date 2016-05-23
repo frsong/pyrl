@@ -14,11 +14,10 @@ here   = utils.get_here(__file__)
 parent = utils.get_parent(here)
 
 # Paths
-scratchroot = os.environ.get('SCRATCH')
-if scratchroot is None:
-    scratchroot = os.path.join(os.environ['HOME'], 'scratch')
-scratchpath  = os.path.join(scratchroot, 'work', 'pyrl')
-trialspath   = os.path.join(scratchpath)
+scratchpath = os.environ.get('SCRATCH')
+if scratchpath is None:
+    scratchpath = os.path.join(os.environ['HOME'], 'scratch')
+trialspath   = os.path.join(scratchpath, 'work', 'pyrl')
 analysispath = os.path.join(parent, 'examples', 'analysis')
 modelspath   = os.path.join(parent, 'examples', 'models')
 
@@ -32,7 +31,8 @@ mante_analysis     = imp.load_source('mante_analysis', mante_analysisfile)
 
 # analysis/multisensory
 multisensory_analysisfile = os.path.join(analysispath, 'multisensory.py')
-multisensory_analysis     = imp.load_source('multisensory_analysis', multisensory_analysisfile)
+multisensory_analysis     = imp.load_source('multisensory_analysis',
+                                            multisensory_analysisfile)
 
 # analysis/romo
 romo_analysisfile = os.path.join(analysispath, 'romo.py')

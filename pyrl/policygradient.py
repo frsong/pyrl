@@ -664,9 +664,9 @@ class PolicyGradient(object):
                         # Gradient norms
                         if len(grad_norms_policy) > 0:
                             if DEBUG:
-                                items['|grad| (policy)']   = [f(grad_norms_policy)
+                                items['|grad| (policy)']   = [len(grad_norms_policy)] + [f(grad_norms_policy)
                                                               for f in [np.min, np.max, np.mean]]
-                                items['|grad| (baseline)'] = [f(grad_norms_baseline)
+                                items['|grad| (baseline)'] = [len(grad_norms_baseline)] + [f(grad_norms_baseline)
                                                               for f in [np.min, np.max, np.mean]]
                             grad_norms_policy   = []
                             grad_norms_baseline = []
@@ -752,7 +752,9 @@ class PolicyGradient(object):
                 args += [baseline_inputs[:-1], Q_b, R_b, M, baseline_lr]
                 b, norm_b = update_baseline(*args)
 
-                grad_norms_baseline.append(float(norm_b))
+                norm_b = float(norm_b)
+                if np.isfinite(norm_b):
+                    grad_norms_baseline.append(float(norm_b))
 
                 #-------------------------------------------------------------------------
                 # Update parameters
@@ -765,7 +767,9 @@ class PolicyGradient(object):
                 args += [U[:-1], Q, A, R, b, M, lr]
                 norm = update_policy(*args)
 
-                grad_norms_policy.append(float(norm))
+                norm = float(norm)
+                if np.isfinite(norm):
+                    grad_norms_policy.append(norm)
 
                 trials_tot += n_gradient
 

@@ -28,7 +28,7 @@ n_conditions = len(wagers) * len(left_rights) * len(cohs)
 
 # Training
 n_gradient   = n_conditions
-n_validation = 100*n_conditions
+n_validation = 50*n_conditions
 
 # Input noise
 #sigma = np.sqrt(2*100*0.007)

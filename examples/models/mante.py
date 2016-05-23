@@ -14,7 +14,7 @@ import numpy as np
 from pyrl import tasktools
 
 # Inputs
-inputs = tasktools.to_map('FIXATION', 'MOTION', 'COLOR',
+inputs = tasktools.to_map('MOTION', 'COLOR',
                           'MOTION-LEFT', 'MOTION-RIGHT',
                           'COLOR-LEFT', 'COLOR-RIGHT')
 
@@ -58,9 +58,9 @@ def get_condition(rng, dt, context={}):
 
     fixation = context.get('fixation')
     if fixation is None:
-        fixation = fixation_min + tasktools.uniform(rng, dt, 0, fixation_max)
-        #fixation = fixation_min + tasktools.truncated_exponential(rng, dt, fixation_mean,
-        #                                                          xmax=fixation_max)
+        #fixation = fixation_min + tasktools.uniform(rng, dt, 0, fixation_max)
+        fixation = fixation_min + tasktools.truncated_exponential(rng, dt, fixation_mean,
+                                                                  xmax=fixation_max)
 
     delay = context.get('delay')
     if delay is None:
@@ -110,7 +110,7 @@ def get_step(rng, dt, trial, t, a):
     status = {'continue': True}
     reward = 0
 
-    if t-1 in epochs['fixation'] or t-1 in epochs['stimulus'] or t-1 in epochs['delay']:
+    if t-1 not in epochs['decision']:
         if a != actions['FIXATE']:
             status['continue'] = False
             reward = R_ABORTED
@@ -161,8 +161,7 @@ def get_step(rng, dt, trial, t, a):
 
     u = np.zeros(len(inputs))
     if t in epochs['fixation'] or t in epochs['stimulus'] or t in epochs['delay']:
-        u[inputs['FIXATION']] = 1
-        u[context]            = 1
+        u[context] = 1
     if t in epochs['stimulus']:
         u[high_m] = scale(+trial['coh_m']) + rng.normal(scale=sigma)/np.sqrt(dt)
         u[low_m]  = scale(-trial['coh_m']) + rng.normal(scale=sigma)/np.sqrt(dt)
@@ -176,4 +175,4 @@ def get_step(rng, dt, trial, t, a):
 def terminate(perf):
     p_decision, p_correct = tasktools.correct_2AFC(perf)
 
-    return p_decision >= 0.99 and p_correct >= 0.9
+    return p_decision >= 0.99 and p_correct >= 0.88

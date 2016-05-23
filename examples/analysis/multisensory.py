@@ -4,11 +4,8 @@ import os
 
 import numpy as np
 
-from pyrl                import fittools, runtools, tasktools, utils
-from pyrl.figtools       import Figure
-from pyrl.policygradient import PolicyGradient
-
-THIS = 'pyrl.analysis.multisensory'
+from pyrl          import fittools, runtools, tasktools, utils
+from pyrl.figtools import Figure
 
 #/////////////////////////////////////////////////////////////////////////////////////////
 
@@ -125,26 +122,26 @@ def psychometric(trialsfile, plot, **kwargs):
 
 #/////////////////////////////////////////////////////////////////////////////////////////
 
-def sort(trialsfile, plots, units=None, network='policy', **kwargs):
+def sort(trialsfile, plots, units=None, network='p', **kwargs):
     """
     Sort trials.
 
     """
     # Load trials
-    trials, U, Z, A, rho, M, perf, r_policy, r_value = utils.load(trialsfile)
+    trials, U, Z, A, P, M, perf, r_p, r_v = utils.load(trialsfile)
 
     # Which network?
-    if network == 'policy':
-        r = r_policy
+    if network == 'p':
+        r = r_p
     else:
-        r = r_value
+        r = r_v
 
-    # Data shape
-    Ntime = r.shape[0]
-    N     = r.shape[-1]
+    # Number of units
+    N = r.shape[-1]
 
     # Same for every trial
-    time = trials[0]['time']
+    time  = trials[0]['time']
+    Ntime = len(time)
 
     # Aligned time
     time_a  = np.concatenate((-time[1:][::-1], time))
@@ -275,45 +272,37 @@ def do(action, args, config):
     print("ACTION*:   " + str(action))
     print("ARGS*:     " + str(args))
 
-    if action in ['trials-b', 'trials-a']:
+    #=====================================================================================
+
+    if 'trials' in action:
         try:
             trials_per_condition = int(args[0])
         except:
             trials_per_condition = 500
 
         model = config['model']
-        m     = config['model'].m
-        pg    = model.get_pg(config['savefile'], config['seed'], dt=config['dt'])
-        rng   = np.random.RandomState(1)
-
-        # Time step
-        dt = config.get('dt', pg.config['dt'])
+        pg    = model.get_pg(config['savefile'], config['seed'], config['dt'])
 
         # Conditions
-        mods  = m.mods
-        freqs = m.freqs
-
-        # Number of conditions, trials
-        n_conditions = m.n_conditions
+        spec         = model.spec
+        mods         = spec.mods
+        freqs        = spec.freqs
+        n_conditions = spec.n_conditions
         n_trials     = n_conditions * trials_per_condition
 
-        # Task
-        task = model.Task()
-
-        print("Generating {} trial conditions ...".format(n_trials))
+        print("{} trials".format(n_trials))
+        task   = model.Task()
         trials = []
         for n in xrange(n_trials):
-            k0, k1  = tasktools.unravel_index(n % n_conditions, (len(mods), len(freqs)))
-            mod     = mods[k0]
-            freq    = freqs[k1]
-            context = {'mods': [mod], 'freqs': [freq]}
-            trial   = task.get_condition(rng, pg.config['dt'], context)
-
-            trials.append(trial)
+            k       = tasktools.unravel_index(n, (len(mods), len(freqs)))
+            context = {'mods': mods[k.pop(0)], 'freqs': freqs[k.pop(0)]}
+            trials.append(task.get_condition(pg.rng, pg.dt, context))
         runtools.run(action, trials, pg, config['scratchpath'])
 
+    #=====================================================================================
+
     elif action == 'psychometric':
-        trialsfile = os.path.join(config['scratchpath'], 'trials_behavior.pkl')
+        trialsfile = runtools.behaviorfile(config['scratchpath'])
 
         fig  = Figure()
         plot = fig.add()
@@ -325,6 +314,13 @@ def do(action, args, config):
         fig.save(path=config['figspath'], name='psychometric')
         fig.close()
 
+    #=====================================================================================
+
     elif action == 'sort':
-        trialsfile = os.path.join(config['scratchpath'], 'trials_activity.pkl')
-        sort(trialsfile, (config['figspath'], 'sorted'))
+        if 'value' in args:
+            network = 'v'
+        else:
+            network = 'p'
+
+        trialsfile = runtools.activityfile(config['scratchpath'])
+        sort(trialsfile, (config['figspath'], 'sorted'), network=network)

@@ -4,9 +4,8 @@ import os
 
 import numpy as np
 
-from pyrl                import fittools, runtools, tasktools, utils
-from pyrl.figtools       import apply_alpha, Figure
-from pyrl.policygradient import PolicyGradient
+from pyrl          import fittools, runtools, tasktools, utils
+from pyrl.figtools import apply_alpha, Figure
 
 #/////////////////////////////////////////////////////////////////////////////////////////
 
@@ -647,31 +646,6 @@ def do(action, args, config):
 
     #=====================================================================================
 
-    elif action == 'psychometric':
-        trialsfile = runtools.behaviorfile(config['scratchpath'])
-
-        fig = Figure(w=6, h=2.7)
-
-        x0 = 0.12
-        y0 = 0.2
-        w  = 0.36
-        h  = 0.7
-        dx = 0.1
-
-        fig.add('m', [x0, y0, w, h])
-        fig.add('c', [fig[-1].right+dx, y0, w, h])
-
-        psychometric(trialsfile, fig.plots)
-
-        fig['m'].xlabel('Percent motion coherence')
-        fig['m'].ylabel('Percent right')
-        fig['c'].xlabel('Percent color coherence')
-
-        fig.save(path=config['figspath'], name='psychometric')
-        fig.close()
-
-    #=====================================================================================
-
     elif 'trials' in action:
         try:
             trials_per_condition = int(args[0])
@@ -704,6 +678,31 @@ def do(action, args, config):
                 }
             trials.append(task.get_condition(pg.rng, pg.dt, context))
         runtools.run(action, trials, pg, config['scratchpath'])
+
+    #=====================================================================================
+
+    elif action == 'psychometric':
+        trialsfile = runtools.behaviorfile(config['scratchpath'])
+
+        fig = Figure(w=6, h=2.7)
+
+        x0 = 0.12
+        y0 = 0.2
+        w  = 0.36
+        h  = 0.7
+        dx = 0.1
+
+        fig.add('m', [x0, y0, w, h])
+        fig.add('c', [fig[-1].right+dx, y0, w, h])
+
+        psychometric(trialsfile, fig.plots)
+
+        fig['m'].xlabel('Percent motion coherence')
+        fig['m'].ylabel('Percent right')
+        fig['c'].xlabel('Percent color coherence')
+
+        fig.save(path=config['figspath'], name='psychometric')
+        fig.close()
 
     #=====================================================================================
 
