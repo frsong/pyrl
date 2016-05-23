@@ -34,6 +34,7 @@ n_validation = 100*n_conditions
 #sigma = np.sqrt(2*100*0.007)
 #sigma = np.sqrt(2*100*0.01)
 sigma = np.sqrt(2*100*0.007)
+#sigma = np.sqrt(2*100*0.01)
 
 # Durations
 fixation_min  = 250
@@ -74,6 +75,7 @@ def get_condition(rng, dt, context={}):
 
     fixation = context.get('fixation')
     if fixation is None:
+        #fixation = fixation_min + tasktools.uniform(rng, dt, 0, fixation_max)
         #fixation = tasktools.uniform(rng, dt, fixation_min, fixation_max)
         fixation = fixation_min + tasktools.truncated_exponential(rng, dt, fixation_mean,
                                                                   xmax=fixation_max)

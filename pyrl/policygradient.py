@@ -13,6 +13,8 @@ from .         import tasktools, theanotools, utils
 from .networks import Networks
 from .sgd      import Adam
 
+DEBUG = True
+
 class PolicyGradient(object):
     def __init__(self, Task, config_or_savefile, seed, dt=None, load='best'):
         self.task = Task()
@@ -661,10 +663,11 @@ class PolicyGradient(object):
 
                         # Gradient norms
                         if len(grad_norms_policy) > 0:
-                            items['|grad| (policy)']   = [f(grad_norms_policy)
-                                                          for f in [np.min, np.max, np.mean]]
-                            items['|grad| (baseline)'] = [f(grad_norms_baseline)
-                                                          for f in [np.min, np.max, np.mean]]
+                            if DEBUG:
+                                items['|grad| (policy)']   = [f(grad_norms_policy)
+                                                              for f in [np.min, np.max, np.mean]]
+                                items['|grad| (baseline)'] = [f(grad_norms_baseline)
+                                                              for f in [np.min, np.max, np.mean]]
                             grad_norms_policy   = []
                             grad_norms_baseline = []
 

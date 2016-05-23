@@ -31,13 +31,10 @@ n_conditions = len(contexts) * (len(left_rights)*len(cohs))**2
 n_gradient   = n_conditions
 n_validation = 50*n_conditions
 
-# Time step
-#dt = 10
-
 #max_iter = 650
 
 # Input noise
-sigma = np.sqrt(2*100*0.02)
+sigma = np.sqrt(2*100*0.01)
 
 # Rewards
 R_ABORTED = -1
@@ -61,9 +58,9 @@ def get_condition(rng, dt, context={}):
 
     fixation = context.get('fixation')
     if fixation is None:
-        #fixation = tasktools.uniform(rng, dt, fixation_min, fixation_max)
-        fixation = fixation_min + tasktools.truncated_exponential(rng, dt, fixation_mean,
-                                                                  xmax=fixation_max)
+        fixation = fixation_min + tasktools.uniform(rng, dt, 0, fixation_max)
+        #fixation = fixation_min + tasktools.truncated_exponential(rng, dt, fixation_mean,
+        #                                                          xmax=fixation_max)
 
     delay = context.get('delay')
     if delay is None:
@@ -123,33 +120,21 @@ def get_step(rng, dt, trial, t, a):
             status['choice']   = 'L'
             status['t_choice'] = t-1
             if trial['context'] == 'm':
-                if trial['left_right_m'] < 0:
-                    status['correct'] = True
-                    reward = R_CORRECT
-                else:
-                    status['correct'] = False
+                status['correct'] = (trial['left_right_m'] < 0)
             else:
-                if trial['left_right_c'] < 0:
-                    status['correct'] = True
-                    reward = R_CORRECT
-                else:
-                    status['correct'] = False
+                status['correct'] = (trial['left_right_c'] < 0)
+            if status['correct']:
+                reward = R_CORRECT
         elif a == actions['CHOOSE-RIGHT']:
             status['continue'] = False
             status['choice']   = 'R'
             status['t_choice'] = t-1
             if trial['context'] == 'm':
-                if trial['left_right_m'] > 0:
-                    status['correct'] = True
-                    reward = R_CORRECT
-                else:
-                    status['correct'] = False
+                status['correct'] = (trial['left_right_m'] > 0)
             else:
-                if trial['left_right_c'] > 0:
-                    status['correct'] = True
-                    reward = R_CORRECT
-                else:
-                    status['correct'] = False
+                status['correct'] = (trial['left_right_c'] > 0)
+            if status['correct']:
+                reward = R_CORRECT
 
     #-------------------------------------------------------------------------------------
     # Inputs

@@ -650,7 +650,7 @@ def do(action, args, config):
     elif action == 'psychometric':
         trialsfile = runtools.behaviorfile(config['scratchpath'])
 
-        fig = Figure(w=6, h=2.5)
+        fig = Figure(w=6, h=2.7)
 
         x0 = 0.12
         y0 = 0.2
@@ -711,7 +711,7 @@ def do(action, args, config):
         if 'value' in args:
             network = 'v'
         else:
-            network = 'v'
+            network = 'p'
 
         trialsfile = runtools.activityfile(config['scratchpath'])
         sort(trialsfile, (config['figspath'], 'sorted'), network=network)

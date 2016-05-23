@@ -16,7 +16,7 @@ default  = {
     'var_rec':       0.02,
     'checkfreq':     50,
     'L2_r':          0.002,
-    'baseline_L2_r': 0.000,
+    'baseline_L2_r': 0,
     'L1_Wrec':       0,
     'L2_Wrec':       0,
     'R_ABORTED':     -1,
