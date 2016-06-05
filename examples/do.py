@@ -55,7 +55,7 @@ print("SUFFIX:    " + suffix)
 
 # Location of script
 here   = utils.get_here(__file__)
-parent = utils.get_parent(here)
+prefix = os.path.basename(here)
 
 # Name to use
 name = os.path.splitext(os.path.basename(modelfile))[0] + suffix
@@ -64,7 +64,7 @@ name = os.path.splitext(os.path.basename(modelfile))[0] + suffix
 scratchpath = os.environ.get('SCRATCH')
 if scratchpath is None:
     scratchpath = os.path.join(os.environ['HOME'], 'scratch')
-trialspath = os.path.join(scratchpath, 'work', parent, name)
+trialspath = os.path.join(scratchpath, 'work', prefix, name)
 
 # Paths
 workpath = os.path.join(here,     'work')
@@ -155,14 +155,13 @@ elif action == 'run':
 
     # Pass everything on
     config = {
-        'seed':        seed,
-        'suffix':      suffix,
-        'model':       model,
-        'savefile':    savefile_copy,
-        'datapath':    datapath,
-        'figspath':    figspath,
-        'scratchpath': trialspath,
-        'trialspath':  trialspath
+        'seed':       seed,
+        'suffix':     suffix,
+        'model':      model,
+        'savefile':   savefile_copy,
+        'datapath':   datapath,
+        'figspath':   figspath,
+        'trialspath': trialspath
         }
 
     if dt > 0:

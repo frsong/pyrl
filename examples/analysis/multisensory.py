@@ -297,19 +297,19 @@ def do(action, args, config):
             k       = tasktools.unravel_index(n, (len(mods), len(freqs)))
             context = {'mods': mods[k.pop(0)], 'freqs': freqs[k.pop(0)]}
             trials.append(task.get_condition(pg.rng, pg.dt, context))
-        runtools.run(action, trials, pg, config['scratchpath'])
+        runtools.run(action, trials, pg, config['trialspath'])
 
     #=====================================================================================
 
     elif action == 'psychometric':
-        trialsfile = runtools.behaviorfile(config['scratchpath'])
+        trialsfile = runtools.behaviorfile(config['trialspath'])
 
         fig  = Figure()
         plot = fig.add()
 
         psychometric(trialsfile, plot)
 
-        plot.vline(config['model'].m.boundary)
+        plot.vline(config['model'].spec.boundary)
 
         fig.save(path=config['figspath'], name='psychometric')
         fig.close()
@@ -322,5 +322,5 @@ def do(action, args, config):
         else:
             network = 'p'
 
-        trialsfile = runtools.activityfile(config['scratchpath'])
+        trialsfile = runtools.activityfile(config['trialspath'])
         sort(trialsfile, (config['figspath'], 'sorted'), network=network)

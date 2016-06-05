@@ -17,7 +17,7 @@ from pyrl import tasktools
 inputs = tasktools.to_map('FIXATION', 'VISUAL-P', 'VISUAL-N', 'AUDITORY-P', 'AUDITORY-N')
 
 # Actions
-actions = tasktools.to_map('FIXATE', 'CHOOSE-HIGH', 'CHOOSE-LOW')
+actions = tasktools.to_map('FIXATE', 'CHOOSE-LOW', 'CHOOSE-HIGH')
 
 # Trial conditions
 mods         = ['v', 'a', 'va']
@@ -28,20 +28,21 @@ n_conditions = len(mods) * len(freqs)
 boundary = 12.5
 
 # Training
-n_gradient   = 2*n_conditions
+n_gradient   = n_conditions
 n_validation = 100*n_conditions
 
-#dt = 10
-
 # Input noise
-sigma = np.sqrt(2*100*0.02)
+sigma = np.sqrt(2*100*0.01)
+
+#var_rec = 0.01
 
 # Epoch durations
-fixation_min = 250
-fixation_max = 750
-stimulus     = 1000
-decision     = 500
-tmax         = fixation_max + stimulus + decision
+fixation_min  = 250
+fixation_mean = 150
+fixation_max  = 500
+stimulus      = 1000
+decision      = 500
+tmax          = fixation_min + fixation_max + stimulus + decision
 
 def get_condition(rng, dt, context={}):
     #-------------------------------------------------------------------------------------
@@ -50,7 +51,9 @@ def get_condition(rng, dt, context={}):
 
     fixation = context.get('fixation')
     if fixation is None:
-        fixation = tasktools.uniform(rng, dt, fixation_min, fixation_max)
+        fixation = fixation_min + tasktools.uniform(rng, dt, 0, fixation_max)
+        #fixation = fixation_min + tasktools.truncated_exponential(rng, dt, fixation_mean,
+        #                                                          xmax=fixation_max)
 
     durations = {
         'fixation': (0, fixation),
@@ -62,15 +65,20 @@ def get_condition(rng, dt, context={}):
 
     #-------------------------------------------------------------------------------------
 
-    mod  = context.get('mods',  rng.choice(mods))
-    freq = context.get('freqs', rng.choice(freqs))
+    mod = context.get('mods')
+    if mod is None:
+        mod = rng.choice(mods)
+
+    freq = context.get('freqs')
+    if freq is None:
+        freq = rng.choice(freqs)
 
     return {
         'durations': durations,
         'time':      time,
         'epochs':    epochs,
-        'mod':       rng.choice(mods_),
-        'freq':      rng.choice(freqs_)
+        'mod':       mod,
+        'freq':      freq
         }
 
 # Rewards
@@ -132,11 +140,15 @@ def get_step(rng, dt, trial, t, a):
         u[inputs['FIXATION']] = 1
     if t in epochs['stimulus']:
         if 'v' in trial['mod']:
-            u[inputs['VISUAL-P']] = scale_p(trial['freq']) + rng.normal(scale=sigma)/np.sqrt(dt)
-            u[inputs['VISUAL-N']] = scale_n(trial['freq']) + rng.normal(scale=sigma)/np.sqrt(dt)
+            u[inputs['VISUAL-P']] = (scale_p(trial['freq'])
+                                     + rng.normal(scale=sigma)/np.sqrt(dt))
+            u[inputs['VISUAL-N']] = (scale_n(trial['freq'])
+                                     + rng.normal(scale=sigma)/np.sqrt(dt))
         if 'a' in trial['mod']:
-            u[inputs['AUDITORY-P']] = scale_p(trial['freq']) + rng.normal(scale=sigma)/np.sqrt(dt)
-            u[inputs['AUDITORY-N']] = scale_n(trial['freq']) + rng.normal(scale=sigma)/np.sqrt(dt)
+            u[inputs['AUDITORY-P']] = (scale_p(trial['freq'])
+                                       + rng.normal(scale=sigma)/np.sqrt(dt))
+            u[inputs['AUDITORY-N']] = (scale_n(trial['freq'])
+                                       + rng.normal(scale=sigma)/np.sqrt(dt))
 
     #-------------------------------------------------------------------------------------
 

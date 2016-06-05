@@ -142,11 +142,11 @@ if 'rdm_rt' in args:
 if 'mante' in args:
     print("=> Context-dependent integration")
     #clean('mante')
-    #train('mante')
-    trials('b', 'mante', 50)
+    train('mante')
+    trials('b', 'mante', 100)
     do_action('mante', 'psychometric')
-    #trials('a', 'mante', 20)
-    #do_action('mante', 'sort')
+    trials('a', 'mante', 20)
+    do_action('mante', 'sort')
 
     #do_action('mante', 'regress')
     #do_action('mante', 'units')
@@ -162,7 +162,9 @@ if 'mante-seeds' in args:
 
 if 'multisensory' in args:
     print("=> Multisensory integration")
+    #train('multisensory')
     trials('b', 'multisensory', 200)
+    do_action('multisensory', 'psychometric')
     #trials('a', 'multisensory', 100)
     #do_action('multisensory', 'sort')
 

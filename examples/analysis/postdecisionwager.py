@@ -529,12 +529,12 @@ def do(action, args, config):
                 'coh':        cohs[k.pop(0)]
                 }
             trials.append(task.get_condition(pg.rng, pg.dt, context))
-        runtools.run(action, trials, pg, config['scratchpath'])
+        runtools.run(action, trials, pg, config['trialspath'])
 
     #=====================================================================================
 
     elif action == 'sure_stimulus_duration':
-        trialsfile = runtools.behaviorfile(config['scratchpath'])
+        trialsfile = runtools.behaviorfile(config['trialspath'])
 
         fig  = Figure()
         plot = fig.add()
@@ -549,7 +549,7 @@ def do(action, args, config):
     #=====================================================================================
 
     elif action == 'correct_stimulus_duration':
-        trialsfile = runtools.behaviorfile(config['scratchpath'])
+        trialsfile = runtools.behaviorfile(config['trialspath'])
 
         fig  = Figure()
         plot = fig.add()
@@ -569,5 +569,5 @@ def do(action, args, config):
         else:
             network = 'p'
 
-        trialsfile = runtools.activityfile(config['scratchpath'])
+        trialsfile = runtools.activityfile(config['trialspath'])
         sort(trialsfile, os.path.join(config['figspath'], 'sorted'), network=network)

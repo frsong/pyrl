@@ -40,7 +40,7 @@ DX = 0.12
 fig.add('reward',  [x0, y0, w, h])
 fig.add('correct', [fig[-1].right+DX, y0, w, h])
 
-T = 100
+T = 1000
 
 #=========================================================================================
 
@@ -50,7 +50,7 @@ original   = [modelname]
 additional = [modelname+'_s'+str(i) for i in [1000, 1001, 1002, 1003, 1004]]
 for name in additional + original:
     # Training history
-    datapath = os.path.join(parent, 'work', 'data', name)
+    datapath = os.path.join(parent, 'examples', 'work', 'data', name)
     savefile = os.path.join(datapath, name+'.pkl')
     if not os.path.isfile(savefile):
         continue
@@ -123,7 +123,10 @@ plot.ylabel('Reward per trial')
 
 if len(times) > 0:
     mean = np.mean(times)
-    sd   = np.std(times, ddof=1)
+    if len(times) > 1:
+        sd = np.std(times, ddof=1)
+    else:
+        sd = 0
     plot.text_lower_right(r'{:.1f} $\pm$ {:.1f} mins'.format(mean, sd), dy=0.03,
                           fontsize=10, color=Figure.colors('green'))
 
@@ -133,6 +136,10 @@ plot.ylim(35, 100)
 plot.ylabel('Percent correct\n(decision trials)')
 
 if modelname == 'romo':
+    target = 90
+    plot.hline(target, color=Figure.colors('red'), zorder=1)
+if modelname == 'mante':
+    target = 88
     plot.hline(target, color=Figure.colors('red'), zorder=1)
 
 #=========================================================================================

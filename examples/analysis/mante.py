@@ -677,12 +677,12 @@ def do(action, args, config):
                 'cohs_c':        cohs[k.pop(0)]
                 }
             trials.append(task.get_condition(pg.rng, pg.dt, context))
-        runtools.run(action, trials, pg, config['scratchpath'])
+        runtools.run(action, trials, pg, config['trialspath'])
 
     #=====================================================================================
 
     elif action == 'psychometric':
-        trialsfile = runtools.behaviorfile(config['scratchpath'])
+        trialsfile = runtools.behaviorfile(config['trialspath'])
 
         fig = Figure(w=6, h=2.7)
 
@@ -712,5 +712,5 @@ def do(action, args, config):
         else:
             network = 'p'
 
-        trialsfile = runtools.activityfile(config['scratchpath'])
+        trialsfile = runtools.activityfile(config['trialspath'])
         sort(trialsfile, (config['figspath'], 'sorted'), network=network)

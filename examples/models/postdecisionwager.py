@@ -59,15 +59,6 @@ R_ABORTED = -1
 R_CORRECT = +1
 R_SURE    = 0.7*R_CORRECT
 
-#var_rec = 0.02
-
-#L2_r = 0.003
-
-#L1_Wrec = 0.002
-
-#lr = 0.004
-#baseline_lr = 0.004
-
 def get_condition(rng, dt, context={}):
     #-------------------------------------------------------------------------------------
     # Epochs

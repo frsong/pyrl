@@ -9,10 +9,6 @@ from pyrl.figtools import Figure
 
 #/////////////////////////////////////////////////////////////////////////////////////////
 
-THIS = 'examples.analysis.rdm'
-
-#/////////////////////////////////////////////////////////////////////////////////////////
-
 colors = {
     0:    '#c6dbef',
     3.2:  '#9ecae1',
@@ -1447,10 +1443,10 @@ def do(action, args, config):
                 'coh':        cohs[k.pop(0)]
                 }
             trials.append(task.get_condition(pg.rng, pg.dt, context))
-        runtools.run(action, trials, pg, config['scratchpath'])
+        runtools.run(action, trials, pg, config['trialspath'])
 
     elif action == 'psychometric':
-        trialsfile = runtools.behaviorfile(config['scratchpath'])
+        trialsfile = runtools.behaviorfile(config['trialspath'])
 
         fig  = Figure()
         plot = fig.add()
@@ -1461,7 +1457,7 @@ def do(action, args, config):
         fig.close()
 
     elif action == 'chronometric':
-        trialsfile = runtools.behaviorfile(config['scratchpath'])
+        trialsfile = runtools.behaviorfile(config['trialspath'])
 
         fig  = Figure()
         plot = fig.add()
@@ -1482,7 +1478,7 @@ def do(action, args, config):
         else:
             network = 'policy'
 
-        trialsfile = os.path.join(config['scratchpath'], 'trials_activity.pkl')
+        trialsfile = os.path.join(config['trialspath'], 'trials_activity.pkl')
         plot_trial(n, trialsfile, (config['figspath'], 'trial{}_{}'.format(n, network)),
                    network=network)
 
@@ -1492,17 +1488,17 @@ def do(action, args, config):
         else:
             network = 'p'
 
-        sort(runtools.activityfile(config['scratchpath']),
+        sort(runtools.activityfile(config['trialspath']),
              os.path.join(config['figspath'], 'sorted'),
              network=network)
 
     elif action == 'sort-postdecision':
-        trialsfile = os.path.join(config['scratchpath'], 'trials_activity.pkl')
+        trialsfile = os.path.join(config['trialspath'], 'trials_activity.pkl')
         sort_postdecision(trialsfile, config['model'].m,
                           (config['figspath'], 'sorted_postdecision'))
 
     elif action == 'sure-stimulus-duration':
-        trialsfile = os.path.join(config['scratchpath'], 'trials_behavior.pkl')
+        trialsfile = os.path.join(config['trialspath'], 'trials_behavior.pkl')
 
         fig  = Figure()
         plot = fig.add()
@@ -1515,7 +1511,7 @@ def do(action, args, config):
     elif action == 'correct_stimulus_duration':
         wager = ('wager' in args)
 
-        trialsfile = runtools.behaviorfile(config['scratchpath'])
+        trialsfile = runtools.behaviorfile(config['trialspath'])
 
         fig  = Figure()
         plot = fig.add()

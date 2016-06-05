@@ -28,11 +28,6 @@ n_conditions = len(gt_lts) * len(fpairs)
 n_gradient   = n_conditions
 n_validation = 20*n_conditions
 
-# Time step (ms)
-#dt = 10
-
-#dt = 25
-
 # Input noise
 sigma = np.sqrt(2*100*0.0001)
 
