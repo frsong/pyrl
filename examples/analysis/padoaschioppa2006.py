@@ -319,24 +319,24 @@ def do(action, args, config):
                 'offer': offers[k.pop(0)]
                 }
             trials.append(task.get_condition(pg.rng, pg.dt, context))
-        runtools.run(action, trials, pg, config['scratchpath'])
+        runtools.run(action, trials, pg, config['trialspath'])
 
     #=====================================================================================
 
     elif action == 'choice_pattern':
-        trialsfile = runtools.behaviorfile(config['scratchpath'])
+        trialsfile = runtools.behaviorfile(config['trialspath'])
 
         fig  = Figure()
         plot = fig.add()
 
-        m = config['model'].m
+        spec = config['model'].spec
 
-        choice_pattern(trialsfile, m.offers, plot)
+        choice_pattern(trialsfile, spec.offers, plot)
 
         plot.xlabel('Offer (\#B : \#A)')
         plot.ylabel('Percent choice B')
 
-        plot.text_upper_left('1A = {}B'.format(m.A_to_B), fontsize=10)
+        plot.text_upper_left('1A = {}B'.format(spec.A_to_B), fontsize=10)
 
         fig.save(path=config['figspath'], name=action)
         fig.close()
@@ -344,7 +344,7 @@ def do(action, args, config):
     #=====================================================================================
 
     elif action == 'sort_epoch':
-        trialsfile = runtools.activityfile(config['scratchpath'])
+        trialsfile = runtools.activityfile(config['trialspath'])
 
         epoch = args[0]
 
@@ -355,6 +355,6 @@ def do(action, args, config):
 
         separate_by_choice = ('separate-by-choice' in args)
 
-        sort_epoch(trialsfile, epoch, config['model'].m.offers,
+        sort_epoch(trialsfile, epoch, config['model'].spec.offers,
                    os.path.join(config['figspath'], 'sorted'),
                    network=network, separate_by_choice=separate_by_choice)

@@ -43,7 +43,7 @@ R_A       = A_to_B * R_B
 
 #baseline_L2_r = 0.002
 
-var_rec = 0.03
+#var_rec = 0.03
 
 # Input scaling
 def scale(x):
