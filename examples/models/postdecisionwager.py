@@ -31,10 +31,9 @@ n_gradient   = n_conditions
 n_validation = 50*n_conditions
 
 # Input noise
-#sigma = np.sqrt(2*100*0.007)
-#sigma = np.sqrt(2*100*0.01)
 sigma = np.sqrt(2*100*0.007)
-#sigma = np.sqrt(2*100*0.01)
+
+#var_rec = 0.01
 
 # Durations
 fixation_min  = 250
@@ -52,12 +51,10 @@ sure_max      = 750
 decision      = 500
 tmax          = fixation_min + fixation_max + stimulus_max + delay_max + decision
 
-#dt = 10
-
 # Rewards
 R_ABORTED = -1
 R_CORRECT = +1
-R_SURE    = 0.7*R_CORRECT
+R_SURE    = 0.69*R_CORRECT
 
 def get_condition(rng, dt, context={}):
     #-------------------------------------------------------------------------------------
@@ -66,8 +63,6 @@ def get_condition(rng, dt, context={}):
 
     fixation = context.get('fixation')
     if fixation is None:
-        #fixation = fixation_min + tasktools.uniform(rng, dt, 0, fixation_max)
-        #fixation = tasktools.uniform(rng, dt, fixation_min, fixation_max)
         fixation = fixation_min + tasktools.truncated_exponential(rng, dt, fixation_mean,
                                                                   xmax=fixation_max)
 
@@ -104,13 +99,13 @@ def get_condition(rng, dt, context={}):
     if wager is None:
         wager = rng.choice(wagers)
 
-    coh = context.get('coh')
-    if coh is None:
-        coh = rng.choice(cohs)
-
     left_right = context.get('left_right')
     if left_right is None:
         left_right = rng.choice(left_rights)
+
+    coh = context.get('coh')
+    if coh is None:
+        coh = rng.choice(cohs)
 
     return {
         'durations':  durations,
@@ -133,8 +128,7 @@ def get_step(rng, dt, trial, t, a):
     epochs = trial['epochs']
     status = {'continue': True}
     reward = 0
-
-    if t-1 in epochs['fixation'] or t-1 in epochs['stimulus'] or t-1 in epochs['delay']:
+    if t-1 not in epochs['decision']:
         if a != actions['FIXATE']:
             status['continue'] = False
             reward = R_ABORTED
@@ -189,9 +183,3 @@ def get_step(rng, dt, trial, t, a):
 target_reward = 0.78
 
 from pyrl.performance import PerformancePostdecisionWager as Performance
-
-#def terminate(perf):
-#    p_answer  = perf.n_answer/perf.n_trials
-#    p_correct = tasktools.divide(perf.n_correct, perf.n_decision)
-#
-#    return p_answer >= 0.99 and p_correct >= 0.85

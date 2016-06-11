@@ -163,7 +163,7 @@ if 'mante-seeds' in args:
 if 'multisensory' in args:
     print("=> Multisensory integration")
     #train('multisensory')
-    trials('b', 'multisensory', 200)
+    trials('b', 'multisensory', 1500)
     do_action('multisensory', 'psychometric')
     #trials('a', 'multisensory', 100)
     #do_action('multisensory', 'sort')
@@ -224,3 +224,7 @@ if 'padoaschioppa2006' in args:
 if 'padoaschioppa2006-seeds' in args:
     print("=> Padoa-Schioppa 2006 (additional)")
     train_seeds('padoaschioppa2006', n_train=5)
+
+if 'padoaschioppa2006-1A3B' in args:
+    trials('b', 'padoaschioppa2006_1A3B', 200)
+    do_action('padoaschioppa2006_1A3B', 'choice_pattern')

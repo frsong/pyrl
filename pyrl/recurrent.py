@@ -39,11 +39,14 @@ class Recurrent(object):
     def get_values(self):
         return OrderedDict([(k, v.get_value()) for k, v in self.params.items()])
 
+    def get_masked_values(self):
+        return OrderedDict([(k, self.get(k).eval()) for k in self.params])
+
     def get(self, name):
         p = self.params[name]
         if name in self.masks:
             #return tensor.nnet.relu(p)
-            return tensor.nnet.relu(p) * self.masks[name]
+            return self.masks[name]*p
         return p
 
     def func_step_0(self, use_x0=False):

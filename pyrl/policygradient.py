@@ -103,6 +103,7 @@ class PolicyGradient(object):
                 'Nin':          config['Nin'],
                 'N':            config['N'],
                 'Nout':         config['Nout'],
+                'p0':           config['p0'],
                 'f_out':        'softmax',
                 #'f_out':        'linear',
                 'fix':          config['fix'],
@@ -119,6 +120,7 @@ class PolicyGradient(object):
                 'Nin':          self.policy_net.N + len(config['actions']),
                 'N':            config['N'],
                 'Nout':         1,
+                'p0':           config['p0'],
                 'f_out':        'linear',
                 'fix':          config['fix'],
                 'L2_r':         config['baseline_L2_r'],
@@ -502,7 +504,7 @@ class PolicyGradient(object):
         items['var_rec']                  = self.config['var_rec']
         items['dt']                       = self.dt
         items['Learning rate (policy)']   = self.config['lr']
-        items['Learning rate (value)']    = self.config['baseline_lr']
+        items['Learning rate (baseline)'] = self.config['baseline_lr']
         items['Max time steps']           = self.Tmax
         items['Num. trials (gradient)']   = self.config['n_gradient']
         items['Num. trials (validation)'] = self.config['n_validation']
@@ -550,11 +552,11 @@ class PolicyGradient(object):
             iter_start = 0
 
             # Keep track of best results
-            best_iter    = -1
-            best_reward  = -np.inf
-            best_perf    = None
-            best_params  = self.policy_net.get_values()
-            best_baseline_params = self.baseline_net.get_values()
+            best_iter   = -1
+            best_reward = -np.inf
+            best_perf   = None
+            best_params = self.policy_net.get_masked_values()
+            best_baseline_params = self.baseline_net.get_masked_values()
 
             # Initial states
             init   = None
@@ -611,8 +613,8 @@ class PolicyGradient(object):
                             best_iter   = iter
                             best_reward = mean_reward
                             best_perf   = perf_
-                            best_params          = self.policy_net.get_values()
-                            best_baseline_params = self.baseline_net.get_values()
+                            best_params          = self.policy_net.get_masked_values()
+                            best_baseline_params = self.baseline_net.get_masked_values()
 
                             record['new_best'] = True
                             training_history.append(record)

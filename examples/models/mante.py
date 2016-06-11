@@ -31,8 +31,6 @@ n_conditions = len(contexts) * (len(left_rights)*len(cohs))**2
 n_gradient   = n_conditions
 n_validation = 50*n_conditions
 
-#max_iter = 650
-
 # Input noise
 sigma = np.sqrt(2*100*0.01)
 
@@ -58,7 +56,6 @@ def get_condition(rng, dt, context={}):
 
     fixation = context.get('fixation')
     if fixation is None:
-        #fixation = fixation_min + tasktools.uniform(rng, dt, 0, fixation_max)
         fixation = fixation_min + tasktools.truncated_exponential(rng, dt, fixation_mean,
                                                                   xmax=fixation_max)
 
@@ -109,7 +106,6 @@ def get_step(rng, dt, trial, t, a):
     epochs = trial['epochs']
     status = {'continue': True}
     reward = 0
-
     if t-1 not in epochs['decision']:
         if a != actions['FIXATE']:
             status['continue'] = False

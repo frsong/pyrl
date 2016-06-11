@@ -92,27 +92,55 @@ y0_mante  = fig['mante-m'].top - h_mante
 dx_mante  = (3*w_activity+2*dx - pad_mante - 4*w_mante)/3
 dy_mante  = (2*h_behavior+DY - 4*h_mante)/3
 
+# Mante
 fig.add('mante-choice-0',         [x0_mante, y0_mante, w_mante, h_mante])
-fig.add('mante-motion-choice-0',  [x0_mante, fig['mante-choice-0'].y-dy_mante-h_mante, w_mante, h_mante])
-fig.add('mante-color-choice-0',   [x0_mante, fig['mante-motion-choice-0'].y-dy_mante-h_mante, w_mante, h_mante])
-fig.add('mante-context-choice-0', [x0_mante, fig['mante-color-choice-0'].y-dy_mante-h_mante, w_mante, h_mante])
+fig.add('mante-motion-choice-0',  [x0_mante, fig['mante-choice-0'].y-dy_mante-h_mante,
+                                   w_mante, h_mante])
+fig.add('mante-color-choice-0',   [x0_mante,
+                                   fig['mante-motion-choice-0'].y-dy_mante-h_mante,
+                                   w_mante, h_mante])
+fig.add('mante-context-choice-0', [x0_mante,
+                                   fig['mante-color-choice-0'].y-dy_mante-h_mante,
+                                   w_mante, h_mante])
 for i in xrange(1, 4):
-    fig.add('mante-choice-{}'.format(i),         [fig['mante-choice-{}'.format(i-1)].right+dx_mante, fig['mante-choice-0'].y, w_mante, h_mante])
-    fig.add('mante-motion-choice-{}'.format(i),  [fig['mante-choice-{}'.format(i-1)].right+dx_mante, fig['mante-motion-choice-0'].y, w_mante, h_mante])
-    fig.add('mante-color-choice-{}'.format(i),   [fig['mante-choice-{}'.format(i-1)].right+dx_mante, fig['mante-color-choice-0'].y, w_mante, h_mante])
-    fig.add('mante-context-choice-{}'.format(i), [fig['mante-choice-{}'.format(i-1)].right+dx_mante, fig['mante-context-choice-0'].y, w_mante, h_mante])
+    fig.add('mante-choice-{}'.format(i),
+            [fig['mante-choice-{}'.format(i-1)].right+dx_mante,
+             fig['mante-choice-0'].y, w_mante, h_mante])
+    fig.add('mante-motion-choice-{}'.format(i),
+            [fig['mante-choice-{}'.format(i-1)].right+dx_mante,
+             fig['mante-motion-choice-0'].y, w_mante, h_mante])
+    fig.add('mante-color-choice-{}'.format(i),
+            [fig['mante-choice-{}'.format(i-1)].right+dx_mante,
+             fig['mante-color-choice-0'].y, w_mante, h_mante])
+    fig.add('mante-context-choice-{}'.format(i),
+            [fig['mante-choice-{}'.format(i-1)].right+dx_mante,
+             fig['mante-context-choice-0'].y, w_mante, h_mante])
 
-fig.add('ms-0', [fig['ms-behavior'].right+DX, fig['ms-behavior'].y, w_activity, h_activity])
+# Multisensory
+fig.add('ms-0', [fig['ms-behavior'].right+DX, fig['ms-behavior'].y,
+                 w_activity, h_activity])
 fig.add('ms-1', [fig['ms-0'].right+dx, fig['ms-behavior'].y, w_activity, h_activity])
 fig.add('ms-2', [fig['ms-1'].right+dx, fig['ms-behavior'].y, w_activity, h_activity])
 
-fig.add('romo-0', [fig['romo-behavior'].right+DX, fig['romo-behavior'].y, w_activity, h_activity])
-fig.add('romo-1', [fig['romo-0'].right+dx, fig['romo-behavior'].y, w_activity, h_activity])
-fig.add('romo-2', [fig['romo-1'].right+dx, fig['romo-behavior'].y, w_activity, h_activity])
+# Romo
+fig.add('romo-0', [fig['romo-behavior'].right+DX, fig['romo-behavior'].y,
+                   w_activity, h_activity])
+fig.add('romo-1', [fig['romo-0'].right+dx, fig['romo-behavior'].y,
+                   w_activity, h_activity])
+fig.add('romo-2', [fig['romo-1'].right+dx, fig['romo-behavior'].y,
+                   w_activity, h_activity])
 
 #=========================================================================================
 # Annotations
 #=========================================================================================
+
+pl_x0 = 0.02
+plotlabels = {
+    'A': (pl_x0, 0.96),
+    'B': (pl_x0, 0.52),
+    'C': (pl_x0, 0.25)
+    }
+fig.plotlabels(plotlabels, fontsize=12)
 
 plot = fig['mante-m']
 plot.text_upper_center(r'\textbf{Behavior}', fontsize=9.5, dy=0.13)
@@ -126,7 +154,12 @@ mante_analysis.psychometric(mante_behavior, {'m': fig['mante-m'], 'c': fig['mant
 
 plot = fig['mante-m']
 plot.xlabel('Percent motion coherence')
-plot.ylabel('Percent right choices')
+plot.ylabel('Percent choice R')
+
+# Legend
+props = {'prop': {'size': 6}, 'handlelength': 1,
+         'handletextpad': 0.9, 'labelspacing': 0.5}
+plot.legend(bbox_to_anchor=(1.1, 0.33), **props)
 
 plot = fig['mante-c']
 plot.xlabel('Percent color coherence')
@@ -195,24 +228,35 @@ plot = fig['ms-behavior']
 kwargs = dict(ms=5, lw=1)
 multisensory_analysis.psychometric(multisensory_behavior, fig['ms-behavior'], **kwargs)
 
+# Legend
+props = {'prop': {'size': 6}, 'handlelength': 1,
+         'handletextpad': 0.9, 'labelspacing': 0.5}
+plot.legend(bbox_to_anchor=(0.605, 1.15), **props)
+
 plot.xlabel('Rate (events/s)')
 plot.ylabel('Percent high choices')
 
 #=========================================================================================
 
-kwargs = {}
+kwargs = {'lw': 1.5, 'dashes': [3, 2]}
 
 units = [17, 6, 14]
 plots = [fig['ms-'+str(i)] for i in xrange(len(units))]
-multisensory_analysis.sort(multisensory_activity, plots, units=units)
+multisensory_analysis.sort(multisensory_activity, plots, units=units, **kwargs)
 
 for p in ['ms-0', 'ms-1', 'ms-2']:
     plot = fig[p]
     plot.xticks([-300, 0, 1000])
     plot.xlim(-300, 1000)
 
+    if p == 'ms-0':
+        props = {'prop': {'size': 6}, 'handlelength': 1.2,
+                 'handletextpad': 0.9, 'labelspacing': 0.5}
+        plot.legend(bbox_to_anchor=(0.615, 1.15), **props)
+
 plot = fig['ms-0']
 plot.xlabel('Time from stimulus onset (ms)')
+plot.ylabel('Firing rate (a.u.)')
 
 #=========================================================================================
 
@@ -229,7 +273,7 @@ kwargs = {}
 
 units = [0, 15, 18]
 plots = [fig['romo-'+str(i)] for i in xrange(len(units))]
-romo_analysis.sort(romo_activity, plots, units=units)
+romo_analysis.sort(romo_activity, plots, units=units, **kwargs)
 
 for p in ['romo-0', 'romo-1', 'romo-2']:
     plot = fig[p]
@@ -237,7 +281,7 @@ for p in ['romo-0', 'romo-1', 'romo-2']:
     plot.xlim(-0.5, 4)
 
 plot = fig['romo-0']
-plot.xlabel('Time from $f_1$ onset (sec)')
+plot.xlabel('Time from $f_1$ onset (s)')
 plot.ylabel('Firing rate (a.u.)')
 
 #=========================================================================================

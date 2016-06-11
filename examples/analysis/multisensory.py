@@ -63,7 +63,7 @@ def psychometric(trialsfile, plot, **kwargs):
     all_x  = []
     all_y  = []
     sigmas = {}
-    for mod in decision_by_freq:
+    for mod in ['v', 'a', 'va']:
         if mod == 'v':
             label = 'Visual'
         elif mod == 'a':
@@ -71,15 +71,10 @@ def psychometric(trialsfile, plot, **kwargs):
         elif mod == 'va':
             label = 'Multisensory'
         else:
-            raise ValueError("[ {}.psychometric ] Unknown modality.".format(THIS))
+            raise ValueError
 
         x = freqs[mod]
         y = p_high[mod]
-
-    # Prop. decision
-    #plot.plot(cohs, 100*p_decision, lw=1.5, color=Figure.colors('orange'),
-    #          label='$P$(decision)')
-    #plot.plot(cohs, 100*p_decision, 'o', ms=6, mew=0, mfc=Figure.colors('orange'))
 
         # Fit psychometric curve
         props = dict(lw=lw, color=colors[mod], label=label)
@@ -199,7 +194,7 @@ def sort(trialsfile, plots, units=None, network='p', **kwargs):
     #-------------------------------------------------------------------------------------
 
     lw     = kwargs.get('lw', 1.5)
-    dashes = kwargs.get('dashes', [3, 1.5])
+    dashes = kwargs.get('dashes', [3, 2])
 
     vline_props = {'lw': kwargs.get('lw_vline', 0.5)}
     if 'dashes_vline' in kwargs:
@@ -219,11 +214,27 @@ def sort(trialsfile, plots, units=None, network='p', **kwargs):
     def plot_sorted(plot, unit, w, r_sorted):
         t = time_a[w]
         yall = [[1]]
-        for cond in sorted(r_sorted.keys()):
+        for cond in [('v', 'H'), ('v', 'L'), ('a', 'H'), ('a', 'L')]:
             mod, choice = cond
+            print(mod, choice)
+
+            if mod == 'v':
+                label = 'Vis, '
+            else:
+                label = 'Aud, '
+            if choice == 'H':
+                label += 'high'
+            else:
+                label += 'low'
+
+            linestyle = linestyle_by_choice[choice]
+            if linestyle == '-':
+                lineprops = dict(linestyle=linestyle, lw=lw)
+            else:
+                lineprops = dict(linestyle=linestyle, lw=lw, dashes=dashes)
             plot.plot(t, r_sorted[cond][w,unit],
                       color=colors_by_mod[mod],
-                      linestyle=linestyle_by_choice[choice],
+                      label=label,
                       **lineprops)
             yall.append(r_sorted[cond][w,unit])
 

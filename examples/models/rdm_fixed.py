@@ -85,8 +85,16 @@ def get_condition(rng, dt, context={}):
     # Trial
     #-------------------------------------------------------------------------------------
 
-    left_rights_ = context.get('left_rights', left_rights)
-    cohs_        = context.get('cohs', cohs)
+    #left_rights_ = context.get('left_rights', left_rights)
+    #cohs_        = context.get('cohs', cohs)
+
+    left_right = context.get('left_right')
+    if left_right is None:
+        left_right = rng.choice(left_rights)
+
+    coh = context.get('coh')
+    if coh is None:
+        coh = rng.choice(cohs)
 
     return {
         'durations':   durations,

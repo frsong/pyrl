@@ -503,6 +503,8 @@ def sort(trialsfile, all_plots, units=None, network='p', **kwargs):
             fig.save(path=figspath, name=name+'_{}{:03d}'.format(network, unit))
             fig.close()
 
+#/////////////////////////////////////////////////////////////////////////////////////////
+
 def psychometric(trialsfile, plots=None, **kwargs):
     """
     Compute and plot the psychometric functions.

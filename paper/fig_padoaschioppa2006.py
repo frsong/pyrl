@@ -22,6 +22,8 @@ trialspath   = os.path.join(scratchpath, 'work', 'pyrl')
 analysispath = os.path.join(parent, 'examples', 'analysis')
 modelspath   = os.path.join(parent, 'examples', 'models')
 
+trialspath2   = os.path.join(scratchpath, 'work', 'examples')
+
 # Analysis
 analysisfile = os.path.join(analysispath, 'padoaschioppa2006.py')
 analysis     = imp.load_source('padoaschioppa2006', analysisfile)
@@ -31,6 +33,12 @@ modelfile    = os.path.join(modelspath, 'padoaschioppa2006.py')
 model        = imp.load_source('model', modelfile)
 trialsfile_b = os.path.join(trialspath, 'padoaschioppa2006', 'trials_behavior.pkl')
 trialsfile_a = os.path.join(trialspath, 'padoaschioppa2006', 'trials_activity.pkl')
+
+# Model 2
+modelfile2    = os.path.join(modelspath, 'padoaschioppa2006_1A3B.py')
+model2        = imp.load_source('model2', modelfile2)
+trialsfile2_b = os.path.join(trialspath2, 'padoaschioppa2006_1A3B', 'trials_behavior.pkl')
+trialsfile2_a = os.path.join(trialspath2, 'padoaschioppa2006_1A3B', 'trials_activity.pkl')
 
 #=========================================================================================
 # Figure
@@ -84,14 +92,14 @@ plot.text_upper_left('1A = {}B'.format(model.A_to_B), fontsize=7.5,
 plot = fig['choice-lower']
 
 kwargs = {'ms': 4.5, 'lw': 1.25}
-analysis.choice_pattern(trialsfile_b, model.offers, plot, **kwargs)
+analysis.choice_pattern(trialsfile2_b, model2.offers, plot, **kwargs)
 
 plot.yticks([0, 50, 100])
 
 plot.xlabel('Offer (\#B : \#A)')
 plot.ylabel('Percent choice B')
 
-plot.text_upper_left('1A = {}B'.format(model.A_to_B), fontsize=7.5,
+plot.text_upper_left('1A = {}B'.format(model2.A_to_B), fontsize=7.5,
                      color=Figure.colors('green'))
 
 #=========================================================================================
@@ -100,16 +108,19 @@ kwargs = {'ms': 4.5, 'lw': 1.25}
 
 plots = [fig['activity-1'], fig['activity-2'], fig['activity-3']]
 units = [8, 2, 19]
+#units = [2,47,41]
 analysis.sort_epoch(trialsfile_a, 'prechoice', model.offers, plots, units, network='v',
                     **kwargs)
 
 plots = [fig['activity-4'], fig['activity-5']]
 units = [25, 29]
+#units = [36,23]
 analysis.sort_epoch(trialsfile_a, 'prechoice', model.offers, plots, units, network='v',
                     **kwargs)
 
 plots = [fig['activity-6']]
 units = [1]
+#units = [0]
 analysis.sort_epoch(trialsfile_a, 'prechoice', model.offers, plots, units, network='v',
                     separate_by_choice=True, **kwargs)
 

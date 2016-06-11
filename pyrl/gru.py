@@ -17,6 +17,7 @@ configs_required = ['Nin', 'Nout']
 configs_default  = {
     'alpha':   1,
     'N':       50,
+    'p0':      1,
     'rho':     2,
     'f_out':   'softmax',
     'L2_r':    0.002,
@@ -117,7 +118,30 @@ class GRU(Recurrent):
             print("Seed = {}".format(seed))
             rng = np.random.RandomState(seed)
 
-            # Network parameters
+            #-----------------------------------------------------------------------------
+            # Connection masks
+            #-----------------------------------------------------------------------------
+
+            # Connection probability
+            p0 = self.config['p0']
+            print(p0)
+
+            # Wrec
+            M = np.zeros(self.get_dim('Wrec'))
+            for j in xrange(M.shape[1]):
+                M[:,j] = 1*(rng.uniform(size=M.shape[0]) < p0)
+            self.masks['Wrec'] = M
+
+            # Wrec (gates)
+            M = np.zeros(self.get_dim('Wrec_gates'))
+            for j in xrange(M.shape[1]):
+                M[:,j] = 1*(rng.uniform(size=M.shape[0]) < p0)
+            self.masks['Wrec_gates'] = M
+
+            #-----------------------------------------------------------------------------
+            # Network parameteres
+            #-----------------------------------------------------------------------------
+
             params = OrderedDict()
             if self.config['ei'] is None:
                 params['Win']        = rng.normal(size=self.get_dim('Win'))
@@ -125,7 +149,6 @@ class GRU(Recurrent):
                 params['Wrec_gates'] = rng.normal(size=self.get_dim('Wrec_gates'))
                 params['Wrec']       = rng.normal(size=self.get_dim('Wrec'))
                 params['Wout']       = np.zeros(self.get_dim('Wout'))
-                #params['Wout']       = rng.normal(size=self.get_dim('Wout'))
                 params['bout']       = np.zeros(self.get_dim('bout'))
                 params['x0']         = 0.5*np.ones(self.get_dim('x0'))
             else:
@@ -155,7 +178,7 @@ class GRU(Recurrent):
                     totI = np.sum(params['Wrec'][inh,i])
                     params['Wrec'][inh,i] *= totE/totI
 
-            # Set spectral radius
+            # Desired spectral radius
             rho = self.config['rho']
 
             Wrec_gates = params['Wrec_gates'].copy()
@@ -175,7 +198,7 @@ class GRU(Recurrent):
             params['Wrec'] *= rho/rho0
 
         #=================================================================================
-        # Get spectral radii
+        # Display spectral radii
         #=================================================================================
 
         Wrec_gates = params['Wrec_gates'].copy()
@@ -198,7 +221,7 @@ class GRU(Recurrent):
         #params['Wrec'] *= rho/rho0
 
         #=================================================================================
-        # Share
+        # Give to Theano
         #=================================================================================
 
         # Share
@@ -208,12 +231,13 @@ class GRU(Recurrent):
         for k in self.masks:
             self.masks[k] = theanotools.shared(self.masks[k])
 
+        # Fixed parameters
+        if self.config['fix']:
+            print("Fixed parameters: " + ', '.join(self.config['fix']))
+
         # Trainable parameters
         self.trainables = [self.params[k]
                            for k in self.params if k not in self.config['fix']]
-        print("Fixed parameters: ")
-        for p in self.config['fix']:
-            print(p)
 
         #=================================================================================
         # Setup
@@ -296,8 +320,6 @@ class GRU(Recurrent):
 
         L2_r = self.config['L2_r']
         if L2_r  > 0:
-            print("L2_r = {}".format(L2_r ))
-
             M_ = (tensor.tile(M.T, (x.shape[-1], 1, 1))).T
             x_all = tensor.concatenate(
                 [x0_.reshape((1, x0_.shape[0], x0_.shape[1])), x],

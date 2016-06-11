@@ -34,8 +34,6 @@ n_validation = 100*n_conditions
 # Input noise
 sigma = np.sqrt(2*100*0.015)
 
-#var_rec = 0.01
-
 # Epoch durations
 fixation_min  = 250
 fixation_mean = 150
@@ -51,9 +49,8 @@ def get_condition(rng, dt, context={}):
 
     fixation = context.get('fixation')
     if fixation is None:
-        fixation = fixation_min + tasktools.uniform(rng, dt, 0, fixation_max)
-        #fixation = fixation_min + tasktools.truncated_exponential(rng, dt, fixation_mean,
-        #                                                          xmax=fixation_max)
+        fixation = fixation_min + tasktools.truncated_exponential(rng, dt, fixation_mean,
+                                                                  xmax=fixation_max)
 
     durations = {
         'fixation': (0, fixation),
@@ -86,8 +83,8 @@ R_ABORTED = -1
 R_CORRECT = +1
 
 # Input scaling
-fmin = 0#min(freqs)
-fmax = 25#max(freqs)
+fmin = 0
+fmax = 25
 
 def scale(f):
     return (f - fmin)/(fmax - fmin)
@@ -106,7 +103,6 @@ def get_step(rng, dt, trial, t, a):
     epochs = trial['epochs']
     status = {'continue': True}
     reward = 0
-
     if t-1 not in epochs['decision']:
         if a != actions['FIXATE']:
             status['continue'] = False
@@ -116,20 +112,16 @@ def get_step(rng, dt, trial, t, a):
             status['continue'] = False
             status['choice']   = 'L'
             status['t_choice'] = t-1
-            if trial['freq'] < boundary:
-                status['correct'] = True
+            status['correct'] = (trial['freq'] < boundary)
+            if status['correct']:
                 reward = R_CORRECT
-            else:
-                status['correct'] = False
         elif a == actions['CHOOSE-HIGH']:
             status['continue'] = False
             status['choice']   = 'H'
             status['t_choice'] = t-1
-            if trial['freq'] > boundary:
-                status['correct'] = True
+            status['correct'] = (trial['freq'] > boundary)
+            if status['correct']:
                 reward = R_CORRECT
-            else:
-                status['correct'] = False
 
     #-------------------------------------------------------------------------------------
     # Inputs
@@ -157,4 +149,4 @@ def get_step(rng, dt, trial, t, a):
 def terminate(perf):
     p_decision, p_correct = tasktools.correct_2AFC(perf)
 
-    return p_decision >= 0.99 and p_correct >= 0.9
+    return p_decision >= 0.99 and p_correct >= 0.81
