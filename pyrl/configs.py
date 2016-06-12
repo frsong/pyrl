@@ -14,7 +14,7 @@ default  = {
     'network_type':  'gru',
     'dt':            10,
     'tau':           100,
-    'var_rec':       0.01,
+    'var_rec':       0.02,
     'R_ABORTED':     -1,
     'checkfreq':     50,
     'L2_r':          0.002,

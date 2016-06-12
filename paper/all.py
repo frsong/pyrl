@@ -197,7 +197,6 @@ if 'romo-seeds' in args:
 if 'postdecisionwager' in args:
     print("=> Postdecision wagering")
     #train('postdecisionwager2')
-    #trials('b', 'postdecisionwager', 20, analysis='postdecisionwager'); exit()
     trials('b', 'postdecisionwager', 2500, analysis='postdecisionwager')
     do_action('postdecisionwager', 'sure_stimulus_duration', analysis='postdecisionwager')
     do_action('postdecisionwager', 'correct_stimulus_duration', analysis='postdecisionwager')

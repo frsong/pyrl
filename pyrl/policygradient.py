@@ -13,7 +13,7 @@ from .         import tasktools, theanotools, utils
 from .networks import Networks
 from .sgd      import Adam
 
-DEBUG = True
+from .debug import DEBUG
 
 class PolicyGradient(object):
     def __init__(self, Task, config_or_savefile, seed, dt=None, load='best'):
@@ -68,15 +68,19 @@ class PolicyGradient(object):
             else:
                 raise ValueError(load)
 
+            # Masks
+            masks_p = save['policy_masks']
+            masks_b = save['baseline_masks']
+
             # Policy network
             self.policy_config = save['policy_config']
             self.policy_config['alpha'] = alpha
-            self.policy_net = Network(self.policy_config, params=params_p)
+            self.policy_net = Network(self.policy_config, params=params_p, masks=masks_p)
 
             # Baseline network
             self.baseline_config = save['baseline_config']
             self.baseline_config['alpha'] = alpha
-            self.baseline_net = Network(self.baseline_config, params=params_b)
+            self.baseline_net = Network(self.baseline_config, params=params_b, masks=masks_b)
         else:
             #-----------------------------------------------------------------------------
             # Create new model.
@@ -105,7 +109,6 @@ class PolicyGradient(object):
                 'Nout':         config['Nout'],
                 'p0':           config['p0'],
                 'f_out':        'softmax',
-                #'f_out':        'linear',
                 'fix':          config['fix'],
                 'L2_r':         config['L2_r'],
                 'L1_Wrec':      config['L1_Wrec'],
@@ -501,6 +504,7 @@ class PolicyGradient(object):
         items = OrderedDict()
         items['Network type']             = self.config['network_type']
         items['N']                        = self.config['N']
+        items['Connection probability']   = self.config['p0']
         items['var_rec']                  = self.config['var_rec']
         items['dt']                       = self.dt
         items['Learning rate (policy)']   = self.config['lr']
@@ -526,7 +530,7 @@ class PolicyGradient(object):
             print("Last saved was after {} iterations.".format(self.save['iter']))
 
             # Random number generator
-            print("Resetting RNG state")
+            print("Resetting RNG state.")
             self.rng.set_state(self.save['rng_state'])
 
             # Keep track of best results
@@ -628,6 +632,8 @@ class PolicyGradient(object):
                             'config':                  self.config,
                             'policy_config':           self.policy_net.config,
                             'baseline_config':         self.baseline_net.config,
+                            'policy_masks':            self.policy_net.get_masks(),
+                            'baseline_masks':          self.baseline_net.get_masks(),
                             'current_policy_params':   self.policy_net.get_values(),
                             'current_baseline_params': self.baseline_net.get_values(),
                             'best_iter':               best_iter,
@@ -702,6 +708,8 @@ class PolicyGradient(object):
                             'config':                  self.config,
                             'policy_config':           self.policy_net.config,
                             'baseline_config':         self.baseline_net.config,
+                            'masks_p':                 self.policy_net.get_masks(),
+                            'masks_b':                 self.baseline_net.get_masks(),
                             'current_policy_params':   self.policy_net.get_values(),
                             'current_baseline_params': self.baseline_net.get_values(),
                             'rng_state':               self.rng.get_state(),

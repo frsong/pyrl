@@ -12,12 +12,12 @@ class Recurrent(object):
 
     """
     def __init__(self, type_):
-        self.type  = type_
-        self.masks = {}
+        self.type   = type_
+        self.params = OrderedDict()
+        self.masks  = {}
 
         # self.N
         # self.trainables
-        # self.params
         # self.f_hidden
         # self.f_out
         # self.f_out3
@@ -35,6 +35,9 @@ class Recurrent(object):
             if trainable.name == name:
                 return i
         return None
+
+    def get_masks(self):
+        return {k: v.get_value() for k, v in self.masks.items()}
 
     def get_values(self):
         return OrderedDict([(k, v.get_value()) for k, v in self.params.items()])

@@ -13,12 +13,14 @@ from .recurrent import Recurrent
 
 from . import tasktools
 
+from .debug import DEBUG
+
 configs_required = ['Nin', 'Nout']
 configs_default  = {
     'alpha':   1,
     'N':       50,
     'p0':      1,
-    'rho':     2,
+    'rho':     1.5,
     'f_out':   'softmax',
     'L2_r':    0.002,
     'L1_Wrec': 0,
@@ -50,7 +52,7 @@ class GRU(Recurrent):
 
         raise ValueError
 
-    def __init__(self, config, params=None, seed=1):
+    def __init__(self, config, params=None, masks=None, seed=1):
         super(GRU, self).__init__('gru')
 
         #=================================================================================
@@ -106,37 +108,45 @@ class GRU(Recurrent):
         #self.config['ei'], EXC, INH = tasktools.generate_ei(self.N)
 
         # Masks
+        '''
         if self.config['ei'] is not None:
             inh, = np.where(self.config['ei'] < 0)
             for k in ['Wrec_gates', 'Wrec']:#, 'Wout']:
                 self.masks[k]       = np.ones(self.get_dim(k))
                 self.masks[k][inh] *= -1
                 #self.masks[k]       = theanotools.shared(self.masks[k])
+        '''
 
         if params is None:
+            #-----------------------------------------------------------------------------
             # Random number generator
-            print("Seed = {}".format(seed))
+            #-----------------------------------------------------------------------------
+
+            if DEBUG:
+                print("[ GRU ] seed = {}".format(seed))
             rng = np.random.RandomState(seed)
 
             #-----------------------------------------------------------------------------
             # Connection masks
             #-----------------------------------------------------------------------------
 
-            # Connection probability
-            p0 = self.config['p0']
-            print(p0)
+            masks = {}
+
+            # In-degree
+            K   = int(self.config['p0']*self.N)
+            idx = np.arange(self.N)
 
             # Wrec
             M = np.zeros(self.get_dim('Wrec'))
             for j in xrange(M.shape[1]):
-                M[:,j] = 1*(rng.uniform(size=M.shape[0]) < p0)
-            self.masks['Wrec'] = M
+                M[rng.permutation(idx)[:K],j] = 1
+            masks['Wrec'] = M
 
             # Wrec (gates)
             M = np.zeros(self.get_dim('Wrec_gates'))
             for j in xrange(M.shape[1]):
-                M[:,j] = 1*(rng.uniform(size=M.shape[0]) < p0)
-            self.masks['Wrec_gates'] = M
+                M[rng.permutation(idx)[:K],j] = 1
+            masks['Wrec_gates'] = M
 
             #-----------------------------------------------------------------------------
             # Network parameteres
@@ -182,11 +192,11 @@ class GRU(Recurrent):
             rho = self.config['rho']
 
             Wrec_gates = params['Wrec_gates'].copy()
-            if 'Wrec_gates' in self.masks:
-                Wrec_gates *= self.masks['Wrec_gates']
+            if 'Wrec_gates' in masks:
+                Wrec_gates *= masks['Wrec_gates']
             Wrec = params['Wrec'].copy()
-            if 'Wrec' in self.masks:
-                Wrec *= self.masks['Wrec']
+            if 'Wrec' in masks:
+                Wrec *= masks['Wrec']
 
             rho0 = matrixtools.spectral_radius(Wrec_gates[:,:self.N])
             params['Wrec_gates'][:,:self.N] *= rho/rho0
@@ -202,11 +212,11 @@ class GRU(Recurrent):
         #=================================================================================
 
         Wrec_gates = params['Wrec_gates'].copy()
-        if 'Wrec_gates' in self.masks:
-            Wrec_gates *= self.masks['Wrec_gates']
+        if 'Wrec_gates' in masks:
+            Wrec_gates *= masks['Wrec_gates']
         Wrec = params['Wrec'].copy()
-        if 'Wrec' in self.masks:
-            Wrec *= self.masks['Wrec']
+        if 'Wrec' in masks:
+            Wrec *= masks['Wrec']
 
         rho0 = matrixtools.spectral_radius(Wrec_gates[:,:self.N])
         print("rho = {}".format(rho0))
@@ -225,15 +235,14 @@ class GRU(Recurrent):
         #=================================================================================
 
         # Share
-        self.params = OrderedDict()
-        for k in params:
-            self.params[k] = theanotools.shared(params[k], k)
-        for k in self.masks:
-            self.masks[k] = theanotools.shared(self.masks[k])
+        for k, v in params.items():
+            self.params[k] = theanotools.shared(v, k)
+        for k, v in masks.items():
+            self.masks[k] = theanotools.shared(v)
 
         # Fixed parameters
-        if self.config['fix']:
-            print("Fixed parameters: " + ', '.join(self.config['fix']))
+        if DEBUG and self.config['fix']:
+            print("[ GRU ] Fixed parameters: " + ', '.join(self.config['fix']))
 
         # Trainable parameters
         self.trainables = [self.params[k]
@@ -245,7 +254,7 @@ class GRU(Recurrent):
 
         # Leak
         self.alpha = self.config['alpha']
-        print("alpha = {}".format(self.alpha))
+        print("[ GRU ] alpha = {}".format(self.alpha))
 
         #=================================================================================
         # Define a step

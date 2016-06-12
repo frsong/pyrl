@@ -31,9 +31,7 @@ n_gradient   = n_conditions
 n_validation = 50*n_conditions
 
 # Input noise
-sigma = np.sqrt(2*100*0.007)
-
-#var_rec = 0.01
+sigma = np.sqrt(2*100*0.01)
 
 # Durations
 fixation_min  = 250
@@ -54,7 +52,7 @@ tmax          = fixation_min + fixation_max + stimulus_max + delay_max + decisio
 # Rewards
 R_ABORTED = -1
 R_CORRECT = +1
-R_SURE    = 0.69*R_CORRECT
+R_SURE    = 0.75*R_CORRECT
 
 def get_condition(rng, dt, context={}):
     #-------------------------------------------------------------------------------------
@@ -180,6 +178,6 @@ def get_step(rng, dt, trial, t, a):
 
     return u, reward, status
 
-target_reward = 0.78
+target_reward = 0.8
 
 from pyrl.performance import PerformancePostdecisionWager as Performance
