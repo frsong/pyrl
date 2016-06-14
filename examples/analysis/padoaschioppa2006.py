@@ -198,7 +198,8 @@ def sort_epoch(trialsfile, epoch, offers, plots, units=None, network='p',
                     cond = (offer, choice)
                     if cond in n_by_cond and n_by_cond[cond] >= min_trials:
                         y_i = epoch_by_cond[cond][unit]
-                        plot.plot(i, y_i, marker, mfc=color, mec=color, ms=0.8*ms, mew=0.8*mew, zorder=10)
+                        plot.plot(i, y_i, marker, mfc=color, mec=color, ms=0.8*ms,
+                                  mew=0.8*mew, zorder=10)
                         yall.append(y_i)
                         if i != 0 and i != len(offers)-1:
                             x.append(i)
@@ -209,7 +210,8 @@ def sort_epoch(trialsfile, epoch, offers, plots, units=None, network='p',
             y = []
             for i, offer in enumerate(offers):
                 y_i = epoch_by_cond[offer][unit]
-                plot.plot(i, y_i, 'o', mfc=color, mec=color, ms=0.8*ms, mew=0.8*mew, zorder=10)
+                plot.plot(i, y_i, 'o', mfc=color, mec=color, ms=0.8*ms,
+                          mew=0.8*mew, zorder=10)
                 yall.append(y_i)
                 if i != 0 and i != len(offers)-1:
                     x.append(i)

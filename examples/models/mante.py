@@ -39,9 +39,9 @@ R_ABORTED = -1
 R_CORRECT = +1
 
 # Epoch durations
-fixation_min  = 250
-fixation_mean = 150
-fixation_max  = 500
+fixation_min  = 350
+fixation_mean = 100
+fixation_max  = 400
 stimulus      = 750
 delay_min     = 300
 delay_mean    = 300
@@ -171,4 +171,4 @@ def get_step(rng, dt, trial, t, a):
 def terminate(perf):
     p_decision, p_correct = tasktools.correct_2AFC(perf)
 
-    return p_decision >= 0.99 and p_correct >= 0.88
+    return p_decision >= 0.99 and p_correct >= 0.90

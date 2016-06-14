@@ -42,9 +42,6 @@ class Recurrent(object):
     def get_values(self):
         return OrderedDict([(k, v.get_value()) for k, v in self.params.items()])
 
-    def get_masked_values(self):
-        return OrderedDict([(k, self.get(k).eval()) for k in self.params])
-
     def get(self, name):
         p = self.params[name]
         if name in self.masks:

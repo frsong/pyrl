@@ -47,6 +47,7 @@ datapath = os.path.join(parent, 'examples', 'work', 'data', modelname)
 savefile = os.path.join(datapath, modelname+'.pkl')
 save     = utils.load(savefile)
 
+masks  = save['policy_masks']
 params = save['best_policy_params']
 N      = params['Wrec'].shape[0]
 
@@ -59,34 +60,45 @@ def plot_weights(plot, W):
     plot.hist(w_inh, color=Figure.colors('red'))
 
 fontsize = 9
+dy       = 0.01
 
 plot = fig['Wrec']
-W   = params['Wrec']
+W = params['Wrec']
+if 'Wrec' in masks:
+    W *= masks['Wrec']
+
+import matplotlib as mpl
+
+plot = fig['Wrec']
+plot.imshow(W.T, cmap=mpl.cm.gray_r)
+'''
 rho = matrixtools.spectral_radius(W)
-#plot_weights(plot, W)
-plot.text_upper_left(r'$W_\text{rec}$', fontsize=fontsize)
-plot.text_upper_right(r'$\rho={:.3f}$'.format(rho), fontsize=fontsize)
+plot_weights(plot, W)
+plot.text_upper_left(r'$W_\text{rec}$', fontsize=fontsize, dy=dy)
+plot.text_upper_right(r'$\rho={:.3f}$'.format(rho), fontsize=fontsize, dy=dy)
 plot.xlabel('$W$')
 
-print(W[:10,:10])
-Wnz = W[np.where(W != 0)]
-print(len(Wnz))
-exit()
+#for j in xrange(W.shape[1]):
+#    print(sum(1*(W[:,j] != 0)))
+
+Wrec_gates = params['Wrec_gates']
+if 'Wrec_gates' in masks:
+    Wrec_gates *= masks['Wrec_gates']
 
 plot = fig['Wrec_lambda']
-W   = params['Wrec_gates'][:,:N]
+W = Wrec_gates[:,:N]
 rho = matrixtools.spectral_radius(W)
 plot_weights(plot, W)
-plot.text_upper_left(r'$W_\text{rec}^\lambda$', fontsize=fontsize)
-plot.text_upper_right(r'$\rho={:.3f}$'.format(rho), fontsize=fontsize)
+plot.text_upper_left(r'$W_\text{rec}^\lambda$', fontsize=fontsize, dy=dy)
+plot.text_upper_right(r'$\rho={:.3f}$'.format(rho), fontsize=fontsize, dy=dy)
 
 plot = fig['Wrec_gamma']
-W   = params['Wrec_gates'][:,N:]
+W = Wrec_gates[:,N:]
 rho = matrixtools.spectral_radius(W)
 plot_weights(plot, W)
-plot.text_upper_left(r'$W_\text{rec}^\gamma$', fontsize=fontsize)
-plot.text_upper_right(r'$\rho={:.3f}$'.format(rho), fontsize=fontsize)
-
+plot.text_upper_left(r'$W_\text{rec}^\gamma$', fontsize=fontsize, dy=dy)
+plot.text_upper_right(r'$\rho={:.3f}$'.format(rho), fontsize=fontsize, dy=dy)
+'''
 #=========================================================================================
 
 fig.save(path=figspath, name='fig_weights_'+modelname)

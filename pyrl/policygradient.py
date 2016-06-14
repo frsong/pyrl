@@ -10,10 +10,9 @@ import theano
 from   theano import tensor
 
 from .         import tasktools, theanotools, utils
+from .debug    import DEBUG
 from .networks import Networks
 from .sgd      import Adam
-
-from .debug import DEBUG
 
 class PolicyGradient(object):
     def __init__(self, Task, config_or_savefile, seed, dt=None, load='best'):
@@ -559,8 +558,8 @@ class PolicyGradient(object):
             best_iter   = -1
             best_reward = -np.inf
             best_perf   = None
-            best_params = self.policy_net.get_masked_values()
-            best_baseline_params = self.baseline_net.get_masked_values()
+            best_params = self.policy_net.get_values()
+            best_baseline_params = self.baseline_net.get_values()
 
             # Initial states
             init   = None
@@ -617,8 +616,8 @@ class PolicyGradient(object):
                             best_iter   = iter
                             best_reward = mean_reward
                             best_perf   = perf_
-                            best_params          = self.policy_net.get_masked_values()
-                            best_baseline_params = self.baseline_net.get_masked_values()
+                            best_params          = self.policy_net.get_values()
+                            best_baseline_params = self.baseline_net.get_values()
 
                             record['new_best'] = True
                             training_history.append(record)

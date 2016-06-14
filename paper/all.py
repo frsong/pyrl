@@ -63,7 +63,7 @@ def clean(model):
     call("python {} {} clean"
          .format(join(dopath, 'do.py'), join(modelspath, model)))
 
-def train(model, seed=None, extra=''):
+def train(model, seed=None):
     if seed is None:
         extra  = ''
         suffix = ''
@@ -87,9 +87,12 @@ def train_seeds(model, start_seed=1000, n_train=1):
         print("[ train_seeds ] {}".format(seed))
         train(model, seed=seed)
 
-def do_action(model, action, analysis=None, args=''):
+def do_action(model, action, analysis=None, seed=None, args=''):
     if analysis is None:
         analysis = model.split('_')[0]
+
+    if seed is not None:
+        args = '--suffix _s{0} '.format(seed) + args
 
     call("python {} {} run {} {} {}".format(join(dopath, 'do.py'),
                                             join(modelspath, model),
@@ -97,14 +100,18 @@ def do_action(model, action, analysis=None, args=''):
                                             action,
                                             args))
 
-def trials(trialtype, model, ntrials, analysis=None, args=''):
+def trials(model, trialtype, ntrials, analysis=None, seed=None, args=''):
     do_action(model, 'trials-{} {}'.format(trialtype, ntrials),
-              analysis=analysis, args=args)
+              analysis=analysis, seed=seed, args=args)
 
 def figure(fig):
     call('python ' + join(paperpath, fig + '.py'))
 
 #=========================================================================================
+# Tasks
+#=========================================================================================
+
+ntrain = 5
 
 #-----------------------------------------------------------------------------------------
 # RDM (FD)
@@ -113,9 +120,9 @@ def figure(fig):
 if 'rdm_fixed' in args:
     print("=> Perceptual decision-making (FD)")
     #train('rdm_fixed')
-    #trials('b', 'rdm_fixed', 2500)
+    #trials(rdm_fixed', 'b', 2500)
     #do_action('rdm_fixed', 'correct_stimulus_duration')
-    trials('a', 'rdm_fixed', 200)
+    trials(rdm_fixed', 'a', 200)
     #do_action('rdm_fixed', 'sort')
 
 if 'rdm_fixed-seeds' in args:
@@ -127,11 +134,11 @@ if 'rdm_fixed-seeds' in args:
 if 'rdm_rt' in args:
     print("=> Perceptual decision-making (RT)")
 
-    #trials('b', 'rdm_rt', 200, analysis='rdm')
+    #trials(rdm_rt', 'b', 200, analysis='rdm')
     #do_action('rdm_rt', 'psychometric')
     #do_action('rdm_rt', 'chronometric')
 
-    trials('a', 'rdm_rt', 100)
+    trials(rdm_rt', 'a', 100)
     do_action('rdm_rt', 'sort')#, args='value')
     #do_action('rdm_rt', 'sort', args='value')
 
@@ -139,14 +146,17 @@ if 'rdm_rt' in args:
 # Context-dependent integration
 #-----------------------------------------------------------------------------------------
 
+model     = 'mante'
+ntrials_b = 100
+ntrials_a = 20
+
 if 'mante' in args:
     print("=> Context-dependent integration")
-    #clean('mante')
     train('mante')
-    trials('b', 'mante', 100)
-    do_action('mante', 'psychometric')
-    trials('a', 'mante', 20)
-    do_action('mante', 'sort')
+    trials(model, 'b', ntrials_b)
+    do_action(model, 'psychometric')
+    trials(model, 'a', ntrials_a)
+    do_action(model, 'sort')
 
     #do_action('mante', 'regress')
     #do_action('mante', 'units')
@@ -160,29 +170,41 @@ if 'mante-seeds' in args:
 # Multisensory integration
 #-----------------------------------------------------------------------------------------
 
+model     = 'multisensory'
+ntrials_b = 1500
+ntrials_a = 100
+
 if 'multisensory' in args:
     print("=> Multisensory integration")
-    #train('multisensory')
-    trials('b', 'multisensory', 1500)
-    do_action('multisensory', 'psychometric')
-    #trials('a', 'multisensory', 100)
-    #do_action('multisensory', 'sort')
+    train(model)
+    trials(model, 'b', ntrials_b)
+    do_action(model, 'psychometric')
+    trials(model, 'a', ntrials_a)
+    do_action(model, 'sort')
 
 if 'multisensory-seeds' in args:
-    print("=> Multisensory integration (additional)")
-    train_seeds('multisensory', n_train=5)
+    start_seed = 1001
+    for seed in xrange(start_seed, start_seed+ntrain):
+        print("=> Multisensory integration (seed = {})".format(seed))
+        train(model, seed=seed)
+        trials(model, 'b', ntrials_b, seed=seed)
+        do_action(model, 'psychometric', seed=seed)
 
 #-----------------------------------------------------------------------------------------
 # Parametric working memory
 #-----------------------------------------------------------------------------------------
 
+model     = 'romo'
+ntrials_b = 100
+ntrials_a = 20
+
 if 'romo' in args:
     print("=> Parametric working memory")
-    #train('romo')
-    trials('b', 'romo', 100)
-    do_action('romo', 'performance')
-    trials('a', 'romo', 20)
-    do_action('romo', 'sort')
+    train('romo')
+    trials(model, 'b', ntrials_b)
+    do_action(model, 'performance')
+    trials(model, 'a', ntrials_a)
+    do_action(model, 'sort')
 
 if 'romo-seeds' in args:
     print("=> Parametric working memory (additional)")
@@ -192,38 +214,46 @@ if 'romo-seeds' in args:
 # Postdecision wager
 #-----------------------------------------------------------------------------------------
 
-# postdecisionager2
-# --seed 1001
+model     = 'postdecisionwager'
+ntrials_b = 2500
+ntrials_a = 100
+
 if 'postdecisionwager' in args:
-    print("=> Postdecision wagering")
-    #train('postdecisionwager2')
-    trials('b', 'postdecisionwager', 2500, analysis='postdecisionwager')
-    do_action('postdecisionwager', 'sure_stimulus_duration', analysis='postdecisionwager')
-    do_action('postdecisionwager', 'correct_stimulus_duration', analysis='postdecisionwager')
-    trials('a', 'postdecisionwager', 100, analysis='postdecisionwager')
-    do_action('postdecisionwager', 'sort', analysis='postdecisionwager')
+    print("=> Postdecision wager")
+    train(model)
+    trials(model, 'b', ntrials_b)
+    do_action(model, 'sure_stimulus_duration')
+    do_action(model, 'correct_stimulus_duration')
+    trials(model, 'a', ntrials_a)
+    do_action(model, 'sort')
 
 if 'postdecisionwager-seeds' in args:
-    print("=> Postdecision wagering (additional)")
+    print("=> Postdecision wager (additional)")
     train_seeds('postdecisionwager', n_train=5)
 
 #-----------------------------------------------------------------------------------------
+# Economic choice
+#-----------------------------------------------------------------------------------------
+
+model     = 'padoaschioppa2006'
+ntrials_b = 200
+ntrials_a = 200
 
 if 'padoaschioppa2006' in args:
     print("=> Padoa-Schioppa 2006")
-    #train('padoaschioppa2006')
-    trials('b', 'padoaschioppa2006', 200)
-    do_action('padoaschioppa2006', 'choice_pattern')
-    trials('a', 'padoaschioppa2006', 200)
-    do_action('padoaschioppa2006', 'sort_epoch', args='postoffer value')
-    do_action('padoaschioppa2006', 'sort_epoch', args='latedelay value')
-    do_action('padoaschioppa2006', 'sort_epoch', args='prechoice value')
-    do_action('padoaschioppa2006', 'sort_epoch', args='prechoice value separate-by-choice')
+    train('padoaschioppa2006')
+    trials(model, 'b', ntrials_b)
+    do_action(model, 'choice_pattern')
+    trials(model, 'a', ntrials_a)
+    do_action(model, 'sort_epoch', args='postoffer value')
+    do_action(model, 'sort_epoch', args='latedelay value')
+    do_action(model, 'sort_epoch', args='prechoice value')
+    do_action(model, 'sort_epoch', args='prechoice value separate-by-choice')
 
 if 'padoaschioppa2006-seeds' in args:
     print("=> Padoa-Schioppa 2006 (additional)")
     train_seeds('padoaschioppa2006', n_train=5)
 
 if 'padoaschioppa2006-1A3B' in args:
-    trials('b', 'padoaschioppa2006_1A3B', 200)
+    trials(padoaschioppa2006_1A3B, 'b', ntrials_b)
     do_action('padoaschioppa2006_1A3B', 'choice_pattern')

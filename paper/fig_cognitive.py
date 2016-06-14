@@ -21,6 +21,8 @@ trialspath   = os.path.join(scratchpath, 'work', 'pyrl')
 analysispath = os.path.join(parent, 'examples', 'analysis')
 modelspath   = os.path.join(parent, 'examples', 'models')
 
+trialspath2   = os.path.join(scratchpath, 'work', 'examples')
+
 # analysis/rdm
 rdm_analysisfile = os.path.join(analysispath, 'rdm.py')
 rdm_analysis     = imp.load_source('rdm_analysis', rdm_analysisfile)
@@ -143,8 +145,8 @@ plotlabels = {
 fig.plotlabels(plotlabels, fontsize=12)
 
 plot = fig['mante-m']
-plot.text_upper_center(r'\textbf{Behavior}', fontsize=9.5, dy=0.13)
-plot.text_upper_center(r'\textbf{Neural activity}', fontsize=9.5, dx=2.5, dy=0.13)
+plot.text_upper_center(r'\textbf{Behavior}', fontsize=9.5, dy=0.14)
+plot.text_upper_center(r'\textbf{Neural activity}', fontsize=9.5, dx=2.5, dy=0.14)
 
 #=========================================================================================
 
@@ -159,7 +161,7 @@ plot.ylabel('Percent choice R')
 # Legend
 props = {'prop': {'size': 6}, 'handlelength': 1,
          'handletextpad': 0.9, 'labelspacing': 0.5}
-plot.legend(bbox_to_anchor=(1.1, 0.33), **props)
+plot.legend(bbox_to_anchor=(0.64, 1.13), **props)
 
 plot = fig['mante-c']
 plot.xlabel('Percent color coherence')
@@ -241,6 +243,7 @@ plot.ylabel('Percent high choices')
 kwargs = {'lw': 1.5, 'dashes': [3, 2]}
 
 units = [17, 6, 14]
+units = [, 90, 61] #86
 plots = [fig['ms-'+str(i)] for i in xrange(len(units))]
 multisensory_analysis.sort(multisensory_activity, plots, units=units, **kwargs)
 

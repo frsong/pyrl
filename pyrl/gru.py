@@ -9,11 +9,10 @@ import theano
 from   theano import tensor
 
 from .          import matrixtools, nptools, theanotools
+from .debug     import DEBUG
 from .recurrent import Recurrent
 
 from . import tasktools
-
-from .debug import DEBUG
 
 configs_required = ['Nin', 'Nout']
 configs_default  = {

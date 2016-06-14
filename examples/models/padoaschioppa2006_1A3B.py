@@ -42,10 +42,6 @@ R_ABORTED = -1
 R_B       = 0.2
 R_A       = A_to_B * R_B
 
-#baseline_L2_r = 0.002
-
-#var_rec = 0.03
-
 # Input scaling
 def scale(x):
     return x/5

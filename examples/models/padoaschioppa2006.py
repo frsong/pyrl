@@ -41,10 +41,6 @@ R_ABORTED = -1
 R_B       = 0.2
 R_A       = A_to_B * R_B
 
-#baseline_L2_r = 0.002
-
-#var_rec = 0.03
-
 # Input scaling
 def scale(x):
     return x/5
@@ -104,7 +100,6 @@ def get_step(rng, dt, trial, t, a):
     epochs = trial['epochs']
     status = {'continue': True}
     reward = 0
-
     if t-1 in epochs['fixation'] or t-1 in epochs['offer-on']:
         if a != actions['FIXATE']:
             status['continue'] = False

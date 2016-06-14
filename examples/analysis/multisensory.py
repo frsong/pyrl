@@ -216,7 +216,6 @@ def sort(trialsfile, plots, units=None, network='p', **kwargs):
         yall = [[1]]
         for cond in [('v', 'H'), ('v', 'L'), ('a', 'H'), ('a', 'L')]:
             mod, choice = cond
-            print(mod, choice)
 
             if mod == 'v':
                 label = 'Vis, '

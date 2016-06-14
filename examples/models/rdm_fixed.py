@@ -32,14 +32,6 @@ n_validation = 100*n_conditions
 # Input noise
 sigma = np.sqrt(2*100*0.01)
 
-#dt = 10
-
-#var_rec = 0.02
-
-#2_r = 0.005
-
-# max_iter = 650
-
 # Durations
 fixation_min  = 250
 fixation_mean = 150
@@ -53,8 +45,6 @@ tmax          = fixation_min + fixation_max + stimulus_max + decision
 # Rewards
 R_ABORTED = -1
 R_CORRECT = +1
-
-# 700 iters
 
 def get_condition(rng, dt, context={}):
     #-------------------------------------------------------------------------------------
@@ -84,9 +74,6 @@ def get_condition(rng, dt, context={}):
     #-------------------------------------------------------------------------------------
     # Trial
     #-------------------------------------------------------------------------------------
-
-    #left_rights_ = context.get('left_rights', left_rights)
-    #cohs_        = context.get('cohs', cohs)
 
     left_right = context.get('left_right')
     if left_right is None:
@@ -162,4 +149,4 @@ def get_step(rng, dt, trial, t, a):
 def terminate(perf):
     p_decision, p_correct = tasktools.correct_2AFC(perf)
 
-    return p_decision >= 0.99 and p_correct >= 0.816
+    return p_decision >= 0.99 and p_correct >= 0.82
