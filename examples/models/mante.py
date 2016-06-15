@@ -39,6 +39,7 @@ R_ABORTED = -1
 R_CORRECT = +1
 
 # Epoch durations
+fixation      = 750
 fixation_min  = 350
 fixation_mean = 100
 fixation_max  = 400
@@ -54,10 +55,10 @@ def get_condition(rng, dt, context={}):
     # Epochs
     #-------------------------------------------------------------------------------------
 
-    fixation = context.get('fixation')
-    if fixation is None:
-        fixation = fixation_min + tasktools.truncated_exponential(rng, dt, fixation_mean,
-                                                                  xmax=fixation_max)
+    #fixation = context.get('fixation')
+    #if fixation is None:
+    #    fixation = fixation_min + tasktools.truncated_exponential(rng, dt, fixation_mean,
+    #                                                              xmax=fixation_max)
 
     delay = context.get('delay')
     if delay is None:

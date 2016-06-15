@@ -121,9 +121,7 @@ class GRU(Recurrent):
             # Random number generator
             #-----------------------------------------------------------------------------
 
-            if DEBUG:
-                print("[ GRU ] seed = {}".format(seed))
-            rng = np.random.RandomState(seed)
+            rng = nptools.get_rng(seed, __file__)
 
             #-----------------------------------------------------------------------------
             # Connection masks
@@ -153,7 +151,7 @@ class GRU(Recurrent):
 
             params = OrderedDict()
             if self.config['ei'] is None:
-                params['Win']        = rng.normal(size=self.get_dim('Win'))
+                params['Win']        = rng.uniform(-1, 1, size=self.get_dim('Win'))
                 params['bin']        = np.zeros(self.get_dim('bin'))
                 params['Wrec_gates'] = rng.normal(size=self.get_dim('Wrec_gates'))
                 params['Wrec']       = rng.normal(size=self.get_dim('Wrec'))

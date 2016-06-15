@@ -33,12 +33,12 @@ sigma = np.sqrt(2*100*0.0001)
 
 # Epoch durations
 fixation      = 750
-fixation_min  = 250
-fixation_mean = 150
-fixation_max  = 500
+fixation_min  = 350
+fixation_mean = 100
+fixation_max  = 400
 f1            = 500
-delay_min     = 3000 - 250
-delay_max     = 3000 + 250
+delay_min     = 3000 - 300
+delay_max     = 3000 + 300
 f2            = 500
 decision      = 500
 tmax          = fixation + f1 + delay_max + f2 + decision
@@ -109,7 +109,6 @@ def get_step(rng, dt, trial, t, a):
     epochs = trial['epochs']
     status = {'continue': True}
     reward = 0
-
     if t-1 not in epochs['decision']:
         if a != actions['FIXATE']:
             status['continue'] = False

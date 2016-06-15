@@ -122,7 +122,7 @@ if 'rdm_fixed' in args:
     #train('rdm_fixed')
     #trials(rdm_fixed', 'b', 2500)
     #do_action('rdm_fixed', 'correct_stimulus_duration')
-    trials(rdm_fixed', 'a', 200)
+    trials(rdm_fixed, 'a', 200)
     #do_action('rdm_fixed', 'sort')
 
 if 'rdm_fixed-seeds' in args:
@@ -138,7 +138,7 @@ if 'rdm_rt' in args:
     #do_action('rdm_rt', 'psychometric')
     #do_action('rdm_rt', 'chronometric')
 
-    trials(rdm_rt', 'a', 100)
+    trials(rdm_rt, 'a', 100)
     do_action('rdm_rt', 'sort')#, args='value')
     #do_action('rdm_rt', 'sort', args='value')
 

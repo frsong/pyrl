@@ -40,7 +40,7 @@ DX = 0.12
 fig.add('reward',  [x0, y0, w, h])
 fig.add('correct', [fig[-1].right+DX, y0, w, h])
 
-T = 100
+T = 1000
 
 #=========================================================================================
 
@@ -137,10 +137,10 @@ plot.ylabel('Percent correct\n(decision trials)')
 
 if modelname == 'romo':
     target = 90
-    plot.hline(target, color=Figure.colors('red'), zorder=1)
+    fig['correct'].hline(target, color=Figure.colors('red'), zorder=1)
 if modelname == 'mante':
     target = 88
-    plot.hline(target, color=Figure.colors('red'), zorder=1)
+    fig['correct'].hline(target, color=Figure.colors('red'), zorder=1)
 
 #=========================================================================================
 

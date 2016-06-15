@@ -9,7 +9,7 @@ import numpy as np
 import theano
 from   theano import tensor
 
-from .         import tasktools, theanotools, utils
+from .         import nptools, tasktools, theanotools, utils
 from .debug    import DEBUG
 from .networks import Networks
 from .sgd      import Adam
@@ -107,6 +107,7 @@ class PolicyGradient(object):
                 'N':            config['N'],
                 'Nout':         config['Nout'],
                 'p0':           config['p0'],
+                'rho':          config['rho'],
                 'f_out':        'softmax',
                 'fix':          config['fix'],
                 'L2_r':         config['L2_r'],
@@ -123,6 +124,7 @@ class PolicyGradient(object):
                 'N':            config['N'],
                 'Nout':         1,
                 'p0':           config['p0'],
+                'rho':          config['baseline_rho'],
                 'f_out':        'linear',
                 'fix':          config['fix'],
                 'L2_r':         config['baseline_L2_r'],
@@ -160,8 +162,7 @@ class PolicyGradient(object):
         self.R_ABORTED = self.config['R_ABORTED']
 
         # Random number generator
-        print("Creating RNG with seed {}".format(seed))
-        self.rng = np.random.RandomState(seed)
+        self.rng = nptools.get_rng(seed, __file__)
 
         # Compile functions
         self.step_0          = self.policy_net.func_step_0()

@@ -106,14 +106,8 @@ def psychometric(trialsfile, plot, **kwargs):
     plot.ylim(0, 100)
     plot.yticks([0, 50, 100])
 
-    #plot.hline(50, linestyle='--')
-
     plot.xlabel('Frequency (events/sec)')
     plot.ylabel('Percent high')
-
-    #props = {'prop': {'size': 8.5}, 'handlelength': 1.4,
-    #         'handletextpad': 1.2, 'labelspacing': 0.9}
-    #plot.legend(bbox_to_anchor=(0.97, 0.17), **props)
 
 #/////////////////////////////////////////////////////////////////////////////////////////
 

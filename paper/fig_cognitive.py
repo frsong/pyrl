@@ -243,7 +243,6 @@ plot.ylabel('Percent high choices')
 kwargs = {'lw': 1.5, 'dashes': [3, 2]}
 
 units = [17, 6, 14]
-units = [, 90, 61] #86
 plots = [fig['ms-'+str(i)] for i in xrange(len(units))]
 multisensory_analysis.sort(multisensory_activity, plots, units=units, **kwargs)
 
@@ -282,8 +281,14 @@ for p in ['romo-0', 'romo-1', 'romo-2']:
     plot = fig[p]
     plot.xticks([0, 1, 2, 3, 4])
     plot.xlim(-0.5, 4)
+    plot.highlight(0, 0.5)
+    plot.highlight(3.5, 4)
 
 plot = fig['romo-0']
+plot.text(0.75/4.5, 1.03, '$f_1$', ha='center', va='bottom', fontsize=8,
+          transform=plot.transAxes)
+plot.text(4.25/4.5, 1.03, '$f_2$', ha='center', va='bottom', fontsize=8,
+          transform=plot.transAxes)
 plot.xlabel('Time from $f_1$ onset (s)')
 plot.ylabel('Firing rate (a.u.)')
 

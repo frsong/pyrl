@@ -33,9 +33,6 @@ n_validation = 50*n_conditions
 # Input noise
 sigma = np.sqrt(2*100*0.01)
 
-# Increase exploration
-#var_rec = 0.02
-
 # Durations
 fixation_min  = 250
 fixation_mean = 150
@@ -181,6 +178,6 @@ def get_step(rng, dt, trial, t, a):
 
     return u, reward, status
 
-target_reward = 0.77
+target_reward = 0.75
 
 from pyrl.performance import PerformancePostdecisionWager as Performance
