@@ -34,9 +34,7 @@ n_validation = 50*n_conditions
 sigma = np.sqrt(2*100*0.01)
 
 # Durations
-fixation_min  = 250
-fixation_mean = 150
-fixation_max  = 500
+fixation      = 750
 stimulus_min  = 100
 stimulus_mean = 180
 stimulus_max  = 800
@@ -47,7 +45,7 @@ sure_min      = 500
 sure_mean     = 575
 sure_max      = 750
 decision      = 500
-tmax          = fixation_min + fixation_max + stimulus_max + delay_max + decision
+tmax          = fixation + stimulus_max + delay_max + decision
 
 # Rewards
 R_ABORTED = -1
@@ -59,10 +57,10 @@ def get_condition(rng, dt, context={}):
     # Epochs
     #-------------------------------------------------------------------------------------
 
-    fixation = context.get('fixation')
-    if fixation is None:
-        fixation = fixation_min + tasktools.truncated_exponential(rng, dt, fixation_mean,
-                                                                  xmax=fixation_max)
+    #fixation = context.get('fixation')
+    #if fixation is None:
+    #    fixation = fixation_min + tasktools.truncated_exponential(rng, dt, fixation_mean,
+    #                                                              xmax=fixation_max)
 
     stimulus = context.get('stimulus')
     if stimulus is None:
@@ -178,6 +176,6 @@ def get_step(rng, dt, trial, t, a):
 
     return u, reward, status
 
-target_reward = 0.75
+target_reward = 0.76
 
 from pyrl.performance import PerformancePostdecisionWager as Performance

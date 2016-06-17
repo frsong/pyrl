@@ -91,7 +91,7 @@ if action == 'info':
 
     # Print additional info
     config = pg.config
-    print(config.keys())
+    #print(config.keys())
     #print("Seed (policy):   {}".format(config['policy_seed']))
     #print("Seed (baseline): {}".format(config['baseline_seed']))
 

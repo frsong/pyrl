@@ -28,14 +28,14 @@ configs_default  = {
     'ei':      None
     }
 
-class GRU(Recurrent):
+class GRU2(Recurrent):
     """
     Modified Gated Recurrent Units.
 
     """
     def get_dim(self, name):
         if name == 'Win':
-            return (self.Nin, 3*self.N)
+            return (self.Nin, 2*self.N)
         if name == 'bin':
             return 3*self.N
         if name == 'Wrec_gates':
@@ -52,7 +52,7 @@ class GRU(Recurrent):
         raise ValueError
 
     def __init__(self, config, params=None, masks=None, seed=1):
-        super(GRU, self).__init__('gru')
+        super(GRU2, self).__init__('gru2')
 
         #=================================================================================
         # Config
@@ -63,7 +63,7 @@ class GRU(Recurrent):
         # Required
         for k in configs_required:
             if k not in config:
-                print("[ GRU ] Error: {} is required.".format(k))
+                print("[ GRU2 ] Error: {} is required.".format(k))
                 sys.exit()
             self.config[k] = config[k]
 
@@ -151,9 +151,7 @@ class GRU(Recurrent):
 
             params = OrderedDict()
             if self.config['ei'] is None:
-                #params['Win']        = rng.uniform(-1, 1, size=self.get_dim('Win'))
-                #params['Win']        = 0.1*np.ones(self.get_dim('Win'))
-                params['Win']        = rng.normal(size=self.get_dim('Win'))
+                params['Win']        = rng.uniform(-1, 1, size=self.get_dim('Win'))
                 params['bin']        = np.zeros(self.get_dim('bin'))
                 params['Wrec_gates'] = rng.normal(size=self.get_dim('Wrec_gates'))
                 params['Wrec']       = rng.normal(size=self.get_dim('Wrec'))
@@ -241,7 +239,7 @@ class GRU(Recurrent):
 
         # Fixed parameters
         if DEBUG and self.config['fix']:
-            print("[ GRU ] Fixed parameters: " + ', '.join(self.config['fix']))
+            print("[ GRU2 ] Fixed parameters: " + ', '.join(self.config['fix']))
 
         # Trainable parameters
         self.trainables = [self.params[k]
@@ -253,24 +251,26 @@ class GRU(Recurrent):
 
         # Leak
         self.alpha = self.config['alpha']
-        print("[ GRU ] alpha = {}".format(self.alpha))
+        print("[ GRU2 ] alpha = {}".format(self.alpha))
 
         #=================================================================================
         # Define a step
         #=================================================================================
 
         def step(u, q, x_tm1, alpha, Win, bin, Wrec_gates, Wrec):
-            inputs_t     = u.dot(Win) + bin
-            state_inputs = inputs_t[:,:self.N]
-            gate_inputs  = inputs_t[:,self.N:]
+            lambda_inputs = bin[:self.N]
+            state_gamma_inputs = u.dot(Win) + bin[self.N:]
+            state_inputs = state_gamma_inputs[:,:self.N]
+            gamma_inputs = state_gamma_inputs[:,self.N:]
 
             r_tm1 = self.f_hidden(x_tm1)
 
-            gate_values   = tensor.nnet.sigmoid(r_tm1.dot(Wrec_gates) + gate_inputs)
-            update_values = gate_values[:,:self.N]
-            g = gate_values[:,self.N:]
-            x_t = ((1 - alpha*update_values)*x_tm1
-                   + alpha*update_values*((g*r_tm1).dot(Wrec) + state_inputs + q))
+            gate_values   = r_tm1.dot(Wrec_gates)
+            lambda_values = tensor.nnet.sigmoid(gate_values[:,:self.N] + lambda_inputs)
+            gamma_values  = tensor.nnet.sigmoid(gate_values[:,self.N:] + gamma_inputs)
+
+            x_t = ((1 - alpha*lambda_values)*x_tm1
+                   + alpha*lambda_values*((gamma_values*r_tm1).dot(Wrec) + state_inputs + q))
 
             return x_t
 
@@ -328,19 +328,13 @@ class GRU(Recurrent):
 
         L2_r = self.config['L2_r']
         if L2_r  > 0:
-            # Repeat (T, B) -> (T, B, N)
             M_ = (tensor.tile(M.T, (x.shape[-1], 1, 1))).T
-
-            # Combine t=0 with t>0
             x_all = tensor.concatenate(
                 [x0_.reshape((1, x0_.shape[0], x0_.shape[1])), x],
                 axis=0
                 )
-
-            # Firing rate
             r = self.f_hidden(x_all)
 
-            # Regularization
             regs += L2_r * tensor.sum(tensor.sqr(r)*M_)/tensor.sum(M_)
 
         #=================================================================================
