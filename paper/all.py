@@ -104,8 +104,8 @@ def trials(model, trialtype, ntrials, analysis=None, seed=None, args=''):
     do_action(model, 'trials-{} {}'.format(trialtype, ntrials),
               analysis=analysis, seed=seed, args=args)
 
-def figure(fig):
-    call('python ' + join(paperpath, fig + '.py'))
+def figure(fig, args=''):
+    call('python {} {}'.format(join(paperpath, fig + '.py'), args))
 
 #=========================================================================================
 # Tasks
@@ -158,13 +158,13 @@ if 'mante' in args:
     trials(model, 'a', ntrials_a)
     do_action(model, 'sort')
 
-    #do_action('mante', 'regress')
-    #do_action('mante', 'units')
-    #figure('fig_mante')
-
 if 'mante-seeds' in args:
-    print("=> Context-dependent integration (additional)")
-    train_seeds('mante', n_train=5)
+    start_seed = 1001
+    for seed in xrange(start_seed, start_seed+ntrain):
+        print("=> Context-dependent integration (seed = {})".format(seed))
+        train(model, seed=seed)
+        trials(model, 'b', ntrials_b, seed=seed)
+        do_action(model, 'psychometric', seed=seed)
 
 #-----------------------------------------------------------------------------------------
 # Multisensory integration
@@ -176,7 +176,7 @@ ntrials_a = 100
 
 if 'multisensory' in args:
     print("=> Multisensory integration")
-    train(model)
+    #train(model)
     trials(model, 'b', ntrials_b)
     do_action(model, 'psychometric')
     trials(model, 'a', ntrials_a)
@@ -259,3 +259,34 @@ if 'padoaschioppa2006-seeds' in args:
 if 'padoaschioppa2006-1A3B' in args:
     trials(padoaschioppa2006_1A3B, 'b', ntrials_b)
     do_action('padoaschioppa2006_1A3B', 'choice_pattern')
+
+#=========================================================================================
+# Paper figures
+#=========================================================================================
+
+if 'fig1_rdm' in args:
+    figure('fig1_rdm')
+
+if 'fig_cognitive' in args:
+    figure('fig_cognitive')
+
+if 'fig_postdecisionwager' in args:
+    figure('fig_postdecisionwager')
+
+if 'padoaschioppa2006' in args:
+    figure('padoaschioppa2006')
+
+if 'fig-learning-mante' in args:
+    figure('fig_learning', args='mante')
+
+if 'fig-learning-multisensory' in args:
+    figure('fig_learning', args='multisensory')
+
+if 'fig-learning-romo' in args:
+    figure('fig_learning', args='romo')
+
+if 'fig-learning-postdecisionwager' in args:
+    figure('fig_learning', args='postdecisionwager')
+
+if 'fig-learning-padoaschioppa2006' in args:
+    figure('fig_learning', args='padoaschioppa2006')
