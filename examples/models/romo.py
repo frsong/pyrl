@@ -41,17 +41,17 @@ delay_min     = 3000 - 300
 delay_max     = 3000 + 300
 f2            = 500
 decision      = 500
-tmax          = fixation + f1 + delay_max + f2 + decision
+tmax          = fixation_min + fixation_max + f1 + delay_max + f2 + decision
 
 def get_condition(rng, dt, context={}):
     #-------------------------------------------------------------------------------------
     # Epochs
     #-------------------------------------------------------------------------------------
 
-    #fixation = context.get('fixation')
-    #if fixation is None:
-    #    fixation = fixation_min + tasktools.truncated_exponential(rng, dt, fixation_mean,
-    #                                                              xmax=fixation_max)
+    fixation = context.get('fixation')
+    if fixation is None:
+        fixation = fixation_min + tasktools.truncated_exponential(rng, dt, fixation_mean,
+                                                                  xmax=fixation_max)
 
     delay = context.get('delay')
     if delay is None:

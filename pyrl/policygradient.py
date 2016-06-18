@@ -9,6 +9,8 @@ import numpy as np
 import theano
 from   theano import tensor
 
+from theano.compile.nanguardmode import NanGuardMode
+
 from .         import nptools, tasktools, theanotools, utils
 from .debug    import DEBUG
 from .networks import Networks
@@ -317,6 +319,13 @@ class PolicyGradient(object):
                     r_policy[t,n] = self.policy_net.firing_rate(x_t)
                     r_value[t,n]  = self.baseline_net.firing_rate(x_t_b)
 
+                    #W = self.policy_net.get_values()['Wout']
+                    #b = self.policy_net.get_values()['bout']
+                    #V = r_policy[t,n].dot(W) + b
+                    #print(t)
+                    #print(V)
+                    #print(np.exp(V))
+
                 # Select action
                 a_t = theanotools.choice(self.rng, self.Nout,
                                          p=np.reshape(z_t, (self.Nout,)))
@@ -333,6 +342,9 @@ class PolicyGradient(object):
                     U[t,n] = 0
                     R[t,n] = self.R_ABORTED
                     status = {'continue': False}
+                #print("t = {}, rho = {}".format(t, R[t,n]))
+                #R[t,n] *= np.exp(-t*self.dt/10000)
+
                 u_t    = U[t,n]
                 M[t,n] = 1
 
@@ -370,8 +382,11 @@ class PolicyGradient(object):
             x0  = self.policy_net.params['x0']
             x0_ = tensor.alloc(x0, U.shape[1], x0.shape[0])
 
-        z_0  = self.policy_net.get_outputs_0(x0_)
-        r, z = self.policy_net.get_outputs(U, noise, x0_)
+        #z_0  = self.policy_net.get_outputs_0(x0_)
+        #r, z = self.policy_net.get_outputs(U, noise, x0_)
+
+        log_z_0  = self.policy_net.get_outputs_0(x0_, log=True)
+        r, log_z = self.policy_net.get_outputs(U, noise, x0_, log=True)
 
         # Learning rate
         lr = tensor.scalar('lr')
@@ -381,8 +396,8 @@ class PolicyGradient(object):
         b = tensor.matrix('b')
         M = tensor.matrix('M')
 
-        logpi_0 = tensor.sum(tensor.log(z_0)*A[0], axis=-1)*M[0]
-        logpi_t = tensor.sum(tensor.log(z)*A[1:],  axis=-1)*M[1:]
+        logpi_0 = tensor.sum(log_z_0*A[0], axis=-1)*M[0]
+        logpi_t = tensor.sum(log_z*A[1:],  axis=-1)*M[1:]
 
         #def f(x):
         #    return -x**2/2/self.sigma**2
@@ -430,7 +445,9 @@ class PolicyGradient(object):
             args = []
         args += [U, noise, A, R, b, M, lr]
 
-        return theano.function(args, norm, updates=updates)
+        return theano.function(args, norm, updates=updates)#,
+                               #mode=NanGuardMode(nan_is_error=True, inf_is_error=True,
+                                #                 big_is_error=True))
 
     def func_update_baseline(self, use_x0=False, accumulators=None):
         U  = tensor.tensor3('U')
@@ -476,7 +493,9 @@ class PolicyGradient(object):
             args = []
         args += [U, noise, R, M, lr]
 
-        return theano.function(args, [z_all[:,:,0], norm], updates=updates)
+        return theano.function(args, [z_all[:,:,0], norm], updates=updates)#,
+                               #mode=NanGuardMode(nan_is_error=True, inf_is_error=True,
+                            #                     big_is_error=True))
 
     def train(self, savefile, recover=False):
         """
@@ -763,6 +782,7 @@ class PolicyGradient(object):
                 b, norm_b = update_baseline(*args)
 
                 norm_b = float(norm_b)
+                #print("norm_b = {}".format(norm_b))
                 if np.isfinite(norm_b):
                     grad_norms_baseline.append(float(norm_b))
 
@@ -778,6 +798,7 @@ class PolicyGradient(object):
                 norm = update_policy(*args)
 
                 norm = float(norm)
+                #print("norm = {}".format(norm))
                 if np.isfinite(norm):
                     grad_norms_policy.append(norm)
 

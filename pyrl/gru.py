@@ -79,16 +79,16 @@ class GRU(Recurrent):
         #=================================================================================
 
         # Hidden
-        self.f_hidden    = tensor.nnet.relu
+        self.f_hidden    = theanotools.relu
         self.firing_rate = nptools.relu
 
         # Output
         if self.config['f_out'] == 'softmax':
-            self.f_out  = theanotools.softmax
-            self.f_out3 = theanotools.softmax3
+            self.f_out     = theanotools.softmax
+            self.f_log_out = theanotools.log_softmax
         elif self.config['f_out'] == 'linear':
-            self.f_out  = (lambda x: x)
-            self.f_out3 = self.f_out
+            self.f_out     = (lambda x: x)
+            self.f_log_out = tensor.log
         else:
             raise ValueError(self.config['f_out'])
 

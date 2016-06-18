@@ -41,6 +41,10 @@ class Adam(object):
                               tensor.or_(norm < 0, norm > 1e10))
         grads = [tensor.switch(new_cond, np.float32(0), g) for g in grads]
 
+        # Safeguard against numerical instability
+        #cond  = tensor.or_(norm < 0, tensor.or_(tensor.isnan(norm), tensor.isinf(norm)))
+        #grads = [tensor.switch(cond, np.float32(0), g) for g in grads]
+
         # New values
         t       = self.time + 1
         lr_t    = lr*tensor.sqrt(1. - beta2**t)/(1. - beta1**t)

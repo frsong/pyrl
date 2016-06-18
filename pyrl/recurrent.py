@@ -20,7 +20,7 @@ class Recurrent(object):
         # self.trainables
         # self.f_hidden
         # self.f_out
-        # self.f_out3
+        # self.f_log_out
         # self.step
 
     @property
@@ -88,14 +88,16 @@ class Recurrent(object):
 
         return theano.function([inputs, noise, x_tm1], [z_t[0], x_t[0]])
 
-    def get_outputs_0(self, x0):
+    def get_outputs_0(self, x0, log=False):
         Wout = self.get('Wout')
         bout = self.get('bout')
         r0   = self.f_hidden(x0)
 
+        if log:
+            return self.f_log_out(r0.dot(Wout) + bout)
         return self.f_out(r0.dot(Wout) + bout)
 
-    def get_outputs(self, inputs, noise, x0):
+    def get_outputs(self, inputs, noise, x0, log=False):
         Wout = self.get('Wout')
         bout = self.get('bout')
 
@@ -105,7 +107,9 @@ class Recurrent(object):
                            non_sequences=self.step_params)
         r = self.f_hidden(x)
 
-        return x, self.f_out3(r.dot(Wout) + bout)
+        if log:
+            return x, self.f_log_out(r.dot(Wout) + bout)
+        return x, self.f_out(r.dot(Wout) + bout)
 
     def get_regs(self, x0_, x, M):
         return 0

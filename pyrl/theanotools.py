@@ -99,26 +99,20 @@ def choice(rng, a, size=1, replace=True, p=None):
 # Output activations
 #=========================================================================================
 
+def relu(x, upper=5):
+    return tensor.nnet.relu(x)
+    #return tensor.switch(x > upper, upper, tensor.nnet.relu(x))
+
 def softmax(x, temp=1):
-    return tensor.nnet.softmax(x/temp)
+    y = tensor.exp(x/temp)
 
-def softmax3(x, temp=1):
-    """
-    Softmax function for theano.tensor.tensor3.
+    return y/y.sum(-1, keepdims=True)
 
-    Parameters
-    ----------
+def log_softmax(x, temp=1):
+    y  = x/temp
+    y -= y.max(axis=-1, keepdims=True)
 
-    x : theano.tensor.tensor3
-        The probability distribution is over the last dimension of `x`.
-
-    """
-    sh = x.shape
-    x  = x.reshape((sh[0]*sh[1], sh[2]))
-    y  = tensor.nnet.softmax(x/temp)
-    y  = y.reshape(sh)
-
-    return y
+    return y - tensor.log(tensor.exp(y).sum(axis=-1, keepdims=True))
 
 def normalization(x):
     x2 = tensor.sqr(x) + 1e-6

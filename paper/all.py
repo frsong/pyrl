@@ -205,6 +205,7 @@ if 'romo' in args:
     do_action(model, 'performance')
     trials(model, 'a', ntrials_a)
     do_action(model, 'sort')
+    do_action(model, 'sort', args='value')
 
 if 'romo-seeds' in args:
     print("=> Parametric working memory (additional)")
@@ -226,6 +227,7 @@ if 'postdecisionwager' in args:
     do_action(model, 'correct_stimulus_duration')
     trials(model, 'a', ntrials_a)
     do_action(model, 'sort')
+    do_action(model, 'sort', args='value')
 
 if 'postdecisionwager-seeds' in args:
     print("=> Postdecision wager (additional)")
