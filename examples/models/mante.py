@@ -55,10 +55,10 @@ def get_condition(rng, dt, context={}):
     # Epochs
     #-------------------------------------------------------------------------------------
 
-    fixation = context.get('fixation')
-    if fixation is None:
-        fixation = fixation_min + tasktools.truncated_exponential(rng, dt, fixation_mean,
-                                                                  xmax=fixation_max)
+    #fixation = context.get('fixation')
+    #if fixation is None:
+    #    fixation = fixation_min + tasktools.truncated_exponential(rng, dt, fixation_mean,
+    #                                                              xmax=fixation_max)
 
     delay = context.get('delay')
     if delay is None:
@@ -78,11 +78,25 @@ def get_condition(rng, dt, context={}):
     # Trial
     #-------------------------------------------------------------------------------------
 
-    context_     = context.get('context',      rng.choice(contexts))
-    left_right_m = context.get('left_right_m', rng.choice(left_rights))
-    left_right_c = context.get('left_right_c', rng.choice(left_rights))
-    coh_m        = context.get('coh_m',        rng.choice(cohs))
-    coh_c        = context.get('coh_c',        rng.choice(cohs))
+    context_ = context.get('context')
+    if context_ is None:
+        context_ = rng.choice(contexts)
+
+    left_right_m = context.get('left_right_m')
+    if left_right_m is None:
+        left_right_m = rng.choice(left_rights)
+
+    left_right_c = context.get('left_right_c')
+    if left_right_c is None:
+        left_right_c = rng.choice(left_rights)
+
+    coh_m = context.get('coh_m')
+    if coh_m is None:
+        coh_m = rng.choice(cohs)
+
+    coh_c = context.get('coh_c')
+    if coh_c is None:
+        coh_c = rng.choice(cohs)
 
     return {
         'durations':    durations,

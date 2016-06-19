@@ -14,23 +14,22 @@ here   = utils.get_here(__file__)
 parent = utils.get_parent(here)
 
 # Paths
-scratchroot = os.environ.get('SCRATCH')
-if scratchroot is None:
-    scratchroot = os.path.join(os.environ['HOME'], 'scratch')
-scratchpath  = os.path.join(scratchroot, 'work', 'pyrl')
-trialspath   = os.path.join(scratchpath)
+scratchpath = os.environ.get('SCRATCH')
+if scratchpath is None:
+    scratchpath = os.path.join(os.environ['HOME'], 'scratch')
+trialspath   = os.path.join(scratchpath, 'work', 'examples')
 analysispath = os.path.join(parent, 'examples', 'analysis')
 modelspath   = os.path.join(parent, 'examples', 'models')
 
 # analysis/rdm
-rdm_analysisfile = os.path.join(analysispath, 'rdm.py')
-rdm_analysis     = imp.load_source('rdm_analysis', rdm_analysisfile)
+analysisfile = os.path.join(analysispath, 'rdm.py')
+analysis     = imp.load_source('analysis', analysisfile)
 
-# models/rdm_fixed
-rdm_fixed_modelfile  = os.path.join(modelspath, 'rdm_fixed.py')
-rdm_fixed_model      = imp.load_source('rdm_fixed_model', rdm_fixed_modelfile)
-rdm_fixed_behavior   = os.path.join(trialspath, 'rdm_fixed', 'trials_behavior.pkl')
-rdm_fixed_activity   = os.path.join(trialspath, 'rdm_fixed', 'trials_activity.pkl')
+# models/rdm_rt
+modelfile  = os.path.join(modelspath, 'rdm_rt.py')
+model      = imp.load_source('model', modelfile)
+behavior   = os.path.join(trialspath, 'rdm_rt', 'trials_behavior.pkl')
+activity   = os.path.join(trialspath, 'rdm_rt', 'trials_activity.pkl')
 
 #=========================================================================================
 
@@ -58,11 +57,11 @@ y0      = 0.22
 dy_task = 0.14
 dy      = 0.08
 
-fig.add('task',                      [x0, y0, w_task, h_epochs])
-fig.add('stimulus',                  [fig['task'].x, fig['task'].top+dy_task, w_task, h_input])
-fig.add('fixation',                  [fig['task'].x, fig['stimulus'].top+dy, w_task, h_input])
-fig.add('correct-stimulus-duration', [fig['task'].right+DX, fig['task'].y, w_behavior, h])
-fig.add('on-stimulus',               [fig['correct-stimulus-duration'].right+dx, fig['task'].y, w_activity, h])
+fig.add('task',         [x0, y0, w_task, h_epochs])
+fig.add('stimulus',     [fig['task'].x, fig['task'].top+dy_task, w_task, h_input])
+fig.add('fixation',     [fig['task'].x, fig['stimulus'].top+dy, w_task, h_input])
+fig.add('chronometric', [fig['task'].right+DX, fig['task'].y, w_behavior, h])
+fig.add('on-stimulus',  [fig[-1].right+dx, fig['task'].y, w_activity, h])
 
 #=========================================================================================
 
@@ -122,8 +121,8 @@ high = np.zeros_like(time)
 low  = np.zeros_like(time)
 for i, t in enumerate(time):
     if durations['stimulus'][0] <= t < durations['stimulus'][1]:
-        high[i] = rdm_fixed_model.scale(+coh) + rng.normal(scale=0.15)
-        low[i]  = rdm_fixed_model.scale(-coh) + rng.normal(scale=0.15)
+        high[i] = model.scale(+coh) + rng.normal(scale=0.15)
+        low[i]  = model.scale(-coh) + rng.normal(scale=0.15)
 
 eps = 0.04
 plot.plot(time, high+eps, color=Figure.colors('blue'), lw=lw)
@@ -213,20 +212,20 @@ plot.ylim(0, 1)
 
 #=========================================================================================
 
-plot = fig['correct-stimulus-duration']
+plot = fig['chronometric']
 
 kwargs = {'ms': 4, 'lw': 1}
-rdm_analysis.correct_stimulus_duration(rdm_fixed_behavior, plot, nbins=10, **kwargs)
+analysis.chronometric(behavior, plot, **kwargs)
 
-plot.xlim(0, 1200)
-plot.xticks([0, 400, 800, 1200])
+#plot.xlim(0, 1200)
+#plot.xticks([0, 400, 800, 1200])
 
-plot.ylim(0.5, 1)
-plot.yticks([0.5, 0.6, 0.7, 0.8, 0.9, 1])
-plot.yticklabels([0.5, 0.6, 0.7, 0.8, 0.9, '1'])
+#plot.ylim(0.5, 1)
+#plot.yticks([0.5, 0.6, 0.7, 0.8, 0.9, 1])
+#plot.yticklabels([0.5, 0.6, 0.7, 0.8, 0.9, '1'])
 
-plot.xlabel('Stimulus duration (ms)')
-plot.ylabel('Probability correct')
+plot.xlabel('Percent coherence toward ')
+plot.ylabel('Reaction time (ms)')
 
 #=========================================================================================
 
@@ -236,7 +235,7 @@ unit = 11
 
 kwargs = {'on-stimulus-tmin': -200, 'on-stimulus-tmax': 400, 'colors': 'kiani',
           'dashes': [3.5, 2]}
-rdm_analysis.sort(rdm_fixed_activity, {'on-stimulus': plot}, unit=unit, **kwargs)
+analysis.sort(activity, {'on-stimulus': plot}, unit=unit, **kwargs)
 
 plot.xlim(-200, 400)
 plot.xticks([-200, 0, 200, 400])

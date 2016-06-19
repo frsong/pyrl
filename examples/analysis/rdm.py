@@ -268,6 +268,9 @@ def chronometric(trialsfile, plot, **kwargs):
     # Load trials
     trials, A, R, M, perf = utils.load(trialsfile)
 
+    # Time
+    time = trials[0]['time']
+
     zero_coherence_rt = []
     correct_rt_by_coh = {}
     error_rt_by_coh   = {}
@@ -325,7 +328,6 @@ def chronometric(trialsfile, plot, **kwargs):
             if len(error_rt_by_coh[coh]) > min_trials:
                 error_idx.append(i)
 
-    print("[ {}.chronometric ]".format(THIS))
     print("  {}/{} non-decision trials.".format(no_decision, len(trials)))
     print("  Mean RT, correct trials: {:.2f} ms".format(correct_tot/correct_n))
     print("  Mean RT, error trials:   {:.2f} ms".format(error_tot/error_n))
@@ -1451,7 +1453,7 @@ def do(action, args, config):
         fig  = Figure()
         plot = fig.add()
 
-        psychometric(trialsfile, config['model'].m, plot, 'psychometric')
+        psychometric(trialsfile, config['model'].spec, plot, 'psychometric')
 
         fig.save(path=config['figspath'], name='psychometric')
         fig.close()
@@ -1467,7 +1469,7 @@ def do(action, args, config):
         plot.xlabel('\% Coherence')
         plot.ylabel('Reaction time (ms)')
 
-        fig.save(os.path.join(config['figspath'], 'chronometric'))
+        fig.save(path=os.path.join(config['figspath'], name='chronometric'))
         fig.close()
 
     elif action == 'plot-trial':
@@ -1494,7 +1496,7 @@ def do(action, args, config):
 
     elif action == 'sort-postdecision':
         trialsfile = os.path.join(config['trialspath'], 'trials_activity.pkl')
-        sort_postdecision(trialsfile, config['model'].m,
+        sort_postdecision(trialsfile, config['model'].spec,
                           (config['figspath'], 'sorted_postdecision'))
 
     elif action == 'sure-stimulus-duration':

@@ -46,7 +46,7 @@ trialsfile2_a = os.path.join(trialspath2, 'padoaschioppa2006_1A3B', 'trials_acti
 
 w   = utils.mm_to_inch(174)
 r   = 0.52
-fig = Figure(w=w, r=r, axislabelsize=8.5, ticklabelsize=6, labelpadx=4.5, labelpady=4.5)
+fig = Figure(w=w, r=r, axislabelsize=8.5, ticklabelsize=6.5, labelpadx=4.5, labelpady=4.5)
 
 x0 = 0.07
 y0 = 0.17

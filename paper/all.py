@@ -117,37 +117,52 @@ ntrain = 5
 # RDM (FD)
 #-----------------------------------------------------------------------------------------
 
+model     = 'rdm_fixed'
+ntrials_b = 2500
+ntrials_a = 20
+
 if 'rdm_fixed' in args:
     print("=> Perceptual decision-making (FD)")
-    #train('rdm_fixed')
-    #trials(rdm_fixed', 'b', 2500)
-    #do_action('rdm_fixed', 'correct_stimulus_duration')
-    trials(rdm_fixed, 'a', 200)
-    #do_action('rdm_fixed', 'sort')
+    train(model)
+    trials(model, 'b', ntrials_b)
+    do_action(model, 'psychometric')
+    do_action(model, 'correct_stimulus_duration')
+    trials(model, 'a', ntrials_a)
+    do_action(model, 'sort')
 
 if 'rdm_fixed-seeds' in args:
-    print("=> Perceptual decision-making (FD) (additional)")
-    train_seeds('rdm_fixed', n_train=5)
+    start_seed = 1001
+    for seed in xrange(start_seed, start_seed+ntrain):
+        print("=> Perceptual decision-making (FD) (seed = {})".format(seed))
+        train(model, seed=seed)
 
 #-----------------------------------------------------------------------------------------
 
+model     = 'rdm_rt'
+ntrials_b = 1000
+ntrials_a = 20
+
 if 'rdm_rt' in args:
     print("=> Perceptual decision-making (RT)")
+    train(model)
+    trials(model, 'b', ntrials_b)
+    do_action(model, 'psychometric')
+    do_action(model, 'chronometric')
+    trials(model, 'a', ntrials_a)
+    do_action(model, 'sort')
 
-    #trials(rdm_rt', 'b', 200, analysis='rdm')
-    #do_action('rdm_rt', 'psychometric')
-    #do_action('rdm_rt', 'chronometric')
-
-    trials(rdm_rt, 'a', 100)
-    do_action('rdm_rt', 'sort')#, args='value')
-    #do_action('rdm_rt', 'sort', args='value')
+if 'rdm_rt-seeds' in args:
+    start_seed = 1001
+    for seed in xrange(start_seed, start_seed+ntrain):
+        print("=> Perceptual decision-making (RT) (seed = {})".format(seed))
+        train(model, seed=seed)
 
 #-----------------------------------------------------------------------------------------
 # Context-dependent integration
 #-----------------------------------------------------------------------------------------
 
 model     = 'mante'
-ntrials_b = 100
+ntrials_b = 200
 ntrials_a = 20
 
 if 'mante' in args:
@@ -208,8 +223,12 @@ if 'romo' in args:
     do_action(model, 'sort', args='value')
 
 if 'romo-seeds' in args:
-    print("=> Parametric working memory (additional)")
-    train_seeds('romo', n_train=5)
+    start_seed = 1001
+    for seed in xrange(start_seed, start_seed+ntrain):
+        print("=> Parametric working memory (seed = {})".format(seed))
+        train(model, seed=seed)
+        trials(model, 'b', ntrials_b, seed=seed)
+        do_action(model, 'performance', seed=seed)
 
 #-----------------------------------------------------------------------------------------
 # Postdecision wager
@@ -230,8 +249,10 @@ if 'postdecisionwager' in args:
     do_action(model, 'sort', args='value')
 
 if 'postdecisionwager-seeds' in args:
-    print("=> Postdecision wager (additional)")
-    train_seeds('postdecisionwager', n_train=5)
+    start_seed = 1001
+    for seed in xrange(start_seed, start_seed+ntrain):
+        print("=> Postdecision wager (seed = {})".format(seed))
+        train(model, seed=seed)
 
 #-----------------------------------------------------------------------------------------
 # Economic choice
@@ -253,8 +274,10 @@ if 'padoaschioppa2006' in args:
     do_action(model, 'sort_epoch', args='prechoice value separate-by-choice')
 
 if 'padoaschioppa2006-seeds' in args:
-    print("=> Padoa-Schioppa 2006 (additional)")
-    train_seeds('padoaschioppa2006', n_train=5)
+    start_seed = 1001
+    for seed in xrange(start_seed, start_seed+ntrain):
+        print("=> Padoa-Schioppa 2006 (seed = {})".format(seed))
+        train(model, seed=seed)
 
 if 'padoaschioppa2006-1A3B' in args:
     trials(padoaschioppa2006_1A3B, 'b', ntrials_b)
@@ -275,6 +298,9 @@ if 'fig_postdecisionwager' in args:
 
 if 'padoaschioppa2006' in args:
     figure('padoaschioppa2006')
+
+if 'fig_rdm_rt' in args:
+    figure('fig_rdm_rt')
 
 if 'fig-learning-mante' in args:
     figure('fig_learning', args='mante')

@@ -22,6 +22,8 @@ configs_default  = {
     'rho':     1.5,
     'f_out':   'softmax',
     'L2_r':    0.002,
+    'Win':     None,
+    'g_Wout':  0,
     'L1_Wrec': 0,
     'L2_Wrec': 0,
     'fix':     [],
@@ -153,11 +155,36 @@ class GRU(Recurrent):
             if self.config['ei'] is None:
                 #params['Win']        = rng.uniform(-1, 1, size=self.get_dim('Win'))
                 #params['Win']        = 0.1*np.ones(self.get_dim('Win'))
-                params['Win']        = rng.normal(size=self.get_dim('Win'))
+                params['Win'] = self.config['Win']
+                if params['Win'] is None:
+                    print("Win is None")
+                    params['Win'] = rng.normal(size=self.get_dim('Win'))
+                else:
+                    print("Win is not None")
+                    params['Win'] = params['Win']*rng.normal(size=self.get_dim('Win'))
+                    print(params['Win'])
+                """
+                if np.isscalar(params['Win']):
+                    print("Win is scalar")
+                    params['Win'] = rng.normal(size=self.get_dim('Win'))
+                    params['Win'][:]
+                elif params['Win'] is None:
+                    print("Win is None")
+                    params['Win'] = rng.normal(size=self.get_dim('Win'))
+                """
+                #params['Win']        = rng.normal(size=self.get_dim('Win'))
                 params['bin']        = np.zeros(self.get_dim('bin'))
                 params['Wrec_gates'] = rng.normal(size=self.get_dim('Wrec_gates'))
                 params['Wrec']       = rng.normal(size=self.get_dim('Wrec'))
-                params['Wout']       = np.zeros(self.get_dim('Wout'))
+
+                if self.config['g_Wout'] > 0:
+                    print("[ GRU ] Initialize Wout to random normal.")
+                    params['Wout'] = self.config['g_Wout']*rng.normal(size=self.get_dim('Wout'))
+                else:
+                    print("[ GRU ] Initialize Wout to zeros.")
+                    params['Wout'] = np.zeros(self.get_dim('Wout'))
+
+                #params['Wout']       = np.zeros(self.get_dim('Wout'))
                 params['bout']       = np.zeros(self.get_dim('bout'))
                 params['x0']         = 0.5*np.ones(self.get_dim('x0'))
             else:

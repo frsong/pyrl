@@ -33,9 +33,9 @@ n_validation = 100*n_conditions
 sigma = np.sqrt(2*100*0.01)
 
 # Durations
-fixation_min  = 250
-fixation_mean = 150
-fixation_max  = 500
+fixation_min  = 350
+fixation_mean = 100
+fixation_max  = 400
 stimulus_min  = 80
 stimulus_mean = 330
 stimulus_max  = 1500
@@ -66,7 +66,6 @@ def get_condition(rng, dt, context={}):
         'fixation':  (0, fixation),
         'stimulus':  (fixation, fixation + stimulus),
         'decision':  (fixation + stimulus, fixation + stimulus + decision),
-        'terminate': (fixation + stimulus + decision, tmax),
         'tmax':      tmax
         }
     time, epochs = tasktools.get_epochs_idx(dt, durations)
@@ -87,8 +86,8 @@ def get_condition(rng, dt, context={}):
         'durations':   durations,
         'time':        time,
         'epochs':      epochs,
-        'left_right':  rng.choice(left_rights_),
-        'coh':         rng.choice(cohs_)
+        'left_right':  left_right,
+        'coh':         coh
         }
 
 # Input scaling
@@ -103,7 +102,6 @@ def get_step(rng, dt, trial, t, a):
     epochs = trial['epochs']
     status = {'continue': True}
     reward = 0
-
     if t-1 in epochs['fixation'] or t-1 in epochs['stimulus']:
         if a != actions['FIXATE']:
             status['continue'] = False

@@ -54,6 +54,7 @@ class PolicyGradient(object):
             print("dt = {}".format(dt))
             self.dt = dt
             if self.dt is None:
+                print("Using config dt.")
                 self.dt = self.config['dt']
 
             # Leak
@@ -97,6 +98,7 @@ class PolicyGradient(object):
             print("dt = {}".format(dt))
             self.dt = dt
             if self.dt is None:
+                print("Using config dt.")
                 self.dt = config['dt']
 
             # Leak
@@ -120,6 +122,8 @@ class PolicyGradient(object):
             self.policy_net = Network(self.policy_config, seed=config['policy_seed'])
 
             # Baseline network
+            #Win = np.zeros((self.policy_net.N + len(config['actions']), 3*config['N']))
+            #Win[self.policy_net.N:] = 1
             self.baseline_config = {
                 'network_type': config['network_type'],
                 'Nin':          self.policy_net.N + len(config['actions']),
@@ -129,6 +133,7 @@ class PolicyGradient(object):
                 'rho':          config['baseline_rho'],
                 'f_out':        'linear',
                 'fix':          config['fix'],
+                'g_Wout':       0.1,
                 'L2_r':         config['baseline_L2_r'],
                 'L1_Wrec':      config['L1_Wrec'],
                 'L2_Wrec':      config['L2_Wrec'],
@@ -381,9 +386,6 @@ class PolicyGradient(object):
         else:
             x0  = self.policy_net.params['x0']
             x0_ = tensor.alloc(x0, U.shape[1], x0.shape[0])
-
-        #z_0  = self.policy_net.get_outputs_0(x0_)
-        #r, z = self.policy_net.get_outputs(U, noise, x0_)
 
         log_z_0  = self.policy_net.get_outputs_0(x0_, log=True)
         r, log_z = self.policy_net.get_outputs(U, noise, x0_, log=True)
