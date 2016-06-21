@@ -118,7 +118,7 @@ ntrain = 5
 #-----------------------------------------------------------------------------------------
 
 model     = 'rdm_fixed'
-ntrials_b = 2500
+ntrials_b = 5000
 ntrials_a = 20
 
 if 'rdm_fixed' in args:

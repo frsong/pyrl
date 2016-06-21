@@ -11,10 +11,14 @@ class Recurrent(object):
     Generic recurrent unit.
 
     """
-    def __init__(self, type_):
+    def __init__(self, type_, name=''):
         self.type   = type_
+        self.name   = self.type
         self.params = OrderedDict()
         self.masks  = {}
+
+        if name != '':
+            self.name += '-' + name
 
         # self.N
         # self.trainables

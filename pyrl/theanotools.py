@@ -99,7 +99,7 @@ def choice(rng, a, size=1, replace=True, p=None):
 # Output activations
 #=========================================================================================
 
-def relu(x, upper=5):
+def relu(x):
     return tensor.nnet.relu(x)
     #return tensor.switch(x > upper, upper, tensor.nnet.relu(x))
 

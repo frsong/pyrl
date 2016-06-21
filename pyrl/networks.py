@@ -1,11 +1,11 @@
 from __future__ import absolute_import
 
-from .gru    import GRU
-from .gru2   import GRU2
-from .simple import Simple
+from . import gru
+from . import gru2
+from . import simple
 
 Networks = {
-    'gru':    GRU,
-    'gru2':   GRU2,
-    'simple': Simple
+    'gru':    gru.GRU,
+    'gru2':   gru2.GRU,
+    'simple': simple.Simple
     }

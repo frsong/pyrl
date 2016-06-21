@@ -9,7 +9,7 @@ import numpy as np
 import theano
 from   theano import tensor
 
-from theano.compile.nanguardmode import NanGuardMode
+#from theano.compile.nanguardmode import NanGuardMode
 
 from .         import nptools, tasktools, theanotools, utils
 from .debug    import DEBUG
@@ -77,12 +77,14 @@ class PolicyGradient(object):
             # Policy network
             self.policy_config = save['policy_config']
             self.policy_config['alpha'] = alpha
-            self.policy_net = Network(self.policy_config, params=params_p, masks=masks_p)
+            self.policy_net = Network(self.policy_config, params=params_p,
+                                      masks=masks_p, name='policy')
 
             # Baseline network
             self.baseline_config = save['baseline_config']
             self.baseline_config['alpha'] = alpha
-            self.baseline_net = Network(self.baseline_config, params=params_b, masks=masks_b)
+            self.baseline_net = Network(self.baseline_config, params=params_b,
+                                        masks=masks_b, name='baseline')
         else:
             #-----------------------------------------------------------------------------
             # Create new model.
@@ -119,7 +121,8 @@ class PolicyGradient(object):
                 'L2_Wrec':      config['L2_Wrec'],
                 'alpha':        alpha
                 }
-            self.policy_net = Network(self.policy_config, seed=config['policy_seed'])
+            self.policy_net = Network(self.policy_config,
+                                      seed=config['policy_seed'], name='policy')
 
             # Baseline network
             #Win = np.zeros((self.policy_net.N + len(config['actions']), 3*config['N']))
@@ -132,15 +135,14 @@ class PolicyGradient(object):
                 'p0':           config['p0'],
                 'rho':          config['baseline_rho'],
                 'f_out':        'linear',
-                'fix':          config['fix'],
-                'g_Wout':       0.1,
+                'fix':          config['baseline_fix'],
                 'L2_r':         config['baseline_L2_r'],
                 'L1_Wrec':      config['L1_Wrec'],
                 'L2_Wrec':      config['L2_Wrec'],
                 'alpha':        alpha
                 }
             self.baseline_net = Network(self.baseline_config,
-                                        seed=config['baseline_seed'])
+                                        seed=config['baseline_seed'], name='baseline')
 
         #=================================================================================
         # PG setup
@@ -156,6 +158,7 @@ class PolicyGradient(object):
 
         # Recurrent noise, scaled by `2*tau/dt`
         self.scaled_var_rec = (2*self.config['tau']/self.dt) * self.config['var_rec']
+        self.scaled_baseline_var_rec = (2*self.config['tau']/self.dt) * self.config['baseline_var_rec']
 
         # Run trials continuously?
         self.mode = self.config['mode']
@@ -210,7 +213,7 @@ class PolicyGradient(object):
         Q   = self.make_noise((self.Tmax, n_trials, self.policy_net.noise_dim),
                                self.scaled_var_rec)
         Q_b = self.make_noise((self.Tmax, n_trials, self.baseline_net.noise_dim),
-                               self.scaled_var_rec)
+                               self.scaled_baseline_var_rec)
 
         # Firing rates
         if return_states:
@@ -379,7 +382,7 @@ class PolicyGradient(object):
 
     def func_update_policy(self, Tmax, use_x0=False, accumulators=None):
         U = tensor.tensor3('U')
-        noise = tensor.tensor3('noise')
+        Q = tensor.tensor3('Q')
 
         if use_x0:
             x0_ = tensor.matrix('x0_')
@@ -388,7 +391,7 @@ class PolicyGradient(object):
             x0_ = tensor.alloc(x0, U.shape[1], x0.shape[0])
 
         log_z_0  = self.policy_net.get_outputs_0(x0_, log=True)
-        r, log_z = self.policy_net.get_outputs(U, noise, x0_, log=True)
+        r, log_z = self.policy_net.get_outputs(U, Q, x0_, log=True)
 
         # Learning rate
         lr = tensor.scalar('lr')
@@ -445,7 +448,7 @@ class PolicyGradient(object):
             args = [x0_]
         else:
             args = []
-        args += [U, noise, A, R, b, M, lr]
+        args += [U, Q, A, R, b, M, lr]
 
         return theano.function(args, norm, updates=updates)#,
                                #mode=NanGuardMode(nan_is_error=True, inf_is_error=True,
@@ -455,8 +458,7 @@ class PolicyGradient(object):
         U  = tensor.tensor3('U')
         R  = tensor.matrix('R')
         R_ = R.reshape((R.shape[0], R.shape[1], 1))
-
-        noise  = tensor.tensor3('noise')
+        Q  = tensor.tensor3('Q')
 
         if use_x0:
             x0_ = tensor.matrix('x0_')
@@ -465,7 +467,7 @@ class PolicyGradient(object):
             x0_ = tensor.alloc(x0, U.shape[1], x0.shape[0])
 
         z_0   = self.baseline_net.get_outputs_0(x0_)
-        r, z  = self.baseline_net.get_outputs(U, noise, x0_)
+        r, z  = self.baseline_net.get_outputs(U, Q, x0_)
         z_all = tensor.concatenate([z_0.reshape((1, z_0.shape[0], z_0.shape[1])), z],
                                    axis=0)
 
@@ -493,7 +495,7 @@ class PolicyGradient(object):
             args = [x0_]
         else:
             args = []
-        args += [U, noise, R, M, lr]
+        args += [U, Q, R, M, lr]
 
         return theano.function(args, [z_all[:,:,0], norm], updates=updates)#,
                                #mode=NanGuardMode(nan_is_error=True, inf_is_error=True,
@@ -526,8 +528,9 @@ class PolicyGradient(object):
         items['Network type']             = self.config['network_type']
         items['N']                        = self.config['N']
         items['Connection probability']   = self.config['p0']
-        items['var_rec']                  = self.config['var_rec']
         items['dt']                       = self.dt
+        items['var_rec (policy)']         = self.config['var_rec']
+        items['var_rec (baseline)']       = self.config['baseline_var_rec']
         items['Learning rate (policy)']   = self.config['lr']
         items['Learning rate (baseline)'] = self.config['baseline_lr']
         items['Max time steps']           = self.Tmax
@@ -694,9 +697,9 @@ class PolicyGradient(object):
                         if len(grad_norms_policy) > 0:
                             if DEBUG:
                                 items['|grad| (policy)']   = [len(grad_norms_policy)] + [f(grad_norms_policy)
-                                                              for f in [np.min, np.max, np.mean]]
+                                                              for f in [np.min, np.median, np.max]]
                                 items['|grad| (baseline)'] = [len(grad_norms_baseline)] + [f(grad_norms_baseline)
-                                                              for f in [np.min, np.max, np.mean]]
+                                                              for f in [np.min, np.median, np.max]]
                             grad_norms_policy   = []
                             grad_norms_baseline = []
 

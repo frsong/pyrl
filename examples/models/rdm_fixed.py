@@ -30,9 +30,10 @@ n_gradient   = n_conditions
 n_validation = 100*n_conditions
 
 # Input noise
-sigma = np.sqrt(2*100*0.01)
+sigma = np.sqrt(2*100*0.009)
 
 # Durations
+fixation      = 750
 fixation_min  = 350
 fixation_mean = 100
 fixation_max  = 400
@@ -51,11 +52,11 @@ def get_condition(rng, dt, context={}):
     # Epochs
     #-------------------------------------------------------------------------------------
 
-    fixation = context.get('fixation')
-    if fixation is None:
+    #fixation = context.get('fixation')
+    #if fixation is None:
         #fixation = tasktools.uniform(rng, dt, fixation_min, fixation_max)
-        fixation = fixation_min + tasktools.truncated_exponential(rng, dt, fixation_mean,
-                                                                  xmax=fixation_max)
+    #    fixation = fixation_min + tasktools.truncated_exponential(rng, dt, fixation_mean,
+    #                                                              xmax=fixation_max)
 
     stimulus = context.get('stimulus')
     if stimulus is None:
@@ -147,4 +148,4 @@ def get_step(rng, dt, trial, t, a):
 def terminate(perf):
     p_decision, p_correct = tasktools.correct_2AFC(perf)
 
-    return p_decision >= 0.99 and p_correct >= 0.82
+    return p_decision >= 0.99 and p_correct >= 0.8

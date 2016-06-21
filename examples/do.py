@@ -64,7 +64,7 @@ name = os.path.splitext(os.path.basename(modelfile))[0] + suffix
 scratchpath = os.environ.get('SCRATCH')
 if scratchpath is None:
     scratchpath = os.path.join(os.environ['HOME'], 'scratch')
-trialspath = os.path.join(scratchpath, 'work', prefix, name)
+trialspath = os.path.join(scratchpath, 'work', 'pyrl', prefix, name)
 
 # Paths
 workpath = os.path.join(here,     'work')

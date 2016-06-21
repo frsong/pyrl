@@ -22,13 +22,15 @@ configs_default  = {
     'rho':     1.5,
     'f_out':   'softmax',
     'L2_r':    0.002,
+    'Win':     None,
+    'Wout':    0,
     'L1_Wrec': 0,
     'L2_Wrec': 0,
     'fix':     [],
     'ei':      None
     }
 
-class GRU2(Recurrent):
+class GRU(Recurrent):
     """
     Modified Gated Recurrent Units.
 
@@ -49,10 +51,10 @@ class GRU2(Recurrent):
         if name == 'x0':
             return self.N
 
-        raise ValueError
+        raise ValueError(name)
 
-    def __init__(self, config, params=None, masks=None, seed=1):
-        super(GRU2, self).__init__('gru2')
+    def __init__(self, config, params=None, masks=None, seed=1, name=''):
+        super(GRU, self).__init__('gru2', name)
 
         #=================================================================================
         # Config
@@ -63,7 +65,7 @@ class GRU2(Recurrent):
         # Required
         for k in configs_required:
             if k not in config:
-                print("[ GRU2 ] Error: {} is required.".format(k))
+                print("[ {} ] Error: {} is required.".format(self.name, k))
                 sys.exit()
             self.config[k] = config[k]
 
@@ -79,16 +81,16 @@ class GRU2(Recurrent):
         #=================================================================================
 
         # Hidden
-        self.f_hidden    = tensor.nnet.relu
+        self.f_hidden    = theanotools.relu
         self.firing_rate = nptools.relu
 
         # Output
         if self.config['f_out'] == 'softmax':
-            self.f_out  = theanotools.softmax
-            self.f_out3 = theanotools.softmax3
+            self.f_out     = theanotools.softmax
+            self.f_log_out = theanotools.log_softmax
         elif self.config['f_out'] == 'linear':
-            self.f_out  = (lambda x: x)
-            self.f_out3 = self.f_out
+            self.f_out     = (lambda x: x)
+            self.f_log_out = tensor.log
         else:
             raise ValueError(self.config['f_out'])
 
@@ -151,12 +153,40 @@ class GRU2(Recurrent):
 
             params = OrderedDict()
             if self.config['ei'] is None:
-                params['Win']        = rng.uniform(-1, 1, size=self.get_dim('Win'))
+                #params['Win']        = rng.uniform(-1, 1, size=self.get_dim('Win'))
+                #params['Win']        = 0.1*np.ones(self.get_dim('Win'))
+                params['Win'] = self.config['Win']
+                if params['Win'] is None:
+                    print("Win is None")
+                    params['Win'] = rng.normal(size=self.get_dim('Win'))
+                else:
+                    print("Win is not None")
+                    params['Win'] = params['Win']*rng.normal(size=self.get_dim('Win'))
+                    print(params['Win'])
+                """
+                if np.isscalar(params['Win']):
+                    print("Win is scalar")
+                    params['Win'] = rng.normal(size=self.get_dim('Win'))
+                    params['Win'][:]
+                elif params['Win'] is None:
+                    print("Win is None")
+                    params['Win'] = rng.normal(size=self.get_dim('Win'))
+                """
+                #params['Win']        = rng.normal(size=self.get_dim('Win'))
                 params['bin']        = np.zeros(self.get_dim('bin'))
                 params['Wrec_gates'] = rng.normal(size=self.get_dim('Wrec_gates'))
                 params['Wrec']       = rng.normal(size=self.get_dim('Wrec'))
-                params['Wout']       = np.zeros(self.get_dim('Wout'))
+
+                if self.config['Wout'] > 0:
+                    print("[ {} ] Initialize Wout to random normal.".format(self.name))
+                    params['Wout'] = self.config['Wout']*rng.normal(size=self.get_dim('Wout'))
+                else:
+                    print("[ {} ] Initialize Wout to zeros.".format(self.name))
+                    params['Wout'] = np.zeros(self.get_dim('Wout'))
+
+                #params['Wout']       = np.zeros(self.get_dim('Wout'))
                 params['bout']       = np.zeros(self.get_dim('bout'))
+                #params['bout'] = rng.uniform(-1, 1, size=self.get_dim('bout'))
                 params['x0']         = 0.5*np.ones(self.get_dim('x0'))
             else:
                 params['Win']        = rng.normal(size=self.get_dim('Win'))
@@ -239,7 +269,7 @@ class GRU2(Recurrent):
 
         # Fixed parameters
         if DEBUG and self.config['fix']:
-            print("[ GRU2 ] Fixed parameters: " + ', '.join(self.config['fix']))
+            print("[ {} ] Fixed parameters: ".format(self.name) + ', '.join(self.config['fix']))
 
         # Trainable parameters
         self.trainables = [self.params[k]
@@ -251,7 +281,7 @@ class GRU2(Recurrent):
 
         # Leak
         self.alpha = self.config['alpha']
-        print("[ GRU2 ] alpha = {}".format(self.alpha))
+        print("[ {} ] alpha = {}".format(self.name, self.alpha))
 
         #=================================================================================
         # Define a step
@@ -328,13 +358,19 @@ class GRU2(Recurrent):
 
         L2_r = self.config['L2_r']
         if L2_r  > 0:
+            # Repeat (T, B) -> (T, B, N)
             M_ = (tensor.tile(M.T, (x.shape[-1], 1, 1))).T
+
+            # Combine t=0 with t>0
             x_all = tensor.concatenate(
                 [x0_.reshape((1, x0_.shape[0], x0_.shape[1])), x],
                 axis=0
                 )
+
+            # Firing rate
             r = self.f_hidden(x_all)
 
+            # Regularization
             regs += L2_r * tensor.sum(tensor.sqr(r)*M_)/tensor.sum(M_)
 
         #=================================================================================

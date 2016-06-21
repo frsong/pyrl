@@ -42,15 +42,15 @@ fig = Figure(w=w, h=h, labelpadx=4.5, labelpady=4.5)
 #=========================================================================================
 
 w_task     = 0.26
-w_behavior = 0.205
-w_activity = 0.205
+w_behavior = 0.19
+w_activity = 0.19
 
 h = 0.67
 h_epochs = 0.2
 h_input  = 0.14
 
 x0 = 0.145
-DX = 0.085
+DX = 0.095
 dx = 0.075
 
 y0      = 0.22
@@ -82,11 +82,10 @@ ms = 5
 
 durations = {
     'fixation': (0, 600),
-    'stimulus': (600, 1400),
-    'decision': (1400, 2000)
+    'stimulus': (600, 2000)
     }
 
-tmax = durations['decision'][-1]
+tmax = durations['stimulus'][-1]
 time = np.linspace(0, tmax, 151)[1:]
 
 #=========================================================================================
@@ -96,7 +95,7 @@ plot.axis_off('bottom')
 
 fixation = np.zeros_like(time)
 for i, t in enumerate(time):
-    if t < durations['stimulus'][1]:
+    if t < durations['stimulus'][0]:
         fixation[i] = 1
 plot.plot(time, fixation, color=Figure.colors('magenta'), lw=lw)
 
@@ -106,7 +105,7 @@ plot.yticklabels(['OFF', 'ON'], fontsize=5.5)
 plot.xlim(0, tmax)
 plot.ylim(0, 1)
 
-plot.text(durations['decision'][0], 1.1, '\"Go\"', ha='left', va='bottom', fontsize=7)
+plot.text(durations['stimulus'][0], 1.1, '\"Go\"', ha='left', va='bottom', fontsize=7)
 
 #=========================================================================================
 
@@ -173,7 +172,7 @@ plot.axis_off('bottom')
 
 y = 0
 plot.plot([0, tmax], y*np.ones(2), color='k', lw=0.75)
-for t in [0] + [durations[e][1] for e in ['fixation', 'stimulus', 'decision']]:
+for t in [0] + [durations[e][1] for e in ['fixation', 'stimulus']]:
     plot.plot(t*np.ones(2), [y-0.05, y+0.05], 'k', lw=0.75)
 
 y_reward = 1.1
@@ -184,24 +183,24 @@ colors  = ['k', None, None]
 display_actions(plot, np.mean(durations['fixation']), y_reward, rewards, colors)
 
 # Rewards - stimulus
-rewards = ['0', '-1', '-1']
-colors  = ['k', None, None]
+rewards = ['0', '+1', '0']
+colors  = [None, Figure.colors('darkblue'), None]
 display_actions(plot, np.mean(durations['stimulus']), y_reward, rewards, colors)
 
 # Rewards - decision
-rewards = ['0', '+1', '0']
-colors  = [None, Figure.colors('darkblue'), None]
-display_actions(plot, np.mean(durations['decision']), y_reward, rewards, colors)
+#rewards = ['0', '+1', '0']
+#colors  = [None, Figure.colors('darkblue'), None]
+#display_actions(plot, np.mean(durations['decision']), y_reward, rewards, colors)
 
 # Epoch labels
-for e, label in zip(['fixation', 'stimulus', 'decision'],
-                    ['Fixation', 'Stimulus', 'Decision']):
+for e, label in zip(['fixation', 'stimulus'],
+                    ['Fixation', 'Stimulus/decision']):
     plot.text(np.mean(durations[e]), y+0.16, label, ha='center', va='bottom',
               fontsize=7)
 
 # Epoch durations
-for e, label in zip(['fixation', 'stimulus', 'decision'],
-                    ['250-750 ms', '80-1500 ms', '500 ms']):
+for e, label in zip(['fixation'],
+                    ['250-750 ms']):
     plot.text(np.mean(durations[e]), y-0.2, label, ha='center', va='top',
               fontsize=7)
 
@@ -220,18 +219,18 @@ analysis.chronometric(behavior, plot, **kwargs)
 #plot.xlim(0, 1200)
 #plot.xticks([0, 400, 800, 1200])
 
-#plot.ylim(0.5, 1)
+plot.ylim(200, 1500)
 #plot.yticks([0.5, 0.6, 0.7, 0.8, 0.9, 1])
 #plot.yticklabels([0.5, 0.6, 0.7, 0.8, 0.9, '1'])
 
 plot.xlabel('Percent coherence toward ')
-plot.ylabel('Reaction time (ms)')
+plot.ylabel('Reaction time (ms)', labelpad=3)
 
 #=========================================================================================
 
 plot = fig['on-stimulus']
 
-unit = 11
+unit = 0
 
 kwargs = {'on-stimulus-tmin': -200, 'on-stimulus-tmax': 400, 'colors': 'kiani',
           'dashes': [3.5, 2]}
@@ -247,8 +246,8 @@ plot.ylabel('Firing rate (a.u.)')
 
 # Legend
 props = {'prop': {'size': 6}, 'handlelength': 1.2,
-         'handletextpad': 1.1, 'labelspacing': 0.7}
-plot.legend(bbox_to_anchor=(0.41, 1.2), **props)
+         'handletextpad': 1.05, 'labelspacing': 0.7}
+plot.legend(bbox_to_anchor=(0.44, 1.2), **props)
 
 #=========================================================================================
 

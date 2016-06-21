@@ -70,8 +70,8 @@ if 'Wrec' in masks:
 import matplotlib as mpl
 
 plot = fig['Wrec']
-plot.imshow(W.T, cmap=mpl.cm.gray_r)
-'''
+#plot.imshow(W.T, cmap=mpl.cm.gray_r)
+#'''
 rho = matrixtools.spectral_radius(W)
 plot_weights(plot, W)
 plot.text_upper_left(r'$W_\text{rec}$', fontsize=fontsize, dy=dy)
@@ -98,7 +98,7 @@ rho = matrixtools.spectral_radius(W)
 plot_weights(plot, W)
 plot.text_upper_left(r'$W_\text{rec}^\gamma$', fontsize=fontsize, dy=dy)
 plot.text_upper_right(r'$\rho={:.3f}$'.format(rho), fontsize=fontsize, dy=dy)
-'''
+#'''
 #=========================================================================================
 
 fig.save(path=figspath, name='fig_weights_'+modelname)

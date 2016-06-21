@@ -1469,7 +1469,7 @@ def do(action, args, config):
         plot.xlabel('\% Coherence')
         plot.ylabel('Reaction time (ms)')
 
-        fig.save(path=os.path.join(config['figspath'], name='chronometric'))
+        fig.save(path=config['figspath'], name='chronometric')
         fig.close()
 
     elif action == 'plot-trial':

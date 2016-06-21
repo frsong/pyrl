@@ -23,7 +23,7 @@ configs_default  = {
     'f_out':   'softmax',
     'L2_r':    0.002,
     'Win':     None,
-    'g_Wout':  0,
+    'Wout':    0,
     'L1_Wrec': 0,
     'L2_Wrec': 0,
     'fix':     [],
@@ -51,10 +51,10 @@ class GRU(Recurrent):
         if name == 'x0':
             return self.N
 
-        raise ValueError
+        raise ValueError(name)
 
-    def __init__(self, config, params=None, masks=None, seed=1):
-        super(GRU, self).__init__('gru')
+    def __init__(self, config, params=None, masks=None, seed=1, name=''):
+        super(GRU, self).__init__('gru', name)
 
         #=================================================================================
         # Config
@@ -65,7 +65,7 @@ class GRU(Recurrent):
         # Required
         for k in configs_required:
             if k not in config:
-                print("[ GRU ] Error: {} is required.".format(k))
+                print("[ {} ] Error: {} is required.".format(self.name, k))
                 sys.exit()
             self.config[k] = config[k]
 
@@ -177,15 +177,16 @@ class GRU(Recurrent):
                 params['Wrec_gates'] = rng.normal(size=self.get_dim('Wrec_gates'))
                 params['Wrec']       = rng.normal(size=self.get_dim('Wrec'))
 
-                if self.config['g_Wout'] > 0:
-                    print("[ GRU ] Initialize Wout to random normal.")
-                    params['Wout'] = self.config['g_Wout']*rng.normal(size=self.get_dim('Wout'))
+                if self.config['Wout'] > 0:
+                    print("[ {} ] Initialize Wout to random normal.".format(self.name))
+                    params['Wout'] = self.config['Wout']*rng.normal(size=self.get_dim('Wout'))
                 else:
-                    print("[ GRU ] Initialize Wout to zeros.")
+                    print("[ {} ] Initialize Wout to zeros.".format(self.name))
                     params['Wout'] = np.zeros(self.get_dim('Wout'))
 
                 #params['Wout']       = np.zeros(self.get_dim('Wout'))
                 params['bout']       = np.zeros(self.get_dim('bout'))
+                #params['bout'] = rng.uniform(-1, 1, size=self.get_dim('bout'))
                 params['x0']         = 0.5*np.ones(self.get_dim('x0'))
             else:
                 params['Win']        = rng.normal(size=self.get_dim('Win'))
@@ -268,7 +269,7 @@ class GRU(Recurrent):
 
         # Fixed parameters
         if DEBUG and self.config['fix']:
-            print("[ GRU ] Fixed parameters: " + ', '.join(self.config['fix']))
+            print("[ {} ] Fixed parameters: ".format(self.name) + ', '.join(self.config['fix']))
 
         # Trainable parameters
         self.trainables = [self.params[k]
@@ -280,7 +281,7 @@ class GRU(Recurrent):
 
         # Leak
         self.alpha = self.config['alpha']
-        print("[ GRU ] alpha = {}".format(self.alpha))
+        print("[ {} ] alpha = {}".format(self.name, self.alpha))
 
         #=================================================================================
         # Define a step

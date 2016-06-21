@@ -17,7 +17,7 @@ parent = utils.get_parent(here)
 scratchpath = os.environ.get('SCRATCH')
 if scratchpath is None:
     scratchpath = os.path.join(os.environ['HOME'], 'scratch')
-trialspath  = os.path.join(scratchpath, 'work', 'pyrl')
+trialspath   = os.path.join(scratchpath, 'work', 'pyrl', 'examples')
 analysispath = os.path.join(parent, 'examples', 'analysis')
 modelspath   = os.path.join(parent, 'examples', 'models')
 
@@ -33,14 +33,106 @@ rdm_fixed_activity   = os.path.join(trialspath, 'rdm_fixed', 'trials_activity.pk
 
 #=========================================================================================
 
-w = utils.mm_to_inch(174)
-r = 0.29
-h = r*w
+w   = utils.mm_to_inch(174)
+r   = 1
+fig = Figure(w=w, r=r)
 
-fig = Figure(w=w, h=h, labelpadx=4.5, labelpady=4.5)
+x0 = 0.1
+y0 = 0.1
+
+dy = 0.05
+
+w = 0.82
+h = 0.13
+
+fig.add('trial-5', [x0, y0, w, h])
+fig.add('trial-4', [x0, fig[-1].top+dy, w, h])
+fig.add('trial-3', [x0, fig[-1].top+dy, w, h])
+fig.add('trial-2', [x0, fig[-1].top+dy, w, h])
+fig.add('trial-1', [x0, fig[-1].top+dy, w, h])
 
 #=========================================================================================
 
+trials, U, Z, A, rho, M, perf, r_policy, r_value = utils.load(rdm_fixed_activity)
+
+inputs = rdm_fixed_model.inputs
+
+def process_trial(plot, n):
+    if perf.choices[n] is None:
+        print("Trial {}: No decision.".format(n))
+        return
+
+    trial = trials[n]
+    time  = trial['time']
+    u = U[:,n]
+    z = Z[:,n]
+
+    stimulus  = np.asarray(trial['epochs']['stimulus'])
+    evidenceL = np.sum(u[stimulus-1,inputs['LEFT']])
+    evidenceR = np.sum(u[stimulus-1,inputs['RIGHT']])
+
+    decision = np.asarray(trial['epochs']['decision'])
+    t_choice = perf.t_choices[n]
+    idx      = decision[np.where(decision <= t_choice)]
+    t0       = time[idx][0]
+
+    pL = z[idx,inputs['LEFT']]
+    pR = z[idx,inputs['RIGHT']]
+    S  = pL + pR
+
+    if perf.choices[n] == 'R':
+        ls = '-'
+    #else:
+    #    ls = '--'
+        plot.plot(time[idx]-t0, pL/S, ls, color=Figure.colors('red'), lw=0.5, zorder=5)
+
+    if perf.choices[n] == 'R':
+        ls = '-'
+    #else:
+    #    ls = '--'
+        plot.plot(time[idx]-t0, pR/S, ls, color=Figure.colors('blue'), lw=0.5, zorder=5)
+
+    #pL_opt = np.exp(evidenceL)
+    #pR_opt = np.exp(evidenceR)
+    #S_opt  = pL_opt + pR_opt
+
+    #plot.plot(time[idx]-t0, pL_opt/S_opt*np.ones(len(idx)), '--', color=Figure.colors('red'), lw=1.5)
+    #plot.plot(time[idx]-t0, pR_opt/S_opt*np.ones(len(idx)), '--', color=Figure.colors('blue'), lw=1.5)
+
+    #stimulus_duration = np.ptp(trial['durations']['stimulus'])
+    #plot.plot(stimulus_duration, pL_opt/pR_opt, 'o', color='k')
+
+    #plot.ylim(0, 1)
+
+M = 0
+for n, trial in enumerate(trials):
+    if trial['left_right'] > 0 and trial['coh'] == 0:
+        process_trial(fig['trial-1'], n)
+        M += 1
+    if trial['left_right'] > 0 and trial['coh'] == 6.4:
+        process_trial(fig['trial-2'], n)
+        M += 1
+    if trial['left_right'] > 0 and trial['coh'] == 12.8:
+        process_trial(fig['trial-3'], n)
+        M += 1
+    if trial['left_right'] > 0 and trial['coh'] == 25.6:
+        process_trial(fig['trial-4'], n)
+        M += 1
+    if trial['left_right'] > 0 and trial['coh'] == 51.2:
+        process_trial(fig['trial-5'], n)
+        M += 1
+
+    if M == 5*100:
+        print("Too many!")
+        break
+
+#=========================================================================================
+
+fig['trial-5'].xlabel('Time (ms)')
+fig['trial-5'].ylabel('$P(a)$')
+
+#=========================================================================================
+'''
 w_task     = 0.26
 w_behavior = 0.205
 w_activity = 0.205
@@ -249,7 +341,7 @@ plot.ylabel('Firing rate (a.u.)')
 props = {'prop': {'size': 6}, 'handlelength': 1.2,
          'handletextpad': 1.1, 'labelspacing': 0.7}
 plot.legend(bbox_to_anchor=(0.41, 1.2), **props)
-
+'''
 #=========================================================================================
 
 fig.save()
