@@ -201,7 +201,7 @@ for e, label in zip(['fixation', 'stimulus', 'decision'],
 
 # Epoch durations
 for e, label in zip(['fixation', 'stimulus', 'decision'],
-                    ['250-750 ms', '80-1500 ms', '500 ms']):
+                    ['750 ms', '80-1500 ms', '500 ms']):
     plot.text(np.mean(durations[e]), y-0.2, label, ha='center', va='top',
               fontsize=7)
 

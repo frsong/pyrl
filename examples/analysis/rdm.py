@@ -374,7 +374,11 @@ def sort(trialsfile, plots, unit=None, network='p', **kwargs):
 
     """
     # Load trials
-    trials, U, Z, A, P, M, perf, r_p, r_v = utils.load(trialsfile)
+    data = utils.load(trialsfile)
+    if len(data) == 9:
+        trials, U, Z, A, P, M, perf, r_p, r_v = data
+    else:
+        trials, U, Z, Z_b, A, P, M, perf, r_p, r_v = data
 
     # Which network?
     if network == 'p':
@@ -588,6 +592,220 @@ def sort(trialsfile, plots, unit=None, network='p', **kwargs):
 
             fig.save(name+'_{}{:03d}'.format(network, unit))
             fig.close()
+
+#/////////////////////////////////////////////////////////////////////////////////////////
+
+def sort_return(trialsfile, plots=None, **kwargs):
+    """
+    Sort the predicted reward.
+
+    """
+    # Load trials
+    trials, U, Z, Z_b, A, P, M, perf, r_p, r_v = utils.load(trialsfile)
+
+    # Same for every trial
+    time  = trials[0]['time']
+    Ntime = len(time)
+
+    # Aligned time
+    time_a  = np.concatenate((-time[1:][::-1], time))
+    Ntime_a = len(time_a)
+
+    #=====================================================================================
+    # Aligned to stimulus onset
+    #=====================================================================================
+
+    r_by_cond_stimulus   = {}
+    n_r_by_cond_stimulus = {}
+    for n, trial in enumerate(trials):
+        if not perf.decisions[n]:
+            continue
+
+        # Signed coherence
+        coh = trial['coh']
+
+        # Choice
+        if perf.choices[n] == 'R':
+            choice = 1
+        else:
+            choice = 0
+
+        # Condition
+        cond = (coh, choice)
+
+        # Storage
+        r_by_cond_stimulus.setdefault(cond, np.zeros(Ntime_a))
+        n_r_by_cond_stimulus.setdefault(cond, np.zeros(Ntime_a))
+
+        # Firing rates
+        Mn = M[:,n]
+        Rn = Z_b[:,n]*Mn
+
+        # Align point
+        t0 = trial['epochs']['stimulus'][0] - 1
+
+        # Before
+        n_b = Rn[:t0].shape[0]
+        r_by_cond_stimulus[cond][Ntime-1-n_b:Ntime-1]   += Rn[:t0]
+        n_r_by_cond_stimulus[cond][Ntime-1-n_b:Ntime-1] += Mn[:t0]
+
+        # After
+        n_a = Rn[t0:].shape[0]
+        r_by_cond_stimulus[cond][Ntime-1:Ntime-1+n_a]   += Rn[t0:]
+        n_r_by_cond_stimulus[cond][Ntime-1:Ntime-1+n_a] += Mn[t0:]
+
+    for cond in r_by_cond_stimulus:
+        r_by_cond_stimulus[cond] = utils.div(r_by_cond_stimulus[cond],
+                                             n_r_by_cond_stimulus[cond])
+
+    #=====================================================================================
+    # Aligned to choice
+    #=====================================================================================
+
+    r_by_cond_choice   = {}
+    n_r_by_cond_choice = {}
+    for n, trial in enumerate(trials):
+        if not perf.decisions[n]:
+            continue
+
+        # Signed coherence
+        coh = trial['coh']
+
+        # Choice
+        if perf.choices[n] == 'R':
+            choice = 1
+        else:
+            choice = 0
+
+        # Condition
+        cond = (coh, choice)
+
+        # Storage
+        r_by_cond_choice.setdefault(cond, np.zeros(Ntime_a))
+        n_r_by_cond_choice.setdefault(cond, np.zeros(Ntime_a))
+
+        # Firing rates
+        Mn = M[:,n]
+        Rn = Z_b[:,n]*Mn
+
+        # Align point
+        t0 = perf.t_choices[n]
+        #np.where(time <= perf.t_choices[n])[0][-1]
+        #assert t0 == np.sum(M[:,n])-1
+
+        # Before
+        n_b = Rn[:t0].shape[0]
+        r_by_cond_choice[cond][Ntime-1-n_b:Ntime-1]   += Rn[:t0]
+        n_r_by_cond_choice[cond][Ntime-1-n_b:Ntime-1] += Mn[:t0]
+
+        # After
+        n_a = Rn[t0:].shape[0]
+        r_by_cond_choice[cond][Ntime-1:Ntime-1+n_a]   += Rn[t0:]
+        n_r_by_cond_choice[cond][Ntime-1:Ntime-1+n_a] += Mn[t0:]
+
+    for cond in r_by_cond_choice:
+        r_by_cond_choice[cond] = utils.div(r_by_cond_choice[cond],
+                                           n_r_by_cond_choice[cond])
+
+    #=====================================================================================
+    # Plot
+    #=====================================================================================
+
+    lw     = kwargs.get('lw', 1.5)
+    dashes = kwargs.get('dashes', [4, 1.5])
+
+    time = trials[0]['time']
+
+    lr_colors = {1: '0', -1: '0.5'}
+
+    def plot_sorted(plot, w, r_sorted, clrs=colors):
+        t = time_a[w]
+        yall = [[1]]
+        for cond in sorted(r_sorted.keys()):
+            coh, choice = cond
+            if choice > 0:
+                props = dict(color=clrs[coh], label='{}\%'.format(coh))
+            else:
+                props = dict(color=clrs[coh])
+
+            if choice > 0:
+                ls = '-'
+                plot.plot(t, r_sorted[cond][w], ls=ls, lw=lw, **props)
+            else:
+                ls = '--'
+                plot.plot(t, r_sorted[cond][w], ls=ls, lw=lw, dashes=dashes, **props)
+            yall.append(r_sorted[cond][w])
+
+        return t, yall
+
+    def on_stimulus(plot, tmin=-200, tmax=1000, clrs=colors):
+        w, = np.where((tmin <= time_a) & (time_a <= tmax))
+        t, yall = plot_sorted(plot, w, r_by_cond_stimulus, clrs)
+
+        plot.xlim(t[0], t[-1])
+
+        plot.lim('y', yall, lower=0)
+
+        return yall
+
+    def on_choice(plot, tmin=-600, tmax=100):
+        w, = np.where((time_a >= tmin) & (time_a <= tmax))
+        t, yall = plot_sorted(plot, w, r_by_cond_choice)
+
+        plot.xlim(t[0], t[-1])
+
+        return yall
+
+    if plots is not None:
+        if kwargs.get('colors') is None:
+            clrs = colors
+        else:
+            clrs = colors_kiani2009
+
+        tmin = kwargs.get('on-stimulus-tmin', -200)
+        tmax = kwargs.get('on-stimulus-tmax', 1000)
+        if 'on-stimulus' in plots:
+            on_stimulus(plots['on-stimulus'], tmin, tmax, clrs)
+
+        if 'on-choice' in plots:
+            on_choice(plots['on-choice'])
+    else:
+        name = plots
+
+        w = 174/25.4
+        r = 0.5
+        h = r*w
+        fig = Figure(w=w, h=h)
+
+        x0 = 0.12
+        y0 = 0.15
+        w  = 0.37
+        h  = 0.8
+        dx = 1.3*w
+
+        fig.add('on-stimulus', [x0,    y0, w, h])
+        fig.add('on-choice',   [x0+dx, y0, w, h])
+
+        #-----------------------------------------------------------------------------
+
+        yall = []
+        yall += on_stimulus(fig['on-stimulus'])
+        yall += on_choice(fig['on-choice'])
+
+        plot = fig['on-stimulus']
+        plot.lim('y', yall, lower=0)
+        plot.vline(0)
+        plot.xlabel('Time (ms)')
+        plot.ylabel('Predicted return')
+
+        plot = fig['on-choice']
+        plot.lim('y', yall, lower=0)
+        plot.vline(0)
+
+        #-----------------------------------------------------------------------------
+
+        fig.save(name)
+        fig.close()
 
 #/////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1493,6 +1711,10 @@ def do(action, args, config):
         sort(runtools.activityfile(config['trialspath']),
              os.path.join(config['figspath'], 'sorted'),
              network=network)
+
+    elif action == 'sort-return':
+        sort(runtools.activityfile(config['trialspath']),
+             os.path.join(config['figspath'], 'sorted_return'))
 
     elif action == 'sort-postdecision':
         trialsfile = os.path.join(config['trialspath'], 'trials_activity.pkl')

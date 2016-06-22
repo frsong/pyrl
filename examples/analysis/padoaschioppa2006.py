@@ -65,7 +65,11 @@ def sort_epoch(trialsfile, epoch, offers, plots, units=None, network='p',
 
     """
     # Load trials
-    trials, U, Z, A, P, M, perf, r_p, r_v = utils.load(trialsfile)
+    data = utils.load(trialsfile)
+    if len(data) == 9:
+        trials, U, Z, A, P, M, perf, r_p, r_v = data
+    else:
+        trials, U, Z, Z_b, A, P, M, perf, r_p, r_v = data
 
     if network == 'p':
         print("POLICY NETWORK")

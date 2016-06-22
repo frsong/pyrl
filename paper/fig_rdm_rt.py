@@ -200,7 +200,7 @@ for e, label in zip(['fixation', 'stimulus'],
 
 # Epoch durations
 for e, label in zip(['fixation'],
-                    ['250-750 ms']):
+                    ['750 ms']):
     plot.text(np.mean(durations[e]), y-0.2, label, ha='center', va='top',
               fontsize=7)
 

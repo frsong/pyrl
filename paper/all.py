@@ -191,7 +191,7 @@ ntrials_a = 100
 
 if 'multisensory' in args:
     print("=> Multisensory integration")
-    #train(model)
+    train(model)
     trials(model, 'b', ntrials_b)
     do_action(model, 'psychometric')
     trials(model, 'a', ntrials_a)
@@ -296,8 +296,8 @@ if 'fig_cognitive' in args:
 if 'fig_postdecisionwager' in args:
     figure('fig_postdecisionwager')
 
-if 'padoaschioppa2006' in args:
-    figure('padoaschioppa2006')
+if 'fig_padoaschioppa2006' in args:
+    figure('fig_padoaschioppa2006')
 
 if 'fig_rdm_rt' in args:
     figure('fig_rdm_rt')

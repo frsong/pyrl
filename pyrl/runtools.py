@@ -40,7 +40,7 @@ def run(action, trials, pg, scratchpath, dt_save=None):
 
         for trial in trials:
             trial['time'] = trial['time'][::inc]
-        save = [trials, U[::inc], Z[::inc], A[::inc], R[::inc],
+        save = [trials, U[::inc], Z[::inc], Z_b[::inc], A[::inc], R[::inc],
                 M[::inc], perf, states[::inc], states_b[::inc]]
     else:
         raise ValueError(action)

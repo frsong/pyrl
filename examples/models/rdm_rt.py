@@ -27,11 +27,9 @@ n_validation = 100*n_conditions
 sigma = np.sqrt(2*100*0.01)
 
 # Durations
-fixation_min  = 350
-fixation_mean = 100
-fixation_max  = 400
-stimulus      = 2000
-tmax          = fixation_min + fixation_max + stimulus
+fixation = 750
+stimulus = 2000
+tmax     = fixation + stimulus
 
 # Rewards
 R_ABORTED = -1
@@ -42,11 +40,11 @@ def get_condition(rng, dt, context={}):
     # Epochs
     #-------------------------------------------------------------------------------------
 
-    fixation = context.get('fixation')
-    if fixation is None:
+    #fixation = context.get('fixation')
+    #if fixation is None:
         #fixation = tasktools.uniform(rng, dt, fixation_min, fixation_max)
-        fixation = fixation_min + tasktools.truncated_exponential(rng, dt, fixation_mean,
-                                                                  xmax=fixation_max)
+    #    fixation = fixation_min + tasktools.truncated_exponential(rng, dt, fixation_mean,
+    #                                                              xmax=fixation_max)
 
     durations = {
         'fixation': (0, fixation),

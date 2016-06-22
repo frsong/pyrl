@@ -176,6 +176,6 @@ def get_step(rng, dt, trial, t, a):
 
     return u, reward, status
 
-target_reward = 0.77
+target_reward = 0.78
 
 from pyrl.performance import PerformancePostdecisionWager as Performance

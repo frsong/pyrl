@@ -238,7 +238,11 @@ def sort(trialsfile, all_plots, units=None, network='p', **kwargs):
 
     """
     # Load trials
-    trials, U, Z, A, P, M, perf, r_p, r_v = utils.load(trialsfile)
+    data = utils.load(trialsfile)
+    if len(data) == 9:
+        trials, U, Z, A, P, M, perf, r_p, r_v = data
+    else:
+        trials, U, Z, Z_b, A, P, M, perf, r_p, r_v = data
 
     # Which network?
     if network == 'p':
