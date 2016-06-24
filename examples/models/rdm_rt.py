@@ -16,7 +16,7 @@ actions = tasktools.to_map('FIXATE', 'CHOOSE-LEFT', 'CHOOSE-RIGHT')
 
 # Trial conditions
 left_rights  = [-1, 1]
-cohs         = [0, 6.4, 12.8, 25.6, 51.2]
+cohs         = [0, 3.2, 6.4, 12.8, 25.6, 51.2]
 n_conditions = len(left_rights)*len(cohs)
 
 # Training
@@ -24,7 +24,7 @@ n_gradient   = n_conditions
 n_validation = 100*n_conditions
 
 # Input noise
-sigma = np.sqrt(2*100*0.01)
+sigma = np.sqrt(2*100*0.012)
 
 # Durations
 fixation = 750
@@ -130,4 +130,4 @@ def get_step(rng, dt, trial, t, a):
 def terminate(perf):
     p_decision, p_correct = tasktools.correct_2AFC(perf)
 
-    return p_decision >= 0.99 and p_correct >= 0.8
+    return p_decision >= 0.99 and p_correct >= 0.82

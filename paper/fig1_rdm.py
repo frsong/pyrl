@@ -17,7 +17,7 @@ parent = utils.get_parent(here)
 scratchpath = os.environ.get('SCRATCH')
 if scratchpath is None:
     scratchpath = os.path.join(os.environ['HOME'], 'scratch')
-trialspath  = os.path.join(scratchpath, 'work', 'pyrl')
+trialspath  = os.path.join(scratchpath, 'work', 'pyrl', 'examples')
 analysispath = os.path.join(parent, 'examples', 'analysis')
 modelspath   = os.path.join(parent, 'examples', 'models')
 
@@ -231,7 +231,7 @@ plot.ylabel('Probability correct')
 
 plot = fig['on-stimulus']
 
-unit = 11
+unit = 61
 
 kwargs = {'on-stimulus-tmin': -200, 'on-stimulus-tmax': 400, 'colors': 'kiani',
           'dashes': [3.5, 2]}

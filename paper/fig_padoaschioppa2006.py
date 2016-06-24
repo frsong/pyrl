@@ -18,11 +18,9 @@ parent = utils.get_parent(here)
 scratchpath = os.environ.get('SCRATCH')
 if scratchpath is None:
     scratchpath = os.path.join(os.environ['HOME'], 'scratch')
-trialspath   = os.path.join(scratchpath, 'work', 'pyrl')
+trialspath   = os.path.join(scratchpath, 'work', 'pyrl', 'examples')
 analysispath = os.path.join(parent, 'examples', 'analysis')
 modelspath   = os.path.join(parent, 'examples', 'models')
-
-trialspath2   = os.path.join(scratchpath, 'work', 'examples')
 
 # Analysis
 analysisfile = os.path.join(analysispath, 'padoaschioppa2006.py')
@@ -37,8 +35,8 @@ trialsfile_a = os.path.join(trialspath, 'padoaschioppa2006', 'trials_activity.pk
 # Model 2
 modelfile2    = os.path.join(modelspath, 'padoaschioppa2006_1A3B.py')
 model2        = imp.load_source('model2', modelfile2)
-trialsfile2_b = os.path.join(trialspath2, 'padoaschioppa2006_1A3B', 'trials_behavior.pkl')
-trialsfile2_a = os.path.join(trialspath2, 'padoaschioppa2006_1A3B', 'trials_activity.pkl')
+trialsfile2_b = os.path.join(trialspath, 'padoaschioppa2006_1A3B', 'trials_behavior.pkl')
+trialsfile2_a = os.path.join(trialspath, 'padoaschioppa2006_1A3B', 'trials_activity.pkl')
 
 #=========================================================================================
 # Figure
@@ -107,20 +105,17 @@ plot.text_upper_left('1A = {}B'.format(model2.A_to_B), fontsize=7.5,
 kwargs = {'ms': 4.5, 'lw': 1.25}
 
 plots = [fig['activity-1'], fig['activity-2'], fig['activity-3']]
-units = [8, 2, 19]
-#units = [2,47,41]
+units = [7, 47, 44]
 analysis.sort_epoch(trialsfile_a, 'prechoice', model.offers, plots, units, network='v',
                     **kwargs)
 
 plots = [fig['activity-4'], fig['activity-5']]
-units = [25, 29]
-#units = [36,23]
+units = [17, 2]
 analysis.sort_epoch(trialsfile_a, 'prechoice', model.offers, plots, units, network='v',
                     **kwargs)
 
 plots = [fig['activity-6']]
-units = [1]
-#units = [0]
+units = [21]
 analysis.sort_epoch(trialsfile_a, 'prechoice', model.offers, plots, units, network='v',
                     separate_by_choice=True, **kwargs)
 

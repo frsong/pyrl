@@ -135,6 +135,12 @@ plot.xlim(0, max([max(x) for x in xall]))
 plot.ylim(35, 100)
 plot.ylabel('Percent correct\n(decision trials)')
 
+if modelname == 'rdm_fixed':
+    target = 80
+    fig['correct'].hline(target, color=Figure.colors('red'), zorder=1)
+if modelname == 'rdm_rt':
+    target = 82
+    fig['correct'].hline(target, color=Figure.colors('red'), zorder=1)
 if modelname == 'romo':
     target = 90
     fig['correct'].hline(target, color=Figure.colors('red'), zorder=1)
