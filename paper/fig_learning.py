@@ -47,7 +47,7 @@ T = 1000
 times = []
 xall  = []
 original   = [modelname]
-additional = [modelname+'_s'+str(i) for i in [1000, 1001, 1002, 1003, 1004]]
+additional = [modelname+'_s'+str(i) for i in [100, 101, 102, 103, 104]]
 for name in additional + original:
     # Training history
     datapath = os.path.join(parent, 'examples', 'work', 'data', name)

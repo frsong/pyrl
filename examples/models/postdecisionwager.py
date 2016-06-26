@@ -34,7 +34,9 @@ n_validation = 50*n_conditions
 sigma = np.sqrt(2*100*0.01)
 
 # Recurrent noise
-var_rec = 0.02
+#var_rec = 0.025
+
+var_rec = 0.01
 
 # Durations
 fixation      = 750
@@ -179,6 +181,6 @@ def get_step(rng, dt, trial, t, a):
 
     return u, reward, status
 
-target_reward = 0.77
+target_reward = 0.78
 
 from pyrl.performance import PerformancePostdecisionWager as Performance

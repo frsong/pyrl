@@ -21,7 +21,7 @@ trialspath   = os.path.join(scratchpath, 'work', 'pyrl')
 analysispath = os.path.join(parent, 'examples', 'analysis')
 modelspath   = os.path.join(parent, 'examples', 'models')
 
-trialspath2   = os.path.join(scratchpath, 'work', 'examples')
+trialspath2   = os.path.join(scratchpath, 'work', 'pyrl', 'examples')
 
 # analysis/rdm
 rdm_analysisfile = os.path.join(analysispath, 'rdm.py')
@@ -55,15 +55,15 @@ multisensory_activity  = os.path.join(trialspath, 'multisensory', 'trials_activi
 # models/romo
 romo_modelfile = os.path.join(modelspath, 'romo.py')
 romo_model     = imp.load_source('romo_model', romo_modelfile)
-romo_behavior  = os.path.join(trialspath, 'romo', 'trials_behavior.pkl')
-romo_activity  = os.path.join(trialspath, 'romo', 'trials_activity.pkl')
+romo_behavior  = os.path.join(trialspath2, 'romo', 'trials_behavior.pkl')
+romo_activity  = os.path.join(trialspath2, 'romo', 'trials_activity.pkl')
 
 #=========================================================================================
 # Figure setup
 #=========================================================================================
 
 w   = utils.mm_to_inch(174)
-r   = 0.97
+r   = 0.98
 fig = Figure(w=w, r=r, axislabelsize=9, labelpadx=4, labelpady=6,
              thickness=0.8, ticksize=3, ticklabelsize=7.5, ticklabelpad=2)
 
@@ -271,9 +271,9 @@ plot.ylabel('$f_2$ (Hz)')
 
 #=========================================================================================
 
-kwargs = {}
+kwargs = {'lw': 1}
 
-units = [0, 15, 18]
+units = [93, 27, 73]
 plots = [fig['romo-'+str(i)] for i in xrange(len(units))]
 romo_analysis.sort(romo_activity, plots, units=units, **kwargs)
 

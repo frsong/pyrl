@@ -17,7 +17,7 @@ parent = utils.get_parent(here)
 scratchpath = os.environ.get('SCRATCH')
 if scratchpath is None:
     scratchpath = os.path.join(os.environ['HOME'], 'scratch')
-trialspath   = os.path.join(scratchpath, 'work', 'examples')
+trialspath   = os.path.join(scratchpath, 'work', 'pyrl', 'examples')
 analysispath = os.path.join(parent, 'examples', 'analysis')
 modelspath   = os.path.join(parent, 'examples', 'models')
 
@@ -219,11 +219,11 @@ analysis.chronometric(behavior, plot, **kwargs)
 #plot.xlim(0, 1200)
 #plot.xticks([0, 400, 800, 1200])
 
-plot.ylim(200, 1500)
-#plot.yticks([0.5, 0.6, 0.7, 0.8, 0.9, 1])
+plot.ylim(200, 1100)
+plot.yticks([200, 400, 600, 800, 1000])
 #plot.yticklabels([0.5, 0.6, 0.7, 0.8, 0.9, '1'])
 
-plot.xlabel('Percent coherence toward ')
+plot.xlabel('Percent coherence')
 plot.ylabel('Reaction time (ms)', labelpad=3)
 
 #=========================================================================================

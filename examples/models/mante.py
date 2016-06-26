@@ -32,7 +32,7 @@ n_gradient   = n_conditions
 n_validation = 50*n_conditions
 
 # Input noise
-sigma = np.sqrt(2*100*0.013)
+sigma = np.sqrt(2*100*0.02)
 
 # Rewards
 R_ABORTED = -1
@@ -178,4 +178,4 @@ def get_step(rng, dt, trial, t, a):
 def terminate(perf):
     p_decision, p_correct = tasktools.correct_2AFC(perf)
 
-    return p_decision >= 0.99 and p_correct >= 0.88
+    return p_decision >= 0.99 and p_correct >= 0.85

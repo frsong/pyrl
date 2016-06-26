@@ -167,8 +167,8 @@ if 'rdm_rt-seeds' in args:
 #-----------------------------------------------------------------------------------------
 
 model     = 'mante'
-ntrials_b = 200
-ntrials_a = 20
+ntrials_b = 500
+ntrials_a = 50
 
 if 'mante' in args:
     print("=> Context-dependent integration")
@@ -214,7 +214,7 @@ if 'multisensory-seeds' in args:
 
 model     = 'romo'
 ntrials_b = 100
-ntrials_a = 20
+ntrials_a = 50
 
 if 'romo' in args:
     print("=> Parametric working memory")
