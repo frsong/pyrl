@@ -173,7 +173,10 @@ class GRU(Recurrent):
                     params['Win'] = rng.normal(size=self.get_dim('Win'))
                 """
                 #params['Win']        = rng.normal(size=self.get_dim('Win'))
-                params['bin']        = np.zeros(self.get_dim('bin'))
+
+                params['bin'] = np.zeros(self.get_dim('bin'))
+                #params['bin'][:self.N] = -2
+
                 params['Wrec_gates'] = rng.normal(size=self.get_dim('Wrec_gates'))
                 params['Wrec']       = rng.normal(size=self.get_dim('Wrec'))
 
@@ -238,6 +241,7 @@ class GRU(Recurrent):
         # Display spectral radii
         #=================================================================================
 
+        """
         Wrec_gates = params['Wrec_gates'].copy()
         if 'Wrec_gates' in masks:
             Wrec_gates *= masks['Wrec_gates']
@@ -256,6 +260,7 @@ class GRU(Recurrent):
         rho0 = matrixtools.spectral_radius(Wrec)
         print("rho = {}".format(rho0))
         #params['Wrec'] *= rho/rho0
+        """
 
         #=================================================================================
         # Give to Theano

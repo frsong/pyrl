@@ -26,25 +26,24 @@ cohs         = [0, 6.4, 12.8, 25.6, 51.2]
 n_conditions = len(left_rights)*len(cohs)
 
 # Training
-n_gradient   = n_conditions
+n_gradient   = 0.5*n_conditions
 n_validation = 100*n_conditions
 
 # Input noise
 sigma = np.sqrt(2*100*0.01)
 
 # Recurrent noise
-var_rec = 0.02
+#var_rec = 0.02
+
+checkfreq = 100
 
 # Durations
 fixation      = 750
-fixation_min  = 350
-fixation_mean = 100
-fixation_max  = 400
 stimulus_min  = 80
 stimulus_mean = 330
 stimulus_max  = 1500
 decision      = 500
-tmax          = fixation_min + fixation_max + stimulus_max + decision
+tmax          = fixation + stimulus_max + decision
 
 # Rewards
 R_ABORTED = -1

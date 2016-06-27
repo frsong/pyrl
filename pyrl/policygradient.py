@@ -355,6 +355,7 @@ class PolicyGradient(object):
                     R[t,n] = self.R_ABORTED
                     status = {'continue': False}
                 #print("t = {}, rho = {}".format(t, R[t,n]))
+                # Discount reward
                 #R[t,n] *= np.exp(-t*self.dt/10000)
 
                 u_t    = U[t,n]
