@@ -32,6 +32,9 @@ n_validation = 100*n_conditions
 # Input noise
 sigma = np.sqrt(2*100*0.01)
 
+# Recurrent noise
+var_rec = 0.02
+
 # Durations
 fixation      = 750
 fixation_min  = 350
@@ -51,12 +54,6 @@ def get_condition(rng, dt, context={}):
     #-------------------------------------------------------------------------------------
     # Epochs
     #-------------------------------------------------------------------------------------
-
-    #fixation = context.get('fixation')
-    #if fixation is None:
-        #fixation = tasktools.uniform(rng, dt, fixation_min, fixation_max)
-    #    fixation = fixation_min + tasktools.truncated_exponential(rng, dt, fixation_mean,
-    #                                                              xmax=fixation_max)
 
     stimulus = context.get('stimulus')
     if stimulus is None:
@@ -103,7 +100,7 @@ def get_step(rng, dt, trial, t, a):
     epochs = trial['epochs']
     status = {'continue': True}
     reward = 0
-    if t-1 in epochs['fixation'] or t-1 in epochs['stimulus']:
+    if t-1 not in epochs['decision']:
         if a != actions['FIXATE']:
             status['continue'] = False
             reward = R_ABORTED

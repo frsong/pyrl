@@ -278,6 +278,9 @@ def sort(trialsfile, all_plots, units=None, network='p', **kwargs):
     #-------------------------------------------------------------------------------------
 
     sorted_trials = {s: {} for s in sortby}
+    X  = 0
+    X2 = 0
+    NX = 0
     for n, trial in enumerate(trials):
         if perf.choices[n] == 'R':
             target = +1
@@ -289,6 +292,15 @@ def sort(trialsfile, all_plots, units=None, network='p', **kwargs):
                 sorted_trial = sort_func(s, preferred_targets, target, trial)
                 for u, cond in enumerate(sorted_trial):
                     sorted_trials[s].setdefault(cond, []).append((n, u))
+
+        # For normalizing
+        Mn  = np.tile(M[:,n], (N,1)).T
+        Rn  = r[:,n]*Mn
+        X  += np.sum(Rn)
+        X2 += np.sum(Rn**2)
+        NX += np.sum(Mn)
+    mean = X/NX
+    sd   = np.sqrt(X2/NX - mean**2)
 
     #-------------------------------------------------------------------------------------
     # Average within conditions
@@ -305,6 +317,9 @@ def sort(trialsfile, all_plots, units=None, network='p', **kwargs):
                 # Firing rates
                 Mn  = M[:,n]
                 Rnu = r[:,n,u]*Mn
+
+                # Normalize
+                Rnu = (Rnu - mean)/sd
 
                 # Align point
                 t0 = trials[n]['epochs']['stimulus'][0] - 1
@@ -323,25 +338,6 @@ def sort(trialsfile, all_plots, units=None, network='p', **kwargs):
         for cond in trials_by_cond:
             trials_by_cond[cond] = utils.div(trials_by_cond[cond]['r'],
                                              trials_by_cond[cond]['n'])
-
-        '''
-        # Statistics
-        X  = 0
-        X2 = 0
-        n  = 0
-        for cond, r_cond in trials_by_cond.items():
-            X  += np.sum(r_cond,    axis=-1)
-            X2 += np.sum(r_cond**2, axis=-1)
-            n  += r_cond.shape[-1]
-        mean = X/n
-        std  = np.sqrt(X2/n - mean**2)
-
-        # Normalize
-        mean = np.tile(mean, (Ntime_a, 1)).T
-        std  = np.tile(std,  (Ntime_a, 1)).T
-        for cond, r_cond in trials_by_cond.items():
-            trials_by_cond[cond] = (r_cond - mean)/std
-        '''
 
         # Save
         sorted_trials[s] = trials_by_cond
@@ -500,7 +496,7 @@ def sort(trialsfile, all_plots, units=None, network='p', **kwargs):
             yall += y
 
             for plot in fig.plots.values():
-                plot.lim('y', yall, lower=0)
+                plot.lim('y', yall)
 
             #-----------------------------------------------------------------------------
 

@@ -155,7 +155,7 @@ elif action == 'run':
 
     # Pass everything on
     config = {
-        'seed':       seed,
+        'seed':       1,
         'suffix':     suffix,
         'model':      model,
         'savefile':   savefile_copy,

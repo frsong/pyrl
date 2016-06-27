@@ -36,7 +36,11 @@ sigma = np.sqrt(2*100*0.01)
 # Recurrent noise
 #var_rec = 0.025
 
-var_rec = 0.01
+#baseline_fix = []
+
+#var_rec = 0.02
+
+L2_r = 0.002
 
 # Durations
 fixation      = 750
@@ -181,6 +185,6 @@ def get_step(rng, dt, trial, t, a):
 
     return u, reward, status
 
-target_reward = 0.78
+target_reward = 0.77
 
 from pyrl.performance import PerformancePostdecisionWager as Performance

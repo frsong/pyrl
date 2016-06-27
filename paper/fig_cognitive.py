@@ -43,8 +43,8 @@ romo_analysis     = imp.load_source('romo_analysis',romo_analysisfile)
 # models/mante
 mante_modelfile  = os.path.join(modelspath, 'mante.py')
 mante_model      = imp.load_source('mante_model', mante_modelfile)
-mante_behavior   = os.path.join(trialspath, 'mante', 'trials_behavior.pkl')
-mante_activity   = os.path.join(trialspath, 'mante', 'trials_activity.pkl')
+mante_behavior   = os.path.join(trialspath2, 'mante', 'trials_behavior.pkl')
+mante_activity   = os.path.join(trialspath2, 'mante', 'trials_activity.pkl')
 
 # models/multisensory
 multisensory_modelfile = os.path.join(modelspath, 'multisensory.py')
@@ -85,10 +85,10 @@ fig.add('ms-behavior', [xleft, fig['romo-behavior'].top+DY, w_behavior, h_behavi
 fig.add('mante-c', [xleft, fig['ms-behavior'].top+DY, w_behavior, h_behavior])
 fig.add('mante-m', [xleft, fig['mante-c'].top+dy, w_behavior, h_behavior])
 
-w_mante = 0.1
+w_mante = 0.08
 h_mante = 0.07
 
-pad_mante = 0.07
+pad_mante = 0.1
 x0_mante  = fig['mante-m'].right + DX + pad_mante
 y0_mante  = fig['mante-m'].top - h_mante
 dx_mante  = (3*w_activity+2*dx - pad_mante - 4*w_mante)/3
@@ -168,7 +168,7 @@ plot.xlabel('Percent color coherence')
 
 #=========================================================================================
 
-units     = [7, 10, 17, 43]
+units     = [44, 45, 52, 86]
 all_plots = []
 for i in xrange(len(units)):
     plots = {
@@ -193,21 +193,35 @@ plot = fig['mante-context-choice-0']
 plot.xticks([tmin, tmax])
 plot.xticklabels([tmin, tmax])
 plot.xlim(tmin, tmax)
-plot.xlabel('Time (ms)')
+plot.xlabel('Time from stim. onset (ms)')
 
 # Rate axis
 lims = {
-    'choice':         5,
-    'motion-choice':  6,
-    'color-choice':   6,
-    'context-choice': 5
+    'choice':         (0, 2.5),
+    'motion-choice':  (-1, 2.5),
+    'color-choice':   (0, 2.5),
+    'context-choice': (0, 2.5)
     }
 
-for k, v in lims.items():
-    for i in xrange(len(units)):
+#for k, v in lims.items():
+#    for i in xrange(len(units)):
+#        plot = fig['mante-{}-{}'.format(k, i)]
+        #plot.yticks([0, v])
+        #plot.ylim(v)
+
+        #if i > 0:
+        #    plot.yticks()
+
+lims = {
+    0: (-0.5, 2.5),
+    1: (0, 2.5),
+    2: (-1, 2),
+    3: (-1, 2.5)
+    }
+for i in xrange(len(units)):
+    for k in ['choice', 'motion-choice', 'color-choice', 'context-choice']:
         plot = fig['mante-{}-{}'.format(k, i)]
-        plot.yticks([0, v])
-        plot.ylim(0, v)
+        plot.ylim(lims[i])
 
 def custom_axislabel(name, s1, s2, color2='k'):
     plot = fig[name]

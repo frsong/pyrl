@@ -9,8 +9,6 @@ import numpy as np
 import theano
 from   theano import tensor
 
-#from theano.compile.nanguardmode import NanGuardMode
-
 from .         import nptools, tasktools, theanotools, utils
 from .debug    import DEBUG
 from .networks import Networks
@@ -51,11 +49,10 @@ class PolicyGradient(object):
             Network = Networks[self.config['network_type']]
 
             # Time step
-            print("dt = {}".format(dt))
             self.dt = dt
             if self.dt is None:
-                print("Using config dt.")
                 self.dt = self.config['dt']
+                print("Using config dt = {}".format(self.dt))
 
             # Leak
             alpha = self.dt/self.config['tau']
@@ -97,11 +94,10 @@ class PolicyGradient(object):
             Network = Networks[config['network_type']]
 
             # Time step
-            print("dt = {}".format(dt))
             self.dt = dt
             if self.dt is None:
-                print("Using config dt.")
                 self.dt = config['dt']
+                print("Using config dt = {}".format(self.dt))
 
             # Leak
             alpha = self.dt/config['tau']
@@ -189,7 +185,8 @@ class PolicyGradient(object):
         return theanotools.zeros(size)
 
     def run_trials(self, trials, init=None, init_b=None,
-                   return_states=False, perf=None, task=None, progress_bar=False):
+                   return_states=False, perf=None, task=None, progress_bar=False,
+                   p_dropout=0):
         if isinstance(trials, list):
             n_trials = len(trials)
         else:
@@ -214,6 +211,13 @@ class PolicyGradient(object):
                                self.scaled_var_rec)
         Q_b = self.make_noise((self.Tmax, n_trials, self.baseline_net.noise_dim),
                                self.scaled_baseline_var_rec)
+
+        # Dropout mask
+        #D   = np.ones((self.Tmax, n_trials, self.policy_net.N))
+        #D_b = np.ones((self.Tmax, n_trials, self.baseline_net.N))
+        #if p_dropout > 0:
+        #    D   -= (np.uniform(size=D.shape) < p_dropout)
+        #    D_b -= (np.uniform(size=D_b.shape) < p_dropout)
 
         # Firing rates
         if return_states:
