@@ -2,7 +2,7 @@
 Multisensory integration, based on
 
   A category-free neural population supports evolving demands during decision-making.
-  D. Raposo, M. T. Kaufman, & A. K. Churchland, Nature Neurosci. 2014.
+  D Raposo, MT Kaufman, & AK Churchland, Nature Neurosci. 2014.
 
   http://dx.doi.org/10.1038/nn.3865
 
@@ -32,26 +32,22 @@ n_gradient   = n_conditions
 n_validation = 100*n_conditions
 
 # Input noise
-sigma = np.sqrt(2*100*0.015)
+sigma = np.sqrt(2*100*0.02)
+
+# Smaller learning rates to obtain symmetric psychometric functions
+lr          = 0.004
+baseline_lr = 0.004
 
 # Epoch durations
-fixation      = 750
-fixation_min  = 350
-fixation_mean = 100
-fixation_max  = 400
-stimulus      = 1000
-decision      = 500
-tmax          = fixation_min + fixation_max + stimulus + decision
+fixation = 750
+stimulus = 1000
+decision = 500
+tmax     = fixation + stimulus + decision
 
 def get_condition(rng, dt, context={}):
     #-------------------------------------------------------------------------------------
     # Epochs
     #-------------------------------------------------------------------------------------
-
-    #fixation = context.get('fixation')
-    #if fixation is None:
-    #    fixation = fixation_min + tasktools.truncated_exponential(rng, dt, fixation_mean,
-    #                                                              xmax=fixation_max)
 
     durations = {
         'fixation': (0, fixation),
@@ -85,7 +81,7 @@ R_CORRECT = +1
 
 # Input scaling
 fmin = 0
-fmax = 25
+fmax = 2*boundary
 
 def scale(f):
     return (f - fmin)/(fmax - fmin)

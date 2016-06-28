@@ -3,7 +3,7 @@ Perceptual decision-making task, based on
 
   Bounded integration in parietal cortex underlies decisions even when viewing
   duration is dictated by the environment.
-  R. Kiani, T. D. Hanks, & M. N. Shadlen, JNS 2008.
+  R Kiani, TD Hanks, & MN Shadlen, JNS 2008.
 
   http://dx.doi.org/10.1523/JNEUROSCI.4761-07.2008
 
@@ -26,16 +26,15 @@ cohs         = [0, 6.4, 12.8, 25.6, 51.2]
 n_conditions = len(left_rights)*len(cohs)
 
 # Training
-n_gradient   = 0.5*n_conditions
+n_gradient   = n_conditions
 n_validation = 100*n_conditions
+#checkfreq    = 100
+
+lr          = 0.004
+baseline_lr = 0.004
 
 # Input noise
 sigma = np.sqrt(2*100*0.01)
-
-# Recurrent noise
-#var_rec = 0.02
-
-checkfreq = 100
 
 # Durations
 fixation      = 750

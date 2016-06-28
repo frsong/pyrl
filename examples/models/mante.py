@@ -2,7 +2,7 @@
 Context-dependent integration task, based on
 
   Context-dependent computation by recurrent dynamics in prefrontal cortex.
-  V. Mante, D. Sussillo, K. V. Shinoy, & W. T. Newsome, Nature 2013.
+  V Mante, D Sussillo, KV Shinoy, & WT Newsome, Nature 2013.
 
   http://dx.doi.org/10.1038/nature12742
 

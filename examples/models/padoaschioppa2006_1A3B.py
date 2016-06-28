@@ -2,7 +2,7 @@
 Economic choice task, based on
 
   Neurons in the orbitofrontal cortex encode economic value.
-  C. Padoa-Schioppa & J. A. Assad, Nature 2006.
+  C Padoa-Schioppa & JA Assad, Nature 2006.
 
   http://dx.doi.org/10.1038/nature04676
 

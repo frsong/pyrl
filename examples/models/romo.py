@@ -34,6 +34,8 @@ sigma = np.sqrt(2*100*0.0001)
 # Recurrent noise
 var_rec = 0.02
 
+#checkfreq = 1
+
 # Epoch durations
 fixation      = 750
 fixation_min  = 350

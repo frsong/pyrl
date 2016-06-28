@@ -10,13 +10,6 @@ import shutil
 import sys
 import time
 
-# Set flags before importing Theano
-os.environ.setdefault('THEANO_FLAGS', '')
-os.environ['THEANO_FLAGS'] += ',floatX=float32,allow_gc=False'
-
-from pyrl       import utils
-from pyrl.model import Model
-
 #=========================================================================================
 # Command line
 #=========================================================================================
@@ -29,6 +22,7 @@ p.add_argument('--dt', type=float, default=0)
 p.add_argument('--dt-save', type=float, default=0)
 p.add_argument('--seed', type=int, default=100)
 p.add_argument('--suffix', type=str, default='')
+p.add_argument('--gpu', dest='gpu', action='store_true', default=False)
 a = p.parse_args()
 
 # Model file
@@ -42,12 +36,23 @@ dt      = a.dt
 dt_save = a.dt_save
 seed    = a.seed
 suffix  = a.suffix
+gpu     = a.gpu
 
 print("MODELFILE: " + modelfile)
 print("ACTION:    " + action)
 print("ARGS:      " + str(args))
 print("SEED:      " + str(seed))
 print("SUFFIX:    " + suffix)
+print("GPU:       " + gpu)
+
+# Set flags before importing Theano
+os.environ.setdefault('THEANO_FLAGS', '')
+os.environ['THEANO_FLAGS'] += ',floatX=float32,allow_gc=False'
+if gpu:
+    os.environ['THEANO_FLAGS'] += ',device=gpu,nvcc.fastmath=True'
+
+from pyrl       import utils
+from pyrl.model import Model
 
 #=========================================================================================
 # Setup paths

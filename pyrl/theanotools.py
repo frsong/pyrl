@@ -126,3 +126,25 @@ def normalization3(x):
     y  = y.reshape(sh)
 
     return y
+
+#=========================================================================================
+# GPU
+#=========================================================================================
+
+def get_processor_type():
+    """
+    Test whether the GPU is being used, based on the example in
+
+      http://deeplearning.net/software/theano/tutorial/using_gpu.html
+
+    """
+    rng = np.random.RandomState(1234)
+
+    n = 10*30*768
+    x = shared(rng.rand(n))
+    f = function([], T.exp(x))
+
+    if np.any([isinstance(x.op, tensor.Elemwise) and ('Gpu' not in type(x.op).__name__)
+               for x in f.maker.fgraph.toposort()]):
+        return 'cpu'
+    return 'gpu'

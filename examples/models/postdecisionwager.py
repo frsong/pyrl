@@ -33,14 +33,15 @@ n_validation = 50*n_conditions
 # Input noise
 sigma = np.sqrt(2*100*0.01)
 
-# Recurrent noise
-#var_rec = 0.025
+#lr          = 0.005
+#baseline_lr = 0.005
 
-#baseline_fix = []
+var_rec = 0.01
+baseline_var_rec = 0.01
 
-#var_rec = 0.02
+#Win = 0.1
 
-L2_r = 0.002
+baseline_fix = []
 
 # Durations
 fixation      = 750
@@ -54,7 +55,7 @@ sure_min      = 500
 sure_mean     = 575
 sure_max      = 750
 decision      = 500
-tmax          = fixation + stimulus_max + delay_max + decision
+tmax          = fixation + stimulus_min + stimulus_max + delay_max + decision
 
 # Rewards
 R_ABORTED = -1
@@ -63,13 +64,25 @@ R_SURE    = 0.7*R_CORRECT
 
 def get_condition(rng, dt, context={}):
     #-------------------------------------------------------------------------------------
+    # Wager or no wager?
+    #-------------------------------------------------------------------------------------
+
+    wager = context.get('wager')
+    if wager is None:
+        wager = rng.choice(wagers)
+
+    #-------------------------------------------------------------------------------------
     # Epochs
     #-------------------------------------------------------------------------------------
 
+    #fixation_min  = 350
+    #fixation_mean = 100
+    #fixation_max  = 400
+
     #fixation = context.get('fixation')
     #if fixation is None:
-    #    fixation = fixation_min + tasktools.truncated_exponential(rng, dt, fixation_mean,
-    #                                                              xmax=fixation_max)
+#        fixation = fixation_min + tasktools.truncated_exponential(rng, dt, fixation_mean,
+#                                                                  xmax=fixation_max)
 
     stimulus = context.get('stimulus')
     if stimulus is None:
@@ -81,28 +94,26 @@ def get_condition(rng, dt, context={}):
         delay = tasktools.truncated_exponential(rng, dt, delay_mean,
                                                 xmin=delay_min, xmax=delay_max)
 
-    sure_onset = context.get('sure_onset')
-    if sure_onset is None:
-        sure_onset = tasktools.truncated_exponential(rng, dt, sure_mean,
-                                                     xmin=sure_min, xmax=sure_max)
+    if wager:
+        sure_onset = context.get('sure_onset')
+        if sure_onset is None:
+            sure_onset = tasktools.truncated_exponential(rng, dt, sure_mean,
+                                                         xmin=sure_min, xmax=sure_max)
 
     durations = {
         'fixation':  (0, fixation),
         'stimulus':  (fixation, fixation + stimulus),
         'delay':     (fixation + stimulus, fixation + stimulus + delay),
-        'sure':      (fixation + stimulus + sure_onset, tmax),
         'decision':  (fixation + stimulus + delay, tmax),
         'tmax':      tmax
         }
+    if wager:
+        durations['sure'] = (fixation + stimulus + sure_onset, tmax)
     time, epochs = tasktools.get_epochs_idx(dt, durations)
 
     #-------------------------------------------------------------------------------------
     # Trial
     #-------------------------------------------------------------------------------------
-
-    wager = context.get('wager')
-    if wager is None:
-        wager = rng.choice(wagers)
 
     left_right = context.get('left_right')
     if left_right is None:

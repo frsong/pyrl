@@ -22,7 +22,7 @@ configs_default  = {
     'rho':     1.5,
     'f_out':   'softmax',
     'L2_r':    0.002,
-    'Win':     None,
+    'Win':     1,
     'Wout':    0,
     'L1_Wrec': 0,
     'L2_Wrec': 0,
@@ -153,16 +153,9 @@ class GRU(Recurrent):
 
             params = OrderedDict()
             if self.config['ei'] is None:
-                #params['Win']        = rng.uniform(-1, 1, size=self.get_dim('Win'))
-                #params['Win']        = 0.1*np.ones(self.get_dim('Win'))
-                params['Win'] = self.config['Win']
-                if params['Win'] is None:
-                    print("Win is None")
-                    params['Win'] = rng.normal(size=self.get_dim('Win'))
-                else:
-                    print("Win is not None")
-                    params['Win'] = params['Win']*rng.normal(size=self.get_dim('Win'))
-                    print(params['Win'])
+                print("Win = {}".format(self.config['Win']))
+                params['Win'] = self.config['Win']*rng.normal(size=self.get_dim('Win'))
+
                 """
                 if np.isscalar(params['Win']):
                     print("Win is scalar")

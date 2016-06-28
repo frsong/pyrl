@@ -111,6 +111,7 @@ class PolicyGradient(object):
                 'p0':           config['p0'],
                 'rho':          config['rho'],
                 'f_out':        'softmax',
+                'Win':          config['Win'],
                 'fix':          config['fix'],
                 'L2_r':         config['L2_r'],
                 'L1_Wrec':      config['L1_Wrec'],
@@ -131,6 +132,7 @@ class PolicyGradient(object):
                 'p0':           config['p0'],
                 'rho':          config['baseline_rho'],
                 'f_out':        'linear',
+                'Win':          config['baseline_Win'],
                 'fix':          config['baseline_fix'],
                 'L2_r':         config['baseline_L2_r'],
                 'L1_Wrec':      config['L1_Wrec'],
@@ -528,8 +530,15 @@ class PolicyGradient(object):
         else:
             use_x0 = False
 
+        # GPU?
+        if theanotools.get_processor_type() == 'gpu':
+            gpu = 'Yes'
+        else:
+            gpu = 'No'
+
         # Print settings
         items = OrderedDict()
+        items['GPU']                      = gpu,
         items['Network type']             = self.config['network_type']
         items['N']                        = self.config['N']
         items['Connection probability']   = self.config['p0']

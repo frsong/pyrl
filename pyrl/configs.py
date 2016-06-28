@@ -21,6 +21,8 @@ default  = {
     'baseline_var_rec': 0.01,
     'L2_r':             0,
     'baseline_L2_r':    0,
+    'Win':              1,
+    'baseline_Win':     1,
     'rho':              2,
     'baseline_rho':     2,
     'L1_Wrec':          0,

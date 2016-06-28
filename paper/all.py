@@ -172,10 +172,10 @@ ntrials_a = 50
 
 if 'mante' in args:
     print("=> Context-dependent integration")
-    #train('mante')
-    #trials(model, 'b', ntrials_b)
-    #do_action(model, 'psychometric')
-    #trials(model, 'a', ntrials_a)
+    train('mante')
+    trials(model, 'b', ntrials_b)
+    do_action(model, 'psychometric')
+    trials(model, 'a', ntrials_a)
     do_action(model, 'sort')
 
 if 'mante-seeds' in args:
@@ -195,7 +195,7 @@ ntrials_a = 100
 
 if 'multisensory' in args:
     print("=> Multisensory integration")
-    #train(model)
+    train(model)
     trials(model, 'b', ntrials_b)
     do_action(model, 'psychometric')
     trials(model, 'a', ntrials_a)
@@ -254,6 +254,9 @@ if 'postdecisionwager-seeds' in args:
     for seed in xrange(start_seed, start_seed+ntrain):
         print("=> Postdecision wager (seed = {})".format(seed))
         train(model, seed=seed)
+        trials(model, 'b', ntrials_b, seed=seed)
+        do_action(model, 'sure_stimulus_duration', seed=seed)
+        do_action(model, 'correct_stimulus_duration', seed=seed)
 
 #-----------------------------------------------------------------------------------------
 # Economic choice
