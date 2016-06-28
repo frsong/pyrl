@@ -43,7 +43,7 @@ print("ACTION:    " + action)
 print("ARGS:      " + str(args))
 print("SEED:      " + str(seed))
 print("SUFFIX:    " + suffix)
-print("GPU:       " + gpu)
+print("GPU:       " + str(gpu))
 
 # Set flags before importing Theano
 os.environ.setdefault('THEANO_FLAGS', '')

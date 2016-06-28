@@ -142,7 +142,7 @@ def get_processor_type():
 
     n = 10*30*768
     x = shared(rng.rand(n))
-    f = function([], T.exp(x))
+    f = theano.function([], tensor.exp(x))
 
     if np.any([isinstance(x.op, tensor.Elemwise) and ('Gpu' not in type(x.op).__name__)
                for x in f.maker.fgraph.toposort()]):

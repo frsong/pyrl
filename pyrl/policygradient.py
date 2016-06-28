@@ -538,7 +538,7 @@ class PolicyGradient(object):
 
         # Print settings
         items = OrderedDict()
-        items['GPU']                      = gpu,
+        items['GPU']                      = gpu
         items['Network type']             = self.config['network_type']
         items['N']                        = self.config['N']
         items['Connection probability']   = self.config['p0']
