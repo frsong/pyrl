@@ -21,11 +21,13 @@ from pyrl import utils
 
 p = argparse.ArgumentParser()
 p.add_argument('--simulate', action='store_true', default=False)
+p.add_argument('--gpu', dest='gpu', action='store_true', default=False)
 p.add_argument('args', nargs='*')
 a = p.parse_args()
 
 simulate = a.simulate
 args     = a.args
+gpu      = a.gpu
 if not args:
     args = [
         'mante', # Fig. 1
@@ -70,6 +72,9 @@ def train(model, seed=None):
     else:
         extra = ' --seed {0} --suffix _s{0}'.format(seed)
         suffix = '_s'+str(seed)
+
+    if gpu:
+        extra += ' --gpu'
 
     tstart = datetime.datetime.now()
     call("python {} {} train{}".format(join(dopath, 'do.py'),
