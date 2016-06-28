@@ -99,9 +99,16 @@ def choice(rng, a, size=1, replace=True, p=None):
 # Output activations
 #=========================================================================================
 
-def relu(x):
-    return tensor.nnet.relu(x)
-    #return tensor.switch(x > upper, upper, tensor.nnet.relu(x))
+if hasattr(tensor.nnet, 'relu'):
+    def relu(x):
+        return tensor.nnet.relu(x)
+else:
+    def relu(x):
+        return tensor.switch(x > 0, x, 0)
+
+#def relu(x):
+#    return tensor.nnet.relu(x)
+#    #return tensor.switch(x > upper, upper, tensor.nnet.relu(x))
 
 def softmax(x, temp=1):
     y = tensor.exp(x/temp)
