@@ -32,7 +32,7 @@ n_validation = 20*n_conditions
 sigma = np.sqrt(2*100*0.0001)
 
 # Recurrent noise
-var_rec = 0.02
+#var_rec = 0.02
 
 #checkfreq = 1
 
