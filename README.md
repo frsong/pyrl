@@ -8,7 +8,7 @@ This code is written in Python 2.7 and requires
 
 ## Notes
 
-* For our paper, we used a time step of 10 ms, which results in hundreds of time steps for typical tasks. When training a new task, we highly recommend that you first start with a larger time step.
+* For the paper, we used a time step of 10 ms, which results in hundreds of time steps for typical tasks. When training a new task, we highly recommend that you start with a larger value to save time.
 
 ## License
 
