@@ -32,9 +32,7 @@ n_validation = 20*n_conditions
 sigma = np.sqrt(2*100*0.0001)
 
 # Recurrent noise
-#var_rec = 0.02
-
-#checkfreq = 1
+var_rec = 0.02
 
 # Epoch durations
 fixation      = 750
@@ -52,11 +50,6 @@ def get_condition(rng, dt, context={}):
     #-------------------------------------------------------------------------------------
     # Epochs
     #-------------------------------------------------------------------------------------
-
-    #fixation = context.get('fixation')
-    #if fixation is None:
-    #    fixation = fixation_min + tasktools.truncated_exponential(rng, dt, fixation_mean,
-    #                                                              xmax=fixation_max)
 
     delay = context.get('delay')
     if delay is None:
