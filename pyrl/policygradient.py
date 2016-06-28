@@ -532,9 +532,9 @@ class PolicyGradient(object):
 
         # GPU?
         if theanotools.get_processor_type() == 'gpu':
-            gpu = 'Yes'
+            gpu = 'yes'
         else:
-            gpu = 'No'
+            gpu = 'no'
 
         # Print settings
         items = OrderedDict()

@@ -101,6 +101,7 @@ for name in additional + original:
 
     #plot.plot(ntrials[w1], rewards[w1], '--', color=color, lw=lw, dashes=dashes)
     plot.plot(ntrials, rewards, color=color, lw=lw)
+    plot.plot(ntrials[-1], rewards[-1], 'o', mfc=color, ms=4, mew=0)
     #plot.plot(ntrials, rewards, 'o', color=color, ms=6, mew=0)
 
     xall.append(ntrials)
@@ -115,6 +116,7 @@ for name in additional + original:
 
     #plot.plot(ntrials[w1], 100*pcorrects[w1], '--', color=color, lw=lw)
     plot.plot(ntrials[w2], 100*pcorrects[w2], color=color, lw=lw)
+    plot.plot(ntrials[w2][-1], 100*pcorrects[w2][-1], 'o', mfc=color, ms=4, mew=0)
     #plot.plot(ntrials, 100*pcorrects, 'o', color=color, ms=6, mew=0)
 
 plot = fig['reward']

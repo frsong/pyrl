@@ -33,15 +33,15 @@ n_validation = 50*n_conditions
 # Input noise
 sigma = np.sqrt(2*100*0.01)
 
-#lr          = 0.005
-#baseline_lr = 0.005
+lr          = 0.004
+baseline_lr = 0.004
 
-var_rec = 0.01
-baseline_var_rec = 0.01
+#var_rec = 0.01
+#baseline_var_rec = 0.01
 
 #Win = 0.1
 
-baseline_fix = []
+#baseline_fix = []
 
 # Durations
 fixation      = 750
