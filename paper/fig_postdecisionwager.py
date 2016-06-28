@@ -237,7 +237,7 @@ display_actions(np.mean(durations['delay']), y_stimulus+shift, rewards, colors)
 
 shift = 0.5
 
-rewards = ['0', '0', '1', '0.8']
+rewards = ['0', '0', '1', '0.7']
 colors  = [None, None, Figure.colors('darkblue'), Figure.colors('blue')]
 display_actions(np.mean(durations['decision']), y_sure_Ts+shift, rewards, colors)
 
