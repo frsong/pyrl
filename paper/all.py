@@ -55,6 +55,7 @@ def call(s):
     if simulate:
         print(3*' ' + s)
     else:
+        print(s)
         rval = subprocess.call(s.split())
         if rval != 0:
             sys.stdout.flush()
