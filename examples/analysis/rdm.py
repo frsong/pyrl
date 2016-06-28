@@ -756,7 +756,7 @@ def sort_return(trialsfile, plots=None, **kwargs):
 
         return yall
 
-    if plots is not None:
+    if not isinstance(plots, str):
         if kwargs.get('colors') is None:
             clrs = colors
         else:
@@ -1713,8 +1713,8 @@ def do(action, args, config):
              network=network)
 
     elif action == 'sort-return':
-        sort(runtools.activityfile(config['trialspath']),
-             os.path.join(config['figspath'], 'sorted_return'))
+        trialsfile = runtools.activityfile(config['trialspath'])
+        sort_return(trialsfile, os.path.join(config['figspath'], 'sorted_return'))
 
     elif action == 'sort-postdecision':
         trialsfile = os.path.join(config['trialspath'], 'trials_activity.pkl')
