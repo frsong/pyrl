@@ -103,6 +103,7 @@ if hasattr(tensor.nnet, 'relu'):
     def relu(x):
         return tensor.nnet.relu(x)
 else:
+    print("No ReLU, using switch.")
     def relu(x):
         return tensor.switch(x > 0, x, 0)
 
