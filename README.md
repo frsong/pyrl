@@ -6,6 +6,10 @@ This code is written in Python 2.7 and requires
 
 * [Theano 0.8.2](http://deeplearning.net/software/theano/)
 
+## Notes
+
+* For our paper, we used a time step of 10 ms, which results in hundreds of time steps for typical tasks. When training a new task, we highly recommend that you first start with a larger time step.
+
 ## License
 
 MIT
