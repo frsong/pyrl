@@ -41,7 +41,7 @@ baseline_lr = 0.004
 
 #Win = 0.1
 
-#baseline_fix = []
+baseline_fix = []
 
 # Durations
 fixation      = 750
