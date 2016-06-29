@@ -21,7 +21,7 @@ configs_default  = {
     'p0':       1,
     'rho':      1.5,
     'f_out':    'softmax',
-    'L2_r':     0.002,
+    'L2_r':     0,
     'Win':      1,
     'Win_mask': None,
     'Wout':     0,
