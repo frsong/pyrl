@@ -16,19 +16,25 @@ from . import tasktools
 
 configs_required = ['Nin', 'Nout']
 configs_default  = {
-    'alpha':   1,
-    'N':       50,
-    'p0':      1,
-    'rho':     1.5,
-    'f_out':   'softmax',
-    'L2_r':    0.002,
-    'Win':     1,
-    'Wout':    0,
-    'L1_Wrec': 0,
-    'L2_Wrec': 0,
-    'fix':     [],
-    'ei':      None
+    'alpha':    1,
+    'N':        50,
+    'p0':       1,
+    'rho':      1.5,
+    'f_out':    'softmax',
+    'L2_r':     0.002,
+    'Win':      1,
+    'Win_mask': None,
+    'Wout':     0,
+    'bout':     0,
+    'x0':       0.5,
+    'L1_Wrec':  0,
+    'L2_Wrec':  0,
+    'fix':      [],
+    'ei':       None
     }
+
+def random_sign(rng, size):
+    return 2*rng.randint(2, size=size) - 1
 
 class GRU(Recurrent):
     """
@@ -131,7 +137,11 @@ class GRU(Recurrent):
 
             masks = {}
 
-            # In-degree
+            # Input masks
+            if self.config['Win_mask'] is not None:
+                masks['Win'] = self.config['Win_mask']
+
+            # Recurrent in-degree
             K   = int(self.config['p0']*self.N)
             idx = np.arange(self.N)
 
@@ -153,37 +163,37 @@ class GRU(Recurrent):
 
             params = OrderedDict()
             if self.config['ei'] is None:
-                print("Win = {}".format(self.config['Win']))
+                # External input
+                if isinstance(self.config['Win'], np.ndarray):
+                    print("Win is numpy.ndarray")
+                else:
+                    print("Win = {}".format(self.config['Win']))
                 params['Win'] = self.config['Win']*rng.normal(size=self.get_dim('Win'))
-
-                """
-                if np.isscalar(params['Win']):
-                    print("Win is scalar")
-                    params['Win'] = rng.normal(size=self.get_dim('Win'))
-                    params['Win'][:]
-                elif params['Win'] is None:
-                    print("Win is None")
-                    params['Win'] = rng.normal(size=self.get_dim('Win'))
-                """
-                #params['Win']        = rng.normal(size=self.get_dim('Win'))
-
                 params['bin'] = np.zeros(self.get_dim('bin'))
-                #params['bin'][:self.N] = -2
 
+                # Recurrent input
                 params['Wrec_gates'] = rng.normal(size=self.get_dim('Wrec_gates'))
                 params['Wrec']       = rng.normal(size=self.get_dim('Wrec'))
 
+                #k     = 4
+                #theta = 1/k
+                #params['Wrec_gates'] = rng.gamma(k, theta, size=self.get_dim('Wrec_gates'))
+                #params['Wrec']       = rng.gamma(k, theta, size=self.get_dim('Wrec'))
+
+                #params['Wrec_gates'] *= random_sign(rng, self.get_dim('Wrec_gates'))
+                #params['Wrec']       *= random_sign(rng, self.get_dim('Wrec'))
+
+                # Readout
                 if self.config['Wout'] > 0:
                     print("[ {} ] Initialize Wout to random normal.".format(self.name))
                     params['Wout'] = self.config['Wout']*rng.normal(size=self.get_dim('Wout'))
                 else:
                     print("[ {} ] Initialize Wout to zeros.".format(self.name))
                     params['Wout'] = np.zeros(self.get_dim('Wout'))
+                params['bout'] = self.config['bout']*np.ones(self.get_dim('bout'))
 
-                #params['Wout']       = np.zeros(self.get_dim('Wout'))
-                params['bout']       = np.zeros(self.get_dim('bout'))
-                #params['bout'] = rng.uniform(-1, 1, size=self.get_dim('bout'))
-                params['x0']         = 0.5*np.ones(self.get_dim('x0'))
+                # Initial condition
+                params['x0'] = self.config['x0']*np.ones(self.get_dim('x0'))
             else:
                 params['Win']        = rng.normal(size=self.get_dim('Win'))
                 params['bin']        = np.zeros(self.get_dim('bin'))

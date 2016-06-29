@@ -38,9 +38,6 @@ sigma = np.sqrt(2*100*0.02)
 R_ABORTED = -1
 R_CORRECT = +1
 
-lr = 0.004
-baseline_lr = 0.004
-
 # Epoch durations
 fixation   = 750
 stimulus   = 750

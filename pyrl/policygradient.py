@@ -112,6 +112,7 @@ class PolicyGradient(object):
                 'rho':          config['rho'],
                 'f_out':        'softmax',
                 'Win':          config['Win'],
+                'Win_mask':     config['Win_mask'],
                 'fix':          config['fix'],
                 'L2_r':         config['L2_r'],
                 'L1_Wrec':      config['L1_Wrec'],
@@ -133,6 +134,8 @@ class PolicyGradient(object):
                 'rho':          config['baseline_rho'],
                 'f_out':        'linear',
                 'Win':          config['baseline_Win'],
+                'Win_mask':     config['baseline_Win_mask'],
+                'bout':         -1,
                 'fix':          config['baseline_fix'],
                 'L2_r':         config['baseline_L2_r'],
                 'L1_Wrec':      config['L1_Wrec'],
@@ -223,7 +226,7 @@ class PolicyGradient(object):
 
         # Firing rates
         if return_states:
-            r_policy = theanotools.zeros((self.Tmax, n_trials, self.N))
+            r_policy = theanotools.zeros((self.Tmax, n_trials, self.policy_net.N))
             r_value  = theanotools.zeros((self.Tmax, n_trials, self.baseline_net.N))
 
         # Keep track of initial conditions
