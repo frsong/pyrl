@@ -26,7 +26,7 @@ offers       = [(0, 1), (1, 3), (1, 2), (1, 1), (2, 1), (3, 1), (4, 1), (6, 1), 
 n_conditions = len(juices) * len(offers)
 
 # Training
-n_gradient   = n_conditions
+n_gradient   = 0.5*n_conditions
 n_validation = 50*n_conditions
 
 # Durations

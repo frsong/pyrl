@@ -14,7 +14,7 @@ default  = {
     'mode':              'episodic',
     'network_type':      'gru',
     'R_ABORTED':         -1,
-    'checkfreq':         50,
+    'checkfreq':         100,
     'dt':                10,
     'tau':               100,
     'var_rec':           0.01,
