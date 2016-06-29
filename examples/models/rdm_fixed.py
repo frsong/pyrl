@@ -28,10 +28,6 @@ n_conditions = len(left_rights)*len(cohs)
 # Training
 n_gradient   = n_conditions
 n_validation = 100*n_conditions
-#checkfreq    = 100
-
-lr          = 0.004
-baseline_lr = 0.004
 
 # Input noise
 sigma = np.sqrt(2*100*0.01)
