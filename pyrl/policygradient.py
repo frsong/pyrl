@@ -135,7 +135,7 @@ class PolicyGradient(object):
                 'f_out':        'linear',
                 'Win':          config['baseline_Win'],
                 'Win_mask':     config['baseline_Win_mask'],
-                'bout':         -1,
+                'bout':         -0.9,
                 'fix':          config['baseline_fix'],
                 'L2_r':         config['baseline_L2_r'],
                 'L1_Wrec':      config['L1_Wrec'],
