@@ -34,7 +34,7 @@ n_validation = 100*n_conditions
 # Input noise
 sigma = np.sqrt(2*100*0.021)
 
-# Input weights
+# Separate visual and auditory inputs
 N    = 100
 Wins = []
 for i in xrange(3):
