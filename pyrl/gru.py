@@ -191,6 +191,8 @@ class GRU(Recurrent):
                 # Initial condition
                 params['x0'] = self.config['x0']*np.ones(self.get_dim('x0'))
             else:
+                raise NotImplementedError
+                '''
                 params['Win']        = rng.normal(size=self.get_dim('Win'))
                 params['bin']        = np.zeros(self.get_dim('bin'))
                 #params['Wrec_gates'] = rng.normal(size=self.get_dim('Wrec_gates'))
@@ -216,6 +218,7 @@ class GRU(Recurrent):
                     totE = np.sum(params['Wrec'][exc,i])
                     totI = np.sum(params['Wrec'][inh,i])
                     params['Wrec'][inh,i] *= totE/totI
+                '''
 
             # Desired spectral radius
             rho = self.config['rho']
