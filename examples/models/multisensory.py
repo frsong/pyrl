@@ -34,10 +34,6 @@ n_validation = 100*n_conditions
 # Input noise
 sigma = np.sqrt(2*100*0.021)
 
-# Smaller learning rates to obtain symmetric psychometric functions
-lr          = 0.004
-baseline_lr = 0.004
-
 # Epoch durations
 fixation = 750
 stimulus = 1000

@@ -39,13 +39,7 @@ def get_condition(rng, dt, context={}):
     #-------------------------------------------------------------------------------------
     # Epochs
     #-------------------------------------------------------------------------------------
-
-    #fixation = context.get('fixation')
-    #if fixation is None:
-        #fixation = tasktools.uniform(rng, dt, fixation_min, fixation_max)
-    #    fixation = fixation_min + tasktools.truncated_exponential(rng, dt, fixation_mean,
-    #                                                              xmax=fixation_max)
-
+    
     durations = {
         'fixation': (0, fixation),
         'stimulus': (fixation, fixation + stimulus),
