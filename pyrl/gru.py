@@ -168,7 +168,8 @@ class GRU(Recurrent):
                     print("Win is numpy.ndarray")
                 else:
                     print("Win = {}".format(self.config['Win']))
-                params['Win'] = self.config['Win']*rng.normal(size=self.get_dim('Win'))
+                #params['Win'] = self.config['Win']*rng.normal(size=self.get_dim('Win'))
+                params['Win'] = self.config['Win']*rng.uniform(-0.1, 0.1, size=self.get_dim('Win'))
                 params['bin'] = np.zeros(self.get_dim('bin'))
 
                 # Recurrent input
