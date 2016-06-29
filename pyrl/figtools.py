@@ -26,7 +26,7 @@ import matplotlib.pyplot          as plt
 import mpl_toolkits.mplot3d.art3d as art3d
 from   mpl_toolkits.mplot3d       import Axes3D
 
-from .utils import mkdir_p
+from . import utils
 
 THIS = "pyrl.figtools"
 
@@ -50,12 +50,21 @@ except subprocess.CalledProcessError:
 else:
     latex = True
     mpl.rcParams['text.usetex'] = True
-    mpl.rcParams['text.latex.preamble'] = (
-        '\usepackage{sfmath}'
-        '\usepackage[T1]{fontenc}'
-        '\usepackage{amsmath}'
-        '\usepackage{amssymb}'
-        )
+
+    if 'hfs242' in utils.get_here(__file__):
+        mpl.rcParams['text.latex.preamble'] = (
+            '\usepackage{/home/hfs242/lib/tex/sfmath}'
+            '\usepackage[T1]{fontenc}'
+            '\usepackage{amsmath}'
+            '\usepackage{amssymb}'
+            )
+    else:
+        mpl.rcParams['text.latex.preamble'] = (
+            '\usepackage{sfmath}'
+            '\usepackage[T1]{fontenc}'
+            '\usepackage{amsmath}'
+            '\usepackage{amssymb}'
+            )
 
 #=========================================================================================
 # Global defaults
@@ -583,7 +592,7 @@ class Figure(object):
         if not name.startswith('/') and path is None:
             path = os.path.dirname(os.path.realpath(sys.argv[0]))
             path = os.path.join(path, 'work', 'figs')
-            mkdir_p(path)
+            utils.mkdir_p(path)
 
         fname = join(path, name + '.' + self.p['format'])
         plt.figure(self.fig.number)
