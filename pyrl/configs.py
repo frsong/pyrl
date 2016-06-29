@@ -6,7 +6,7 @@ default  = {
     'N':                 100,
     'p0':                0.1,
     'lr':                0.005,
-    'baseline_lr':       0.01,
+    'baseline_lr':       0.005,
     'max_iter':          100000,
     'fix':               ['bin'],
     'baseline_fix':      ['bin', 'bout'],
