@@ -9,7 +9,7 @@ default  = {
     'baseline_lr':       0.004,
     'max_iter':          100000,
     'fix':               ['bin'],
-    'baseline_fix':      ['bin'],
+    'baseline_fix':      ['bin', 'bout'],
     'target_reward':     np.inf,
     'mode':              'episodic',
     'network_type':      'gru',

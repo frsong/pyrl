@@ -159,7 +159,8 @@ class PolicyGradient(object):
 
         # Recurrent noise, scaled by `2*tau/dt`
         self.scaled_var_rec = (2*self.config['tau']/self.dt) * self.config['var_rec']
-        self.scaled_baseline_var_rec = (2*self.config['tau']/self.dt) * self.config['baseline_var_rec']
+        self.scaled_baseline_var_rec = ((2*self.config['tau']/self.dt)
+                                        * self.config['baseline_var_rec'])
 
         # Run trials continuously?
         self.mode = self.config['mode']
