@@ -172,16 +172,16 @@ class GRU(Recurrent):
                 params['bin'] = np.zeros(self.get_dim('bin'))
 
                 # Recurrent input
-                params['Wrec_gates'] = rng.normal(size=self.get_dim('Wrec_gates'))
-                params['Wrec']       = rng.normal(size=self.get_dim('Wrec'))
+                #params['Wrec_gates'] = rng.normal(size=self.get_dim('Wrec_gates'))
+                #params['Wrec']       = rng.normal(size=self.get_dim('Wrec'))
 
-                #k     = 4
-                #theta = 1/k
-                #params['Wrec_gates'] = rng.gamma(k, theta, size=self.get_dim('Wrec_gates'))
-                #params['Wrec']       = rng.gamma(k, theta, size=self.get_dim('Wrec'))
+                k     = 4
+                theta = 1/k
+                params['Wrec_gates'] = rng.gamma(k, theta, size=self.get_dim('Wrec_gates'))
+                params['Wrec']       = rng.gamma(k, theta, size=self.get_dim('Wrec'))
 
-                #params['Wrec_gates'] *= random_sign(rng, self.get_dim('Wrec_gates'))
-                #params['Wrec']       *= random_sign(rng, self.get_dim('Wrec'))
+                params['Wrec_gates'] *= random_sign(rng, self.get_dim('Wrec_gates'))
+                params['Wrec']       *= random_sign(rng, self.get_dim('Wrec'))
 
                 # Readout
                 if self.config['Wout'] > 0:
