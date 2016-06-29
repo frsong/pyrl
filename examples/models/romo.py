@@ -25,7 +25,7 @@ fpairs = [(18, 10), (22, 14), (26, 18), (30, 22), (34, 26)]
 n_conditions = len(gt_lts) * len(fpairs)
 
 # Training
-n_gradient   = 0.5*n_conditions
+n_gradient   = n_conditions
 n_validation = 20*n_conditions
 
 # Input noise

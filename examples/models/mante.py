@@ -28,7 +28,7 @@ cohs         = [5, 15, 50]
 n_conditions = len(contexts) * (len(left_rights)*len(cohs))**2
 
 # Training
-n_gradient   = 0.5*n_conditions
+n_gradient   = n_conditions
 n_validation = 50*n_conditions
 
 # Input noise
