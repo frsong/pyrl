@@ -269,7 +269,7 @@ if 'postdecisionwager-seeds' in args:
 
 model     = 'padoaschioppa2006'
 ntrials_b = 200
-ntrials_a = 200
+ntrials_a = 500
 
 if 'padoaschioppa2006' in args:
     print("=> Padoa-Schioppa 2006")
