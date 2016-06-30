@@ -169,14 +169,14 @@ class GRU(Recurrent):
                 params['bin'] = np.zeros(self.get_dim('bin'))
 
                 # Recurrent input
-                #k = 4
-                #params['Wrec_gates']  = rng.gamma(k, 1/k, self.get_dim('Wrec_gates'))
-                #params['Wrec']        = rng.gamma(k, 1/k, self.get_dim('Wrec'))
-                #params['Wrec_gates'] *= random_sign(rng, self.get_dim('Wrec_gates'))
-                #params['Wrec']       *= random_sign(rng, self.get_dim('Wrec'))
+                k = 4
+                params['Wrec_gates']  = rng.gamma(k, 1/k, self.get_dim('Wrec_gates'))
+                params['Wrec']        = rng.gamma(k, 1/k, self.get_dim('Wrec'))
+                params['Wrec_gates'] *= random_sign(rng, self.get_dim('Wrec_gates'))
+                params['Wrec']       *= random_sign(rng, self.get_dim('Wrec'))
 
-                params['Wrec_gates'] = rng.normal(size=self.get_dim('Wrec_gates'))
-                params['Wrec']       = rng.normal(size=self.get_dim('Wrec'))
+                #params['Wrec_gates'] = rng.normal(size=self.get_dim('Wrec_gates'))
+                #params['Wrec']       = rng.normal(size=self.get_dim('Wrec'))
 
                 # Readout
                 if self.config['Wout'] > 0:
@@ -186,6 +186,7 @@ class GRU(Recurrent):
                     print("[ {} ] Initialize Wout to zeros.".format(self.name))
                     params['Wout'] = np.zeros(self.get_dim('Wout'))
                 params['bout'] = self.config['bout']*np.ones(self.get_dim('bout'))
+                print(params['bout'])
 
                 # Initial condition
                 params['x0'] = self.config['x0']*np.ones(self.get_dim('x0'))
