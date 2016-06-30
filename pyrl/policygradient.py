@@ -342,7 +342,7 @@ class PolicyGradient(object):
                 Z[t,n] = z_t
 
                 # Baseline
-                r_t = self.policy_net.firing_rate(x_t)
+                r_t = self.policy_net.firing_rate(x_t[0])
                 u_t_b = np.concatenate((r_t, A[t-1,n]), axis=-1)
                 z_t_b, x_t_b[0] = self.baseline_step_t(u_t_b[None,:],
                                                        q_t_b[None,:],
