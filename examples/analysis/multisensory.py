@@ -308,7 +308,7 @@ def do(action, args, config):
         trials = []
         for n in xrange(n_trials):
             k       = tasktools.unravel_index(n, (len(mods), len(freqs)))
-            context = {'mods': mods[k.pop(0)], 'freqs': freqs[k.pop(0)]}
+            context = {'mod': mods[k.pop(0)], 'freq': freqs[k.pop(0)]}
             trials.append(task.get_condition(pg.rng, pg.dt, context))
         runtools.run(action, trials, pg, config['trialspath'])
 

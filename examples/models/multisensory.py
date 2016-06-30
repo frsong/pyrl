@@ -35,6 +35,7 @@ n_validation = 100*n_conditions
 sigma = np.sqrt(2*100*0.02)
 
 # Separate visual and auditory inputs
+'''
 N    = 100
 Wins = []
 for i in xrange(3):
@@ -46,6 +47,7 @@ for i in xrange(3):
     Win[inputs['AUDITORY-N'],N//3:2*N//3] = 1
     Wins.append(Win)
 Win = np.concatenate(Wins, axis=1)
+'''
 
 # Epoch durations
 fixation = 750
@@ -68,11 +70,11 @@ def get_condition(rng, dt, context={}):
 
     #-------------------------------------------------------------------------------------
 
-    mod = context.get('mods')
+    mod = context.get('mod')
     if mod is None:
         mod = rng.choice(mods)
 
-    freq = context.get('freqs')
+    freq = context.get('freq')
     if freq is None:
         freq = rng.choice(freqs)
 
