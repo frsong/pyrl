@@ -39,7 +39,7 @@ def get_condition(rng, dt, context={}):
     #-------------------------------------------------------------------------------------
     # Epochs
     #-------------------------------------------------------------------------------------
-    
+
     durations = {
         'fixation': (0, fixation),
         'stimulus': (fixation, fixation + stimulus),
@@ -124,4 +124,4 @@ def get_step(rng, dt, trial, t, a):
 def terminate(perf):
     p_decision, p_correct = tasktools.correct_2AFC(perf)
 
-    return p_decision >= 0.99 and p_correct >= 0.82
+    return p_decision >= 0.99 and p_correct >= 0.8
