@@ -171,7 +171,7 @@ class PolicyGradient(object):
         self.Tmax = int(self.config['tmax']/self.config['dt']) + 1
 
         # Reward discount time constant
-        self.tau_reward = 10000
+        self.tau_reward = 20000
 
         # Reward on aborted trials
         self.R_ABORTED = self.config['R_ABORTED']
@@ -365,7 +365,7 @@ class PolicyGradient(object):
                     status = {'continue': False}
                 #print("t = {}, rho = {}".format(t, R[t,n]))
                 # Discount reward
-                #R[t,n] *= np.exp(-t*self.dt/self.tau_reward)
+                R[t,n] *= np.exp(-t*self.dt/self.tau_reward)
 
                 u_t    = U[t,n]
                 M[t,n] = 1
