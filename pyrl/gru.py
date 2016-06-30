@@ -26,7 +26,7 @@ configs_default  = {
     'Win_mask': None,
     'Wout':     0,
     'bout':     0,
-    'x0':       0.2,
+    'x0':       0.5,
     'L1_Wrec':  0,
     'L2_Wrec':  0,
     'fix':      [],
