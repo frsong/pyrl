@@ -41,7 +41,7 @@ R_ABORTED = -1
 R_B       = 0.2
 R_A       = A_to_B * R_B
 
-#p0 = 0.1
+p0            = 0.1
 baseline_fix  = ['bout']
 baseline_bout = 0
 tau_reward    = np.inf
