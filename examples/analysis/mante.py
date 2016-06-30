@@ -312,7 +312,7 @@ def sort(trialsfile, all_plots, units=None, network='p', **kwargs):
         for cond, n_u in sorted_trials[s].items():
             # Storage
             trials_by_cond.setdefault(cond, {'r': np.zeros((Ntime_a, N)),
-                                             'n': np.zeros((Ntime_a, N), dtype=int)})
+                                             'n': np.zeros((Ntime_a, N))})
             for n, u in n_u:
                 # Firing rates
                 Mn  = M[:,n]

@@ -1127,7 +1127,7 @@ def sort_postdecision(trialsfile, m, plots, unit=None, **kwargs):
 
             # Make room
             noTs_states_by_lr_dots.setdefault(lr, np.zeros((2*Ntime-1, N)))
-            noTs_n_states_by_lr_dots.setdefault(lr, np.zeros((2*Ntime-1, N), dtype=int))
+            noTs_n_states_by_lr_dots.setdefault(lr, np.zeros((2*Ntime-1, N)))
 
             # States
             Mn = np.tile(M[:,n], (N,1)).T
@@ -1172,7 +1172,7 @@ def sort_postdecision(trialsfile, m, plots, unit=None, **kwargs):
 
             # Make room
             noTs_states_by_lr_saccade.setdefault(lr, np.zeros((2*Ntime-1, N)))
-            noTs_n_states_by_lr_saccade.setdefault(lr, np.zeros((2*Ntime-1, N), dtype=int))
+            noTs_n_states_by_lr_saccade.setdefault(lr, np.zeros((2*Ntime-1, N)))
 
             # States
             Mn = np.tile(M[:,n], (N,1)).T
@@ -1224,7 +1224,7 @@ def sort_postdecision(trialsfile, m, plots, unit=None, **kwargs):
             if not perf.sures[n]:
                 # Make room
                 Ts_states_by_lr_dots.setdefault(lr, np.zeros((2*Ntime-1, N)))
-                Ts_n_states_by_lr_dots.setdefault(lr, np.zeros((2*Ntime-1, N), dtype=int))
+                Ts_n_states_by_lr_dots.setdefault(lr, np.zeros((2*Ntime-1, N)))
 
                 # Before
                 n_b = Sn[:t0].shape[0]
@@ -1238,7 +1238,7 @@ def sort_postdecision(trialsfile, m, plots, unit=None, **kwargs):
             else:
                 # Make room
                 Ts_states_by_lr_sure_dots.setdefault(lr, np.zeros((2*Ntime-1, N)))
-                Ts_n_states_by_lr_sure_dots.setdefault(lr, np.zeros((2*Ntime-1, N), dtype=int))
+                Ts_n_states_by_lr_sure_dots.setdefault(lr, np.zeros((2*Ntime-1, N)))
 
                 # Before
                 n_b = Sn[:t0].shape[0]
@@ -1286,7 +1286,7 @@ def sort_postdecision(trialsfile, m, plots, unit=None, **kwargs):
             if not perf.sures[n]:
                 # Make room
                 Ts_states_by_lr_sure.setdefault(lr, np.zeros((2*Ntime-1, N)))
-                Ts_n_states_by_lr_sure.setdefault(lr, np.zeros((2*Ntime-1, N), dtype=int))
+                Ts_n_states_by_lr_sure.setdefault(lr, np.zeros((2*Ntime-1, N)))
 
                 # Before
                 n_b = Sn[:t0].shape[0]
@@ -1300,7 +1300,7 @@ def sort_postdecision(trialsfile, m, plots, unit=None, **kwargs):
             else:
                 # Make room
                 Ts_states_by_lr_sure_sure.setdefault(lr, np.zeros((2*Ntime-1, N)))
-                Ts_n_states_by_lr_sure_sure.setdefault(lr, np.zeros((2*Ntime-1, N), dtype=int))
+                Ts_n_states_by_lr_sure_sure.setdefault(lr, np.zeros((2*Ntime-1, N)))
 
                 # Before
                 n_b = Sn[:t0].shape[0]
@@ -1348,7 +1348,7 @@ def sort_postdecision(trialsfile, m, plots, unit=None, **kwargs):
             if not perf.sures[n]:
                 # Make room
                 Ts_states_by_lr_saccade.setdefault(lr, np.zeros((2*Ntime-1, N)))
-                Ts_n_states_by_lr_saccade.setdefault(lr, np.zeros((2*Ntime-1, N), dtype=int))
+                Ts_n_states_by_lr_saccade.setdefault(lr, np.zeros((2*Ntime-1, N)))
 
                 # Before
                 n_b = Sn[:t0].shape[0]
@@ -1362,7 +1362,7 @@ def sort_postdecision(trialsfile, m, plots, unit=None, **kwargs):
             else:
                 # Make room
                 Ts_states_by_lr_sure_saccade.setdefault(lr, np.zeros((2*Ntime-1, N)))
-                Ts_n_states_by_lr_sure_saccade.setdefault(lr, np.zeros((2*Ntime-1, N), dtype=int))
+                Ts_n_states_by_lr_sure_saccade.setdefault(lr, np.zeros((2*Ntime-1, N)))
 
                 # Before
                 n_b = Sn[:t0].shape[0]

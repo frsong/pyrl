@@ -116,7 +116,7 @@ def sort(trialsfile, plots, units=None, network='p', **kwargs):
 
         # Storage
         trials_by_cond.setdefault(cond, {'r': np.zeros((Ntime_a, N)),
-                                         'n': np.zeros((Ntime_a, N), dtype=int)})
+                                         'n': np.zeros((Ntime_a, N))})
 
         # Before
         n_b = Rn[:t0].shape[0]

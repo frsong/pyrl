@@ -120,7 +120,7 @@ def sort_epoch(trialsfile, epoch, offers, plots, units=None, network='p',
         # Storage
         for e in events_by_cond:
             events_by_cond[e].setdefault(cond, {'r': np.zeros((Ntime_a, N)),
-                                                'n': np.zeros((Ntime_a, N), dtype=int)})
+                                                'n': np.zeros((Ntime_a, N))})
 
         # Firing rates
         m_n = np.tile(M[:,n], (N,1)).T
