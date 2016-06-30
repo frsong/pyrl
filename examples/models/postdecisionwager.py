@@ -48,8 +48,8 @@ decision      = 500
 tmax          = fixation + stimulus_min + stimulus_max + delay_max + decision
 
 # Rewards
-R_ABORTED = -1
-R_CORRECT = +1
+R_ABORTED = -2
+R_CORRECT = +2
 R_SURE    = 0.7*R_CORRECT
 
 def get_condition(rng, dt, context={}):
@@ -177,6 +177,7 @@ def get_step(rng, dt, trial, t, a):
 
     return u, reward, status
 
-target_reward = 0.77
+#target_reward = 0.77
+target_reward = 1.5
 
 from pyrl.performance import PerformancePostdecisionWager as Performance

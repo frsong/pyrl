@@ -41,8 +41,8 @@ decision      = 500
 tmax          = fixation + stimulus_max + decision
 
 # Rewards
-R_ABORTED = -1
-R_CORRECT = +1
+R_ABORTED = -2
+R_CORRECT = +2
 
 def get_condition(rng, dt, context={}):
     #-------------------------------------------------------------------------------------
