@@ -277,8 +277,8 @@ if 'padoaschioppa2006' in args:
     trials(model, 'b', ntrials_b)
     do_action(model, 'choice_pattern')
     trials(model, 'a', ntrials_a)
-    do_action(model, 'sort_epoch', args='postoffer value')
-    do_action(model, 'sort_epoch', args='latedelay value')
+    #do_action(model, 'sort_epoch', args='postoffer value')
+    #do_action(model, 'sort_epoch', args='latedelay value')
     do_action(model, 'sort_epoch', args='prechoice value')
     do_action(model, 'sort_epoch', args='prechoice value separate-by-choice')
 
