@@ -163,8 +163,10 @@ if 'rdm_rt' in args:
 
 if 'rdm_rt-seeds' in args:
     for seed in xrange(start_seed, start_seed+ntrain):
-        print("=> Perceptual decision-making (RT) (seed = {})".format(seed))
+        print("=> TRAIN: Perceptual decision-making (RT) (seed = {})".format(seed))
         train(model, seed=seed)
+    for seed in xrange(start_seed, start_seed+ntrain):
+        print("=> TEST: Perceptual decision-making (RT) (seed = {})".format(seed))
         trials(model, 'b', ntrials_b, seed=seed)
         do_action(model, 'psychometric', seed=seed)
         do_action(model, 'chronometric', seed=seed)
@@ -187,8 +189,10 @@ if 'mante' in args:
 
 if 'mante-seeds' in args:
     for seed in xrange(start_seed, start_seed+ntrain):
-        print("=> Context-dependent integration (seed = {})".format(seed))
+        print("=> TRAIN: Context-dependent integration (seed = {})".format(seed))
         train(model, seed=seed)
+    for seed in xrange(start_seed, start_seed+ntrain):
+        print("=> TEST: Context-dependent integration (seed = {})".format(seed))
         trials(model, 'b', ntrials_b, seed=seed)
         do_action(model, 'psychometric', seed=seed)
 
@@ -210,8 +214,10 @@ if 'multisensory' in args:
 
 if 'multisensory-seeds' in args:
     for seed in xrange(start_seed, start_seed+ntrain):
-        print("=> Multisensory integration (seed = {})".format(seed))
+        print("=> TRAIN: Multisensory integration (seed = {})".format(seed))
         train(model, seed=seed)
+    for seed in xrange(start_seed, start_seed+ntrain):
+        print("=> TEST: Multisensory integration (seed = {})".format(seed))
         trials(model, 'b', ntrials_b, seed=seed)
         do_action(model, 'psychometric', seed=seed)
 
@@ -234,8 +240,10 @@ if 'romo' in args:
 
 if 'romo-seeds' in args:
     for seed in xrange(start_seed, start_seed+ntrain):
-        print("=> Parametric working memory (seed = {})".format(seed))
+        print("=> TRAIN: Parametric working memory (seed = {})".format(seed))
         train(model, seed=seed)
+    for seed in xrange(start_seed, start_seed+ntrain):
+        print("=> TEST: Parametric working memory (seed = {})".format(seed))
         trials(model, 'b', ntrials_b, seed=seed)
         do_action(model, 'performance', seed=seed)
 
@@ -259,8 +267,10 @@ if 'postdecisionwager' in args:
 
 if 'postdecisionwager-seeds' in args:
     for seed in xrange(start_seed, start_seed+ntrain):
-        print("=> Postdecision wager (seed = {})".format(seed))
+        print("=> TRAIN: Postdecision wager (seed = {})".format(seed))
         train(model, seed=seed)
+    for seed in xrange(start_seed, start_seed+ntrain):
+        print("=> TEST: Postdecision wager (seed = {})".format(seed))
         trials(model, 'b', ntrials_b, seed=seed)
         do_action(model, 'sure_stimulus_duration', seed=seed)
         do_action(model, 'correct_stimulus_duration', seed=seed)
@@ -286,8 +296,12 @@ if 'padoaschioppa2006' in args:
 
 if 'padoaschioppa2006-seeds' in args:
     for seed in xrange(start_seed, start_seed+ntrain):
-        print("=> Padoa-Schioppa 2006 (seed = {})".format(seed))
+        print("=> TRAIN: Padoa-Schioppa 2006 (seed = {})".format(seed))
         train(model, seed=seed)
+    for seed in xrange(start_seed, start_seed+ntrain):
+        print("=> TEST: Padoa-Schioppa 2006 (seed = {})".format(seed))
+        trials(model, 'b', ntrials_b, seed=seed)
+        do_action(model, 'choice_pattern', seed=seed)
 
 if 'padoaschioppa2006-1A3B' in args:
     train(model+'_1A3B')
