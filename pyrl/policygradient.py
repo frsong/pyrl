@@ -135,13 +135,15 @@ class PolicyGradient(object):
                 'f_out':        'linear',
                 'Win':          config['baseline_Win'],
                 'Win_mask':     config['baseline_Win_mask'],
-                'bout':         config['R_ABORTED'],
+                'bout':         config['baseline_bout'],
                 'fix':          config['baseline_fix'],
                 'L2_r':         config['baseline_L2_r'],
                 'L1_Wrec':      config['L1_Wrec'],
                 'L2_Wrec':      config['L2_Wrec'],
                 'alpha':        alpha
                 }
+            if self.baseline_config['bout'] is None:
+                self.baseline_config['bout'] = config['R_ABORTED']
             self.baseline_net = Network(self.baseline_config,
                                         seed=config['baseline_seed'], name='baseline')
 
