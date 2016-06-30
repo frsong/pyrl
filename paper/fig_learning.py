@@ -121,7 +121,7 @@ for name in additional + original:
 
 plot = fig['reward']
 plot.xlim(0, max([max(x) for x in xall]))
-plot.ylim(-1.1, 1.1)
+plot.ylim(-1, 1)
 plot.xlabel(r'Number of trials ($\times$' + '{})'.format(T))
 plot.ylabel('Reward per trial')
 
