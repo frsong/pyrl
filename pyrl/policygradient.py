@@ -232,6 +232,9 @@ class PolicyGradient(object):
         Q_b = self.make_noise((self.Tmax, n_trials, self.baseline_net.noise_dim),
                                self.scaled_baseline_var_rec)
 
+        x_t   = theanotools.zeros((1, self.policy_net.N))
+        x_t_b = theanotools.zeros((1, self.baseline_net.N))
+
         # Dropout mask
         #D   = np.ones((self.Tmax, n_trials, self.policy_net.N))
         #D_b = np.ones((self.Tmax, n_trials, self.baseline_net.N))
@@ -290,23 +293,23 @@ class PolicyGradient(object):
 
             t = 0
             if init is None:
-                z_t,   x_t   = self.step_0()
-                z_t_b, x_t_b = self.baseline_step_0()
+                z_t,   x_t[0]   = self.step_0()
+                z_t_b, x_t_b[0] = self.baseline_step_0()
             else:
-                z_t,   x_t   = init
-                z_t_b, x_t_b = init_b
+                z_t,   x_t[0]   = init
+                z_t_b, x_t_b[0] = init_b
             Z[t,n]   = z_t
             Z_b[t,n] = z_t_b
 
             # Save initial condition
             if x0 is not None:
-                x0[n]   = x_t
-                x0_b[n] = x_t_b
+                x0[n]   = x_t[0]
+                x0_b[n] = x_t_b[0]
 
             # Save states
             if return_states:
-                r_policy[t,n] = self.policy_net.firing_rate(x_t)
-                r_value[t,n]  = self.baseline_net.firing_rate(x_t_b)
+                r_policy[t,n] = self.policy_net.firing_rate(x_t[0])
+                r_value[t,n]  = self.baseline_net.firing_rate(x_t_b[0])
 
             # Select action
             a_t = theanotools.choice(self.rng, self.Nout, p=np.reshape(z_t, (self.Nout,)))
@@ -335,21 +338,21 @@ class PolicyGradient(object):
                     break
 
                 # Policy
-                z_t, x_t = self.step_t(u_t[None,:], q_t[None,:], x_t[None,:])
+                z_t, x_t = self.step_t(u_t[None,:], q_t[None,:], x_t)
                 Z[t,n] = z_t
 
                 # Baseline
                 r_t = self.policy_net.firing_rate(x_t)
                 u_t_b = np.concatenate((r_t, A[t-1,n]), axis=-1)
-                z_t_b, x_t_b = self.baseline_step_t(u_t_b[None,:],
-                                                    q_t_b[None,:],
-                                                    x_t_b[None,:])
+                z_t_b, x_t_b[0] = self.baseline_step_t(u_t_b[None,:],
+                                                       q_t_b[None,:],
+                                                       x_t_b)
                 Z_b[t,n] = z_t_b
 
                 # Firing rates
                 if return_states:
-                    r_policy[t,n] = self.policy_net.firing_rate(x_t)
-                    r_value[t,n]  = self.baseline_net.firing_rate(x_t_b)
+                    r_policy[t,n] = self.policy_net.firing_rate(x_t[0])
+                    r_value[t,n]  = self.baseline_net.firing_rate(x_t_b[0])
 
                     #W = self.policy_net.get_values()['Wout']
                     #b = self.policy_net.get_values()['bout']
@@ -390,8 +393,8 @@ class PolicyGradient(object):
 
             # Save next state if necessary
             if self.mode == 'continuous':
-                init   = self.step_t(u_t[None,:], q_t[None,:], x_t[None,:])
-                init_b = self.baseline_step_t(u_t_b[None,:], q_t_b[None,:], x_t_b[None,:])
+                init   = self.step_t(u_t[None,:], q_t[None,:], x_t)
+                init_b = self.baseline_step_t(u_t_b[None,:], q_t_b[None,:], x_t_b)
         if progress_bar:
             print("100")
 
