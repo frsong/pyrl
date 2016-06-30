@@ -138,8 +138,10 @@ if 'rdm_fixed' in args:
 
 if 'rdm_fixed-seeds' in args:
     for seed in xrange(start_seed, start_seed+ntrain):
-        print("=> Perceptual decision-making (FD) (seed = {})".format(seed))
+        print("=> TRAIN: Perceptual decision-making (FD) (seed = {})".format(seed))
         train(model, seed=seed)
+    for seed in xrange(start_seed, start_seed+ntrain):
+        print("=> TEST: Perceptual decision-making (FD) (seed = {})".format(seed))
         trials(model, 'b', ntrials_b, seed=seed)
         do_action(model, 'psychometric', seed=seed)
         do_action(model, 'correct_stimulus_duration', seed=seed)
