@@ -43,6 +43,7 @@ R_A       = A_to_B * R_B
 
 #p0 = 0.1
 #baseline_fix = ['bout']
+tau_reward = np.inf
 
 # Input scaling
 def scale(x):
