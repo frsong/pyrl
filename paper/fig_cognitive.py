@@ -225,9 +225,9 @@ for i in xrange(len(units)):
 
 def custom_axislabel(name, s1, s2, color2='k'):
     plot = fig[name]
-    plot.text(-0.8, 0.5+0.13, s1, ha='center', va='center', fontsize=7,
+    plot.text(-1.15, 0.5+0.13, s1, ha='center', va='center', fontsize=7,
               transform=plot.transAxes)
-    plot.text(-0.8, 0.5-0.13, s2, ha='center', va='center', fontsize=7, color=color2,
+    plot.text(-1.15, 0.5-0.13, s2, ha='center', va='center', fontsize=7, color=color2,
               transform=plot.transAxes)
 
 custom_axislabel('mante-choice-0', 'choice', r'\textit{all trials}')
