@@ -4,7 +4,7 @@ required = ['inputs', 'actions', 'tmax', 'n_gradient', 'n_validation']
 default  = {
     'Performance':       None,
     'N':                 100,
-    'p0':                0.1,
+    'p0':                1,
     'lr':                0.004,
     'baseline_lr':       0.004,
     'max_iter':          100000,

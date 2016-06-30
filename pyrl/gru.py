@@ -141,21 +141,22 @@ class GRU(Recurrent):
             if self.config['Win_mask'] is not None:
                 masks['Win'] = self.config['Win_mask']
 
-            # Recurrent in-degree
-            K   = int(self.config['p0']*self.N)
-            idx = np.arange(self.N)
+            if self.config['p0'] < 1:
+                # Recurrent in-degree
+                K   = int(self.config['p0']*self.N)
+                idx = np.arange(self.N)
 
-            # Wrec
-            M = np.zeros(self.get_dim('Wrec'))
-            for j in xrange(M.shape[1]):
-                M[rng.permutation(idx)[:K],j] = 1
-            masks['Wrec'] = M
+                # Wrec
+                M = np.zeros(self.get_dim('Wrec'))
+                for j in xrange(M.shape[1]):
+                    M[rng.permutation(idx)[:K],j] = 1
+                masks['Wrec'] = M
 
-            # Wrec (gates)
-            M = np.zeros(self.get_dim('Wrec_gates'))
-            for j in xrange(M.shape[1]):
-                M[rng.permutation(idx)[:K],j] = 1
-            masks['Wrec_gates'] = M
+                # Wrec (gates)
+                M = np.zeros(self.get_dim('Wrec_gates'))
+                for j in xrange(M.shape[1]):
+                    M[rng.permutation(idx)[:K],j] = 1
+                masks['Wrec_gates'] = M
 
             #-----------------------------------------------------------------------------
             # Network parameteres
