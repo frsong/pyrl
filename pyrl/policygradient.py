@@ -338,7 +338,7 @@ class PolicyGradient(object):
                     break
 
                 # Policy
-                z_t, x_t = self.step_t(u_t[None,:], q_t[None,:], x_t)
+                z_t, x_t[0] = self.step_t(u_t[None,:], q_t[None,:], x_t)
                 Z[t,n] = z_t
 
                 # Baseline
