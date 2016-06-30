@@ -32,16 +32,13 @@ n_validation = 20*n_conditions
 sigma = np.sqrt(2*100*0.0001)
 
 # Epoch durations
-fixation      = 750
-fixation_min  = 350
-fixation_mean = 100
-fixation_max  = 400
-f1            = 500
-delay_min     = 3000 - 300
-delay_max     = 3000 + 300
-f2            = 500
-decision      = 500
-tmax          = fixation_min + fixation_max + f1 + delay_max + f2 + decision
+fixation  = 750
+f1        = 500
+delay_min = 3000 - 300
+delay_max = 3000 + 300
+f2        = 500
+decision  = 500
+tmax      = fixation + f1 + delay_max + f2 + decision
 
 def get_condition(rng, dt, context={}):
     #-------------------------------------------------------------------------------------

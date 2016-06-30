@@ -164,14 +164,10 @@ class GRU(Recurrent):
             params = OrderedDict()
             if self.config['ei'] is None:
                 # External input
-                if isinstance(self.config['Win'], np.ndarray):
-                    print("Win is numpy.ndarray")
-                else:
-                    print("Win = {}".format(self.config['Win']))
                 params['Win'] = self.config['Win']*rng.normal(size=self.get_dim('Win'))
                 params['bin'] = np.zeros(self.get_dim('bin'))
 
-                # Recurrent weights
+                # Recurrent input
                 k     = 4
                 theta = 1/k
                 params['Wrec_gates']  = rng.gamma(k, theta, self.get_dim('Wrec_gates'))
