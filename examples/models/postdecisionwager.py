@@ -27,7 +27,7 @@ cohs         = [0, 3.2, 6.4, 12.8, 25.6, 51.2]
 n_conditions = len(wagers) * len(left_rights) * len(cohs)
 
 # Training
-n_gradient   = n_conditions
+n_gradient   = 0.5*n_conditions
 n_validation = 50*n_conditions
 
 # Input noise
@@ -50,7 +50,7 @@ tmax          = fixation + stimulus_min + stimulus_max + delay_max + decision
 # Rewards
 R_ABORTED = -1
 R_CORRECT = +1
-R_SURE    = 0.8*R_CORRECT
+R_SURE    = 0.7*R_CORRECT
 
 def get_condition(rng, dt, context={}):
     #-------------------------------------------------------------------------------------
