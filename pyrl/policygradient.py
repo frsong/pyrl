@@ -365,7 +365,7 @@ class PolicyGradient(object):
                     status = {'continue': False}
                 #print("t = {}, rho = {}".format(t, R[t,n]))
                 # Discount reward
-                R[t,n] *= np.exp(-t*self.dt/self.tau_reward)
+                #R[t,n] *= np.exp(-t*self.dt/self.tau_reward)
 
                 u_t    = U[t,n]
                 M[t,n] = 1
