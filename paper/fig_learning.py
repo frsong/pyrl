@@ -91,7 +91,7 @@ for name in additional + original:
 
     print(rewards)
     w1 = list(np.where(rewards == -1)[0])
-    w2 = list(np.where(rewards > -1)[0])
+    w2 = list(np.where(rewards > 0)[0])
     try:
         w1.append(w2[0])
     except IndexError:
