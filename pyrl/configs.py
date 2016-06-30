@@ -4,7 +4,7 @@ required = ['inputs', 'actions', 'tmax', 'n_gradient', 'n_validation']
 default  = {
     'Performance':       None,
     'N':                 100,
-    'p0':                1,
+    'p0':                0.2,
     'lr':                0.005,
     'baseline_lr':       0.005,
     'max_iter':          100000,
@@ -17,7 +17,7 @@ default  = {
     'checkfreq':         50,
     'dt':                10,
     'tau':               100,
-    'tau_reward':        20000,
+    'tau_reward':        10000,
     'var_rec':           0.01,
     'baseline_var_rec':  0.01,
     'L2_r':              0,
