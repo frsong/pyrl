@@ -36,10 +36,10 @@ fig = Figure(w=w, r=r, axislabelsize=11, labelpadx=6, labelpady=6,
 x0 = 0.11
 y0 = 0.18
 
-w = 0.37
+w = 0.36
 h = 0.71
 
-DX = 0.12
+DX = 0.14
 
 fig.add('reward',  [x0, y0, w, h])
 fig.add('correct', [fig[-1].right+DX, y0, w, h])
