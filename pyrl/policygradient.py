@@ -561,7 +561,8 @@ class PolicyGradient(object):
         items['Network type']             = self.config['network_type']
         items['N']                        = self.config['N']
         items['Connection probability']   = self.config['p0']
-        items['dt']                       = self.dt
+        items['dt']                       = str(self.dt) + ' ms'
+        items['tau_reward']               = str(self.config['tau_reward']) + ' ms'
         items['var_rec (policy)']         = self.config['var_rec']
         items['var_rec (baseline)']       = self.config['baseline_var_rec']
         items['Learning rate (policy)']   = self.config['lr']
