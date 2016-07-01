@@ -150,7 +150,7 @@ if modelname == 'rdm_fixed':
     target = 80
     plot.hline(target, color=target_color, zorder=1)
 elif modelname == 'rdm_rt':
-    target = 82
+    target = 80
     plot.hline(target, color=target_color, zorder=1)
 elif modelname == 'mante':
     target = 88
