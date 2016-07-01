@@ -32,7 +32,11 @@ n_gradient   = n_conditions
 n_validation = 100*n_conditions
 
 # Input noise
-sigma = np.sqrt(2*100*0.019)
+sigma = np.sqrt(2*100*0.02)
+
+lr          = 0.002
+baseline_lr = 0.002
+tau_reward  = 15000
 
 # Separate visual and auditory inputs
 N    = 100
