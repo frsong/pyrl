@@ -149,7 +149,7 @@ if 'rdm_fixed-seeds' in args:
 #-----------------------------------------------------------------------------------------
 
 model     = 'rdm_rt'
-ntrials_b = 1000
+ntrials_b = 2000
 ntrials_a = 50
 
 if 'rdm_rt' in args:
