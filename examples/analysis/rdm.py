@@ -359,8 +359,8 @@ def chronometric(trialsfile, plot, **kwargs):
             'mew':       kwargs.get('mew', 1)}
     plot.plot(error_cohs[error_idx], error_rt[error_idx], **prop)
 
-    #plot.lim('y', [correct_rt, error_rt], lower=0)
-    plot.ylim(200, 1000)
+    plot.lim('y', [correct_rt, error_rt], lower=0)
+    #plot.ylim(200, 1000)
 
     plot.xscale('log')
     plot.xticks([1, 10, 100])
