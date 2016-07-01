@@ -17,6 +17,8 @@ parent = utils.get_parent(here)
 paperpath = os.path.join(parent, 'paper')
 timespath = os.path.join(paperpath, 'times')
 figspath  = os.path.join(paperpath, 'work', 'figs')
+for path in [paperpath, timespath, figspath]:
+    utils.mkdir_p(path)
 
 modelname = sys.argv[1]
 
