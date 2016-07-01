@@ -231,16 +231,17 @@ plot.ylabel('Probability correct')
 
 plot = fig['on-stimulus']
 
-unit = 61
+unit = 14
 
-kwargs = {'on-stimulus-tmin': -200, 'on-stimulus-tmax': 400, 'colors': 'kiani',
+kwargs = {'on-stimulus-tmin': -100, 'on-stimulus-tmax': 400, 'colors': 'kiani',
           'dashes': [3.5, 2]}
 rdm_analysis.sort(rdm_fixed_activity, {'on-stimulus': plot}, unit=unit, **kwargs)
 
-plot.xlim(-200, 400)
-plot.xticks([-200, 0, 200, 400])
+plot.xlim(-100, 400)
+plot.xticks([0, 200, 400])
 
-plot.yticks([0, 1, 2])
+plot.ylim(0, 5)
+plot.yticks([0, 1, 2, 3, 4, 5])
 
 plot.xlabel('Time from stimulus (ms)')
 plot.ylabel('Firing rate (a.u.)')
