@@ -34,8 +34,6 @@ n_validation = 100*n_conditions
 # Input noise
 sigma = np.sqrt(2*100*0.02)
 
-tau_reward = 15000
-
 # Separate visual and auditory inputs
 N    = 100
 Wins = []

@@ -46,8 +46,6 @@ R_A       = A_to_B * R_B
 #baseline_bout = 0
 #tau_reward    = np.inf
 
-tau_reward = 15000
-
 # Input scaling
 def scale(x):
     return x/5

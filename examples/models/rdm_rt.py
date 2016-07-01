@@ -23,8 +23,6 @@ n_conditions = len(left_rights)*len(cohs)
 n_gradient   = n_conditions
 n_validation = 100*n_conditions
 
-tau_reward = 15000
-
 # Input noise
 sigma = np.sqrt(2*100*0.015)
 
