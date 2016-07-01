@@ -746,7 +746,7 @@ class PolicyGradient(object):
 
                         # Terminate
                         if hasattr(self.task, 'terminate'):
-                            if self.task.terminate(best_perf):
+                            if self.task.terminate(perf_):
                                 print("Termination criterion satisfied.")
                                 return
                     else:
