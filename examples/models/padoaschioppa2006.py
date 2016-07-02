@@ -20,9 +20,10 @@ inputs = tasktools.to_map('FIXATION', 'L-A', 'L-B', 'R-A', 'R-B', 'N-L', 'N-R')
 actions = tasktools.to_map('FIXATE', 'CHOOSE-LEFT', 'CHOOSE-RIGHT')
 
 # Trial conditions
-A_to_B       = 2
+A_to_B       = 2.5
 juices       = [('A', 'B'), ('B', 'A')]
-offers       = [(0, 1), (1, 3), (1, 2), (1, 1), (2, 1), (3, 1), (4, 1), (6, 1), (2, 0)]
+offers       = [(0, 1), (1, 3), (1, 2), (1, 1), (2, 1),
+                (3, 1), (4, 1), (6, 1), (10, 1), (2, 0)]
 n_conditions = len(juices) * len(offers)
 
 # Training
@@ -40,11 +41,6 @@ tmax         = fixation + offer_on_max + decision
 R_ABORTED = -1
 R_B       = 0.2
 R_A       = A_to_B * R_B
-
-#p0            = 0.1
-#baseline_fix  = ['bout']
-#baseline_bout = 0
-#tau_reward    = np.inf
 
 # Input scaling
 def scale(x):
