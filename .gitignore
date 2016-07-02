@@ -8,6 +8,10 @@
 build/
 dist/
 examples/work/
+examples/models/sugrue2004.py
+examples/analysis/sugrue2004.py
+examples/models/matchingpennies.py
+examples/analysis/matchingpennies.py
 paper/figs/
 paper/paper/
 paper/times/
