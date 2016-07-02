@@ -663,6 +663,11 @@ class PolicyGradient(object):
                         (U, Q, Q_b, Z, Z_b, A, R, M, init_, init_b_, x0_, x0_b_,
                          perf_) = self.run_trials(trials)
 
+                        terminate = False
+                        if hasattr(self.task, 'terminate'):
+                            if self.task.terminate(perf_):
+                                terminate = True
+
                         # Save
                         mean_reward = np.sum(R*M)/n_validation
                         record = {
@@ -671,7 +676,7 @@ class PolicyGradient(object):
                             'n_trials':    trials_tot,
                             'perf':        perf_
                             }
-                        if mean_reward > best_reward:
+                        if mean_reward > best_reward or terminate:
                             best_iter   = iter
                             best_reward = mean_reward
                             best_perf   = perf_
@@ -746,10 +751,9 @@ class PolicyGradient(object):
                             return
 
                         # Terminate
-                        if hasattr(self.task, 'terminate'):
-                            if self.task.terminate(perf_):
-                                print("Termination criterion satisfied.")
-                                return
+                        if terminate:
+                            print("Termination criterion satisfied.")
+                            return
                     else:
                         #-----------------------------------------------------------------
                         # Ongoing learning
