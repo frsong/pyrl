@@ -663,6 +663,7 @@ class PolicyGradient(object):
                         (U, Q, Q_b, Z, Z_b, A, R, M, init_, init_b_, x0_, x0_b_,
                          perf_) = self.run_trials(trials)
 
+                        # Termination condition
                         terminate = False
                         if hasattr(self.task, 'terminate'):
                             if self.task.terminate(perf_):
