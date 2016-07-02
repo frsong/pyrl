@@ -28,10 +28,6 @@ a = p.parse_args()
 simulate = a.simulate
 args     = a.args
 gpu      = a.gpu
-if not args:
-    args = [
-
-        ]
 
 #=========================================================================================
 # Shared steps
@@ -40,16 +36,16 @@ if not args:
 here   = utils.get_here(__file__)
 parent = utils.get_parent(here)
 
-dopath       = join(parent, 'examples')
-modelspath   = join(parent, 'examples', 'models')
-analysispath = join(parent, 'examples', 'analysis')
-paperpath    = join(parent, 'paper')
-timespath    = join(paperpath, 'times')
-#paperfigspath = join(paperpath, 'work', 'figs')
+dopath        = join(parent, 'examples')
+modelspath    = join(parent, 'examples', 'models')
+analysispath  = join(parent, 'examples', 'analysis')
+paperpath     = join(parent, 'paper')
+timespath     = join(paperpath, 'times')
+paperfigspath = join(paperpath, 'work', 'figs')
 
 # Make paths
-#utils.mkdir_p(paperfigspath)
-utils.mkdir_p(timespath)
+for path in [timespath, paperfigspath]:
+    utils.mkdir_p(path)
 
 def call(s):
     if simulate:
@@ -60,10 +56,6 @@ def call(s):
             sys.stdout.flush()
             print("Something went wrong (return code {}).".format(rval))
             sys.exit(1)
-
-def clean(model):
-    call("python {} {} clean"
-         .format(join(dopath, 'do.py'), join(modelspath, model)))
 
 def train(model, seed=None):
     if seed is None:
@@ -289,8 +281,6 @@ if 'padoaschioppa2006' in args:
     trials(model, 'b', ntrials_b)
     do_action(model, 'choice_pattern')
     trials(model, 'a', ntrials_a)
-    #do_action(model, 'sort_epoch', args='postoffer value')
-    #do_action(model, 'sort_epoch', args='latedelay value')
     do_action(model, 'sort_epoch', args='prechoice value')
     do_action(model, 'sort_epoch', args='prechoice value separate-by-choice')
 

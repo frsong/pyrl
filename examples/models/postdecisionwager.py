@@ -177,6 +177,11 @@ def get_step(rng, dt, trial, t, a):
 
     return u, reward, status
 
-target_reward = 0.8
-
 from pyrl.performance import PerformancePostdecisionWager as Performance
+
+def terminate(perf):
+    p_answer  = perf.n_answer/perf.n_trials
+    p_correct = tasktools.divide(perf.n_correct, perf.n_decision)
+    p_sure    = tasktools.divide(perf.n_sure, perf.n_sure_decision)
+
+    return p_answer >= 0.99 and p_correct >= 0.72 and 0.4 < p_sure < 0.6
