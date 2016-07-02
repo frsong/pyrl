@@ -140,7 +140,7 @@ if len(times) > 0:
 
 plot = fig['correct']
 plot.xlim(0, max([max(x) for x in xall]))
-plot.ylim(35, 100)
+plot.ylim(40, 100)
 plot.ylabel('Percent correct\n(decision trials)')
 
 target_color = Figure.colors('red')

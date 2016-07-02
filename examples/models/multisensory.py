@@ -20,9 +20,10 @@ inputs = tasktools.to_map('FIXATION', 'VISUAL-P', 'VISUAL-N', 'AUDITORY-P', 'AUD
 actions = tasktools.to_map('FIXATE', 'CHOOSE-LOW', 'CHOOSE-HIGH')
 
 # Trial conditions
-mods         = ['v', 'a', 'va']
-freqs        = range(9, 16+1)
-n_conditions = len(mods) * len(freqs)
+mods          = ['v', 'a', 'va']
+training_mods = mods + ['va']
+freqs         = range(9, 16+1)
+n_conditions  = len(mods) * len(freqs)
 
 # Discrimination boundary
 boundary = 12.5
@@ -32,9 +33,10 @@ n_gradient   = n_conditions
 n_validation = 100*n_conditions
 
 # Input noise
-sigma = np.sqrt(2*100*0.018)
+sigma = np.sqrt(2*100*0.02)
 
 # Separate visual and auditory inputs
+'''
 N    = 100
 Wins = []
 for i in xrange(3):
@@ -45,7 +47,9 @@ for i in xrange(3):
     Win[inputs['AUDITORY-P'],N//2:] = 1
     Win[inputs['AUDITORY-N'],N//2:] = 1
     Wins.append(Win)
-Win = np.concatenate(Wins, axis=1)
+Win      = np.concatenate(Wins, axis=1)
+Win_mask = Win.copy()
+'''
 
 # Epoch durations
 fixation = 750
@@ -70,7 +74,7 @@ def get_condition(rng, dt, context={}):
 
     mod = context.get('mod')
     if mod is None:
-        mod = rng.choice(mods)
+        mod = rng.choice(training_mods)
 
     freq = context.get('freq')
     if freq is None:
