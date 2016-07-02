@@ -219,8 +219,8 @@ analysis.chronometric(behavior, plot, **kwargs)
 #plot.xlim(0, 1200)
 #plot.xticks([0, 400, 800, 1200])
 
-plot.ylim(200, 1100)
-plot.yticks([200, 400, 600, 800, 1000])
+plot.ylim(400, 1200)
+plot.yticks([400, 600, 800, 1000, 1200])
 #plot.yticklabels([0.5, 0.6, 0.7, 0.8, 0.9, '1'])
 
 plot.xlabel('Percent coherence')
@@ -230,16 +230,17 @@ plot.ylabel('Reaction time (ms)', labelpad=3)
 
 plot = fig['on-stimulus']
 
-unit = 0
+unit = 38
 
-kwargs = {'on-stimulus-tmin': -200, 'on-stimulus-tmax': 400, 'colors': 'kiani',
+kwargs = {'on-stimulus-tmin': -100, 'on-stimulus-tmax': 500, 'colors': 'kiani',
           'dashes': [3.5, 2]}
 analysis.sort(activity, {'on-stimulus': plot}, unit=unit, **kwargs)
 
-plot.xlim(-200, 400)
-plot.xticks([-200, 0, 200, 400])
+plot.xlim(-100, 500)
+plot.xticks([0, 250, 500])
 
-plot.yticks([0, 1, 2])
+plot.ylim(0, 1)
+plot.yticks([0, 1])
 
 plot.xlabel('Time from stimulus (ms)')
 plot.ylabel('Firing rate (a.u.)')

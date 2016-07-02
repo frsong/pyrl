@@ -304,7 +304,7 @@ def chronometric(trialsfile, plot, **kwargs):
     correct_tot  = 0
     correct_n    = 0
     for i, coh in enumerate(correct_cohs):
-        if len(correct_rt_by_coh[coh]) > 0:
+        if len(correct_rt_by_coh[coh]) > 10:
             correct_tot += np.sum(correct_rt_by_coh[coh])
             correct_n   += len(correct_rt_by_coh[coh])
             correct_rt[i] = np.mean(correct_rt_by_coh[coh])
@@ -320,7 +320,7 @@ def chronometric(trialsfile, plot, **kwargs):
     error_tot  = 0
     error_n    = 0
     for i, coh in enumerate(error_cohs):
-        if len(error_rt_by_coh[coh]) > 0:
+        if len(error_rt_by_coh[coh]) > 10:
             error_tot += np.sum(error_rt_by_coh[coh])
             error_n   += len(error_rt_by_coh[coh])
             error_rt[i] = np.mean(error_rt_by_coh[coh])
