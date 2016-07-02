@@ -33,7 +33,7 @@ n_gradient   = n_conditions
 n_validation = 100*n_conditions
 
 # Input noise
-sigma = np.sqrt(2*100*0.02)
+sigma = np.sqrt(2*100*0.022)
 
 # Separate visual and auditory inputs
 N    = 100
@@ -157,4 +157,4 @@ def get_step(rng, dt, trial, t, a):
 def terminate(perf):
     p_decision, p_correct = tasktools.correct_2AFC(perf)
 
-    return p_decision >= 0.99 and p_correct >= 0.83
+    return p_decision >= 0.99 and p_correct >= 0.8
