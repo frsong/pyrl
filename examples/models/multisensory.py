@@ -36,20 +36,18 @@ n_validation = 100*n_conditions
 sigma = np.sqrt(2*100*0.02)
 
 # Separate visual and auditory inputs
-'''
 N    = 100
 Wins = []
 for i in xrange(3):
     Win = np.zeros((len(inputs), N))
     Win[inputs['FIXATION']]         = 1
-    Win[inputs['VISUAL-P'],:N//2]   = 1
-    Win[inputs['VISUAL-N'],:N//2]   = 1
-    Win[inputs['AUDITORY-P'],N//2:] = 1
-    Win[inputs['AUDITORY-N'],N//2:] = 1
+    Win[inputs['VISUAL-P'],:N//3]   = 1
+    Win[inputs['VISUAL-N'],:N//3]   = 1
+    Win[inputs['AUDITORY-P'],N//3:2*N//3] = 1
+    Win[inputs['AUDITORY-N'],N//3:2*N//3] = 1
     Wins.append(Win)
 Win      = np.concatenate(Wins, axis=1)
 Win_mask = Win.copy()
-'''
 
 # Epoch durations
 fixation = 750

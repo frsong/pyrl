@@ -139,6 +139,7 @@ class GRU(Recurrent):
 
             # Input masks
             if self.config['Win_mask'] is not None:
+                print("[ {} ] Setting mask for Win.".format(self.name))
                 masks['Win'] = self.config['Win_mask']
 
             if self.config['p0'] < 1:
