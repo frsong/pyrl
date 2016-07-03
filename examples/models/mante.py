@@ -29,10 +29,10 @@ n_conditions = len(contexts) * (len(left_rights)*len(cohs))**2
 
 # Training
 n_gradient   = n_conditions
-n_validation = 50*n_conditions
+n_validation = 100*n_conditions
 
 # Input noise
-sigma = np.sqrt(2*100*0.022)
+sigma = np.sqrt(2*100*0.025)
 
 # Rewards
 R_ABORTED = -1

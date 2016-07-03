@@ -168,8 +168,8 @@ if 'rdm_rt-seeds' in args:
 #-----------------------------------------------------------------------------------------
 
 model     = 'mante'
-ntrials_b = 500
-ntrials_a = 50
+ntrials_b = 1000
+ntrials_a = 100
 
 if 'mante' in args:
     print("=> Context-dependent integration")
