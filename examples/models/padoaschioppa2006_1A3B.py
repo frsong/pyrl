@@ -20,10 +20,10 @@ inputs = tasktools.to_map('FIXATION', 'L-A', 'L-B', 'R-A', 'R-B', 'N-L', 'N-R')
 actions = tasktools.to_map('FIXATE', 'CHOOSE-LEFT', 'CHOOSE-RIGHT')
 
 # Trial conditions
-A_to_B       = 3.2
+A_to_B       = 2.9
 juices       = [('A', 'B'), ('B', 'A')]
 offers       = [(0, 1), (1, 3), (1, 2), (1, 1), (2, 1),
-                (3, 1), (4, 1), (6, 1), (10, 1), (3, 0)]
+                (3, 1), (4, 1), (6, 1), (2, 0)]
 n_conditions = len(juices) * len(offers)
 
 # Training
