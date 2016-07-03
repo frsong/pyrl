@@ -36,6 +36,7 @@ n_validation = 100*n_conditions
 sigma = np.sqrt(2*100*0.025)
 
 # Separate visual and auditory inputs
+'''
 N    = 100
 Wins = []
 for i in xrange(3):
@@ -48,6 +49,7 @@ for i in xrange(3):
     Wins.append(Win)
 Win      = np.concatenate(Wins, axis=1)
 Win_mask = Win.copy()
+'''
 
 # Epoch durations
 fixation = 750
