@@ -244,7 +244,7 @@ if 'romo-seeds' in args:
 #-----------------------------------------------------------------------------------------
 
 model     = 'postdecisionwager'
-ntrials_b = 2500
+ntrials_b = 2000
 ntrials_a = 100
 
 if 'postdecisionwager' in args:
