@@ -282,7 +282,8 @@ ntrials_a = 500
 
 if 'padoaschioppa2006' in args:
     print("=> Padoa-Schioppa 2006")
-    train('padoaschioppa2006')
+    seed = 1000
+    train('padoaschioppa2006', seed=seed, main=True)
     trials(model, 'b', ntrials_b)
     do_action(model, 'choice_pattern')
     trials(model, 'a', ntrials_a)
