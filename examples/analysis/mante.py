@@ -672,11 +672,11 @@ def do(action, args, config):
                                             len(left_rights), len(left_rights),
                                             len(cohs), len(cohs)))
             context = {
-                'context':       mcs[k.pop(0)],
-                'left_rights_m': left_rights[k.pop(0)],
-                'left_rights_c': left_rights[k.pop(0)],
-                'cohs_m':        cohs[k.pop(0)],
-                'cohs_c':        cohs[k.pop(0)]
+                'context':      mcs[k.pop(0)],
+                'left_right_m': left_rights[k.pop(0)],
+                'left_right_c': left_rights[k.pop(0)],
+                'coh_m':        cohs[k.pop(0)],
+                'coh_c':        cohs[k.pop(0)]
                 }
             trials.append(task.get_condition(pg.rng, pg.dt, context))
         runtools.run(action, trials, pg, config['trialspath'])
