@@ -187,7 +187,6 @@ class GRU(Recurrent):
                     print("[ {} ] Initialize Wout to zeros.".format(self.name))
                     params['Wout'] = np.zeros(self.get_dim('Wout'))
                 params['bout'] = self.config['bout']*np.ones(self.get_dim('bout'))
-                print(params['bout'])
 
                 # Initial condition
                 params['x0'] = self.config['x0']*np.ones(self.get_dim('x0'))
