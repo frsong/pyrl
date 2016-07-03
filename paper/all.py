@@ -57,13 +57,17 @@ def call(s):
             print("Something went wrong (return code {}).".format(rval))
             sys.exit(1)
 
-def train(model, seed=None):
+def train(model, seed=None, main=False):
     if seed is None:
-        extra  = ''
+        extra = ''
+    else:
+        extra = ' --seed ' + str(seed)
+
+    if seed is None or main:
         suffix = ''
     else:
-        extra = ' --seed {0} --suffix _s{0}'.format(seed)
-        suffix = '_s'+str(seed)
+        suffix  = '_s' + str(seed)
+        extra  += ' --suffix ' + suffix
 
     if gpu:
         extra += ' --gpu'
@@ -173,7 +177,8 @@ ntrials_a = 100
 
 if 'mante' in args:
     print("=> Context-dependent integration")
-    train('mante')
+    seed = 1000
+    train('mante', seed=seed, main=True)
     trials(model, 'b', ntrials_b)
     do_action(model, 'psychometric')
     trials(model, 'a', ntrials_a)
