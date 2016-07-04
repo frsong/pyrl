@@ -50,7 +50,7 @@ tmax          = fixation + stimulus_min + stimulus_max + delay_max + decision
 # Rewards
 R_ABORTED = -1
 R_CORRECT = +1
-R_SURE    = 0.65*R_CORRECT
+R_SURE    = 0.7*R_CORRECT
 
 def get_condition(rng, dt, context={}):
     #-------------------------------------------------------------------------------------
