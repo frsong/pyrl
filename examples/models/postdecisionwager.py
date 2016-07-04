@@ -184,4 +184,4 @@ def terminate(perf):
     p_correct = tasktools.divide(perf.n_correct, perf.n_decision)
     p_sure    = tasktools.divide(perf.n_sure, perf.n_sure_decision)
 
-    return p_answer >= 0.99 and p_correct >= 0.72 and 0.4 < p_sure < 0.6
+    return p_answer >= 0.99 and p_correct >= 0.75 and 0.4 < p_sure < 0.6
