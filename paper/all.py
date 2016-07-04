@@ -177,7 +177,7 @@ ntrials_a = 100
 
 if 'mante' in args:
     print("=> Context-dependent integration")
-    seed = 1234
+    seed = 100
     train('mante', seed=seed, main=True)
     trials(model, 'b', ntrials_b)
     do_action(model, 'psychometric')
