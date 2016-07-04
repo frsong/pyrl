@@ -18,7 +18,7 @@ default  = {
     'dt':                10,
     'tau':               100,
     'tau_reward':        15000,
-    'var_rec':           0.01,
+    'var_rec':           0.015,
     'baseline_var_rec':  0.01,
     'L2_r':              0,
     'baseline_L2_r':     0,
