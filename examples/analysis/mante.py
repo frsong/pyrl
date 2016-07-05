@@ -338,6 +338,9 @@ def sort(trialsfile, all_plots, units=None, network='p', **kwargs):
         # Save
         sorted_trials[s] = trials_by_cond
 
+    if all_plots is None:
+        return time_a, sorted_trials
+
     #=====================================================================================
     # Plot functions
     #=====================================================================================
@@ -498,6 +501,87 @@ def sort(trialsfile, all_plots, units=None, network='p', **kwargs):
 
             fig.save(path=figspath, name=name+'_{}{:03d}'.format(network, unit))
             fig.close()
+
+#/////////////////////////////////////////////////////////////////////////////////////////
+
+def is_active(r):
+    return np.std(r, axis=0) > 0.1
+
+def get_active_units(r, M, N):
+    M_ = (np.tile(M.T, (N, 1, 1))).T
+    Mb = np.sum(M, axis=1)
+    Rb = np.sum(r, axis=1)/np.sum(M, axis=1)
+
+    np.sum(Rb**2, axis=0)/np.sum(Mb, axis=0) - (np.sum(Rb)/)
+
+    return np.where(sd > 0.1)[0]
+
+def statespace(trialsfile, plots=None, dt_reg=50, **kwargs):
+    """
+    State-space analysis.
+
+    """
+    # Load trials
+    trials, U, Z, Z_b, A, P, M, perf, r_p, r_v = utils.load(trialsfile)
+
+    # Use policy network for this analysis
+    r = r_p
+    N = r.shape[-1]
+
+    # Time step
+    time  = trials[0]['time']
+    Ntime = len(time)
+    dt    = time[1] - time[0]
+    step  = int(dt_reg/dt)
+
+    #=====================================================================================
+    # Setup
+    #=====================================================================================
+
+    # Active units
+    units = get_active_units(r, M, N)
+    print(units)
+    #print("[ mante.statespace ] Performing regression on {} active units."
+    #      .format(len(units)))
+
+    # Preferred targets for active units
+    #preferred_targets = get_preferred_targets(trials, perf, r)[units]
+
+    #=====================================================================================
+
+    exit()
+    if isinstance(plots, dict):
+        pass
+    else:
+        figspath, name = plots
+
+        w = utils.mm_to_inch(174)
+        r = 0.55
+        fig = Figure(w=w, r=r, thickness=0.8, axislabelsize=8.5, ticklabelsize=7,
+                     labelpadx=4.5, labelpady=4.5)
+
+        w  = 0.24
+        h  = 0.35
+        x0 = 0.1
+        y0 = 0.11
+        dx = 0.07
+        dy = 0.1
+
+        fig.add('c1', [x0, y0, w, h])
+        fig.add('c2', [fig[-1].right+dx, fig[-1].y, w, h])
+        fig.add('c3', [fig[-1].right+dx, fig[-1].y, w, h])
+        fig.add('m1', [fig['c1'].x, fig['c1'].top+dy, w, h])
+        fig.add('m2', [fig[-1].right+dx, fig[-1].y, w, h])
+        fig.add('m3', [fig[-1].right+dx, fig[-1].y, w, h])
+
+        #-----------------------------------------------------------------------------
+
+
+
+        #-----------------------------------------------------------------------------
+
+        fig.save(path=figspath, name=name)
+        fig.close()
 
 #/////////////////////////////////////////////////////////////////////////////////////////
 
@@ -712,3 +796,9 @@ def do(action, args, config):
 
         trialsfile = runtools.activityfile(config['trialspath'])
         sort(trialsfile, (config['figspath'], 'sorted'), network=network)
+
+    #=====================================================================================
+
+    elif action == 'statespace':
+        trialsfile = runtools.activityfile(config['trialspath'])
+        statespace(trialsfile, (config['figspath'], 'statespace'))

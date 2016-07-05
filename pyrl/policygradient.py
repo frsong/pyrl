@@ -421,8 +421,8 @@ class PolicyGradient(object):
         return rvals
 
     def func_update_policy(self, Tmax, use_x0=False, accumulators=None):
-        U = tensor.tensor3('U')
-        Q = tensor.tensor3('Q')
+        U = tensor.tensor3('U') # Inputs
+        Q = tensor.tensor3('Q') # Noise
 
         if use_x0:
             x0_ = tensor.matrix('x0_')
@@ -443,6 +443,11 @@ class PolicyGradient(object):
 
         logpi_0 = tensor.sum(log_z_0*A[0], axis=-1)*M[0]
         logpi_t = tensor.sum(log_z*A[1:],  axis=-1)*M[1:]
+
+        # Entropy
+        entropy_0 = tensor.sum(tensor.exp(log_z_0)*log_z_0, axis=-1)*M[0]
+        entropy_t = tensor.sum(tensor.exp(log_z)*log_z, axis=-1)*M[1:]
+        entropy   = (tensor.sum(entropy_0) + tensor.sum(entropy_t))/tensor.sum(M)
 
         #def f(x):
         #    return -x**2/2/self.sigma**2
@@ -472,7 +477,7 @@ class PolicyGradient(object):
         J -= Jb0 + Jb
 
         # Objective function
-        obj = -J + self.policy_net.get_regs(x0_, r, M)
+        obj = -J + self.policy_net.get_regs(x0_, r, M) - 0.002*entropy
 
         # SGD
         self.policy_sgd = Adam(self.policy_net.trainables, accumulators=accumulators)
@@ -490,9 +495,7 @@ class PolicyGradient(object):
             args = []
         args += [U, Q, A, R, b, M, lr]
 
-        return theano.function(args, norm, updates=updates)#,
-                               #mode=NanGuardMode(nan_is_error=True, inf_is_error=True,
-                                #                 big_is_error=True))
+        return theano.function(args, norm, updates=updates)
 
     def func_update_baseline(self, use_x0=False, accumulators=None):
         U  = tensor.tensor3('U')
