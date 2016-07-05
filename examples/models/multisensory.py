@@ -32,7 +32,7 @@ n_gradient   = n_conditions
 n_validation = 100*n_conditions
 
 # Input noise
-sigma = np.sqrt(2*100*0.022)
+sigma = np.sqrt(2*100*0.02)
 
 '''
 # Separate visual and auditory inputs
@@ -77,7 +77,7 @@ def get_condition(rng, dt, context={}):
 
     freq = context.get('freq')
     if freq is None:
-        freq = rng.choice(freqs)
+        freq = rng.uniform(freqs[0], freqs[-1])#rng.choice(freqs)
 
     return {
         'durations': durations,
