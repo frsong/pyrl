@@ -51,12 +51,17 @@ masks  = save['policy_masks']
 params = save['best_policy_params']
 N      = params['Wrec'].shape[0]
 
-Win = params['Win']
-if 'Win' in masks:
-    Win *= masks['Win']
+Win = save['best_policy_params']['Win']
+if 'Win' in save['policy_masks']:
+    Win *= save['policy_masks']['Win']
+print(np.mean(Win))
+print(np.std(Win))
 
-print(np.mean(abs(Win)))
-print(np.std(abs(Win)))
+Win = save['best_baseline_params']['Win']
+if 'Win' in save['baseline_masks']:
+    Win *= save['baseline_masks']['Win']
+print(np.mean(Win))
+print(np.std(Win))
 
 def plot_weights(plot, W):
     w     = np.ravel(W)

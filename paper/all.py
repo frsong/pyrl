@@ -172,13 +172,13 @@ if 'rdm_rt-seeds' in args:
 #-----------------------------------------------------------------------------------------
 
 model     = 'mante'
-ntrials_b = 1000
+ntrials_b = 500
 ntrials_a = 100
 
 if 'mante' in args:
     print("=> Context-dependent integration")
     seed = 100
-    train('mante', seed=seed, main=True)
+    #train('mante', seed=seed, main=True)
     trials(model, 'b', ntrials_b)
     do_action(model, 'psychometric')
     trials(model, 'a', ntrials_a)

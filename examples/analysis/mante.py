@@ -512,7 +512,7 @@ def get_active_units(r, M, N):
     Mb = np.sum(M, axis=1)
     Rb = np.sum(r, axis=1)/np.sum(M, axis=1)
 
-    np.sum(Rb**2, axis=0)/np.sum(Mb, axis=0) - (np.sum(Rb)/)
+    #np.sum(Rb**2, axis=0)/np.sum(Mb, axis=0) - (np.sum(Rb)/)
 
     return np.where(sd > 0.1)[0]
 
