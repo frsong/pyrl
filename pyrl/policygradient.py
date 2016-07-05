@@ -103,6 +103,7 @@ class PolicyGradient(object):
             alpha = self.dt/config['tau']
 
             # Policy network
+            K = config['p0']*config['N']
             self.policy_config = {
                 'network_type': config['network_type'],
                 'Nin':          config['Nin'],
@@ -111,7 +112,7 @@ class PolicyGradient(object):
                 'p0':           config['p0'],
                 'rho':          config['rho'],
                 'f_out':        'softmax',
-                'Win':          config['Win'],
+                'Win':          config['Win']*np.sqrt(K)/config['Nin'],
                 'Win_mask':     config['Win_mask'],
                 'fix':          config['fix'],
                 'L2_r':         config['L2_r'],
@@ -125,15 +126,28 @@ class PolicyGradient(object):
             # Baseline network
             #Win = np.zeros((self.policy_net.N + len(config['actions']), 3*config['N']))
             #Win[self.policy_net.N:] = 1
+
+            '''
+            rng = np.random.RandomState(1234)
+            policy_N     = config['N']
+            baseline_N   = config['N']
+            baseline_Nin = self.policy_net.N + len(config['actions'])
+            baseline_Win_mask = np.zeros((baseline_Nin, 3*baseline_N))
+            p_in = 0.5
+            baseline_Win_mask[:policy_N] = (rng.uniform(size=baseline_Win_mask[:policy_N].shape) < p_in)
+            #baseline_Win = 1/np.sqrt(p_in*baseline)
+            '''
+
+            baseline_Nin = self.policy_net.N + len(config['actions'])
             self.baseline_config = {
                 'network_type': config['network_type'],
-                'Nin':          self.policy_net.N + len(config['actions']),
+                'Nin':          baseline_Nin,
                 'N':            config['N'],
                 'Nout':         1,
                 'p0':           config['p0'],
                 'rho':          config['baseline_rho'],
                 'f_out':        'linear',
-                'Win':          config['baseline_Win'],
+                'Win':          config['baseline_Win']*np.sqrt(K)/baseline_Nin,
                 'Win_mask':     config['baseline_Win_mask'],
                 'bout':         config['baseline_bout'],
                 'fix':          config['baseline_fix'],

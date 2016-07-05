@@ -23,7 +23,7 @@ default  = {
     'L2_r':              0,
     'baseline_L2_r':     0,
     'Win':               1,
-    'baseline_Win':      1/np.sqrt(100),
+    'baseline_Win':      1,
     'bout':              0,
     'baseline_bout':     None,
     'Win_mask':          None,
