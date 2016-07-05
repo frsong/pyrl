@@ -477,7 +477,7 @@ class PolicyGradient(object):
         J -= Jb0 + Jb
 
         # Objective function
-        obj = -J + self.policy_net.get_regs(x0_, r, M) - 0.002*entropy
+        obj = -J + self.policy_net.get_regs(x0_, r, M) - 0.005*entropy
 
         # SGD
         self.policy_sgd = Adam(self.policy_net.trainables, accumulators=accumulators)

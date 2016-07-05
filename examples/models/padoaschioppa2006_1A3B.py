@@ -39,7 +39,7 @@ tmax         = fixation + offer_on_max + decision
 
 # Rewards
 R_ABORTED = -1
-R_B       = 0.25
+R_B       = 0.2
 R_A       = A_to_B * R_B
 
 # Input scaling
