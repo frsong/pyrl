@@ -32,13 +32,13 @@ n_validation = 20*n_conditions
 sigma = np.sqrt(2*100*0.0001)
 
 # Recurrent noise
-#var_rec = 0.015
+var_rec = 0.015
 
 # Epoch durations
 fixation  = 750
 f1        = 500
 delay_min = 3000 - 300
-delay_max = 3000# + 300
+delay_max = 3000 + 300
 f2        = 500
 decision  = 500
 tmax      = fixation + f1 + delay_max + f2 + decision
@@ -48,10 +48,9 @@ def get_condition(rng, dt, context={}):
     # Epochs
     #-------------------------------------------------------------------------------------
 
-    delay = delay_max
-    #delay = context.get('delay')
-    #if delay is None:
-    #    delay = tasktools.uniform(rng, dt, delay_min, delay_max)
+    delay = context.get('delay')
+    if delay is None:
+        delay = tasktools.uniform(rng, dt, delay_min, delay_max)
 
     durations = {
         'fixation':   (0, fixation),
