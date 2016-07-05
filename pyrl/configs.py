@@ -3,8 +3,8 @@ import numpy as np
 required = ['inputs', 'actions', 'tmax', 'n_gradient', 'n_validation']
 default  = {
     'Performance':       None,
-    'N':                 50,
-    'p0':                1,
+    'N':                 100,
+    'p0':                0.2,
     'lr':                0.004,
     'baseline_lr':       0.004,
     'max_iter':          100000,
@@ -17,7 +17,7 @@ default  = {
     'checkfreq':         50,
     'dt':                10,
     'tau':               100,
-    'tau_reward':        15000,
+    'tau_reward':        np.inf,#15000,
     'var_rec':           0.01,
     'baseline_var_rec':  0.01,
     'L2_r':              0,
