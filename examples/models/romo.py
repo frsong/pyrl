@@ -29,10 +29,10 @@ n_gradient   = n_conditions
 n_validation = 20*n_conditions
 
 # Input noise
-sigma = np.sqrt(2*100*0.0001)
+sigma = np.sqrt(2*100*0.001)
 
 # Recurrent noise
-var_rec = 0.015
+var_rec = 0.02
 
 # Epoch durations
 fixation  = 750
