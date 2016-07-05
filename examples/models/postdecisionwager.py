@@ -21,7 +21,7 @@ inputs = tasktools.to_map('FIXATION', 'LEFT', 'RIGHT', 'SURE')
 actions = tasktools.to_map('FIXATE', 'CHOOSE-LEFT', 'CHOOSE-RIGHT', 'CHOOSE-SURE')
 
 # Trial conditions
-wagers       = [False]
+wagers       = [True, False]
 left_rights  = [-1, 1]
 cohs         = [0, 3.2, 6.4, 12.8, 25.6, 51.2]
 n_conditions = len(wagers) * len(left_rights) * len(cohs)

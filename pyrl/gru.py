@@ -166,10 +166,17 @@ class GRU(Recurrent):
             params = OrderedDict()
             if self.config['ei'] is None:
                 # External input
-                params['Win'] = self.config['Win']*rng.normal(size=self.get_dim('Win'))
+                #params['Win'] = self.config['Win']*rng.normal(size=self.get_dim('Win'))
+
+                # Input weights
+                k = 4
+                params['Win']  = self.config['Win']*rng.gamma(k, 1/k, size=self.get_dim('Win'))
+                params['Win'] *= random_sign(rng, self.get_dim('Win'))
+
+                # Input biases
                 params['bin'] = np.zeros(self.get_dim('bin'))
 
-                # Recurrent input
+                # Recurrent weights
                 k = 4
                 params['Wrec_gates']  = rng.gamma(k, 1/k, self.get_dim('Wrec_gates'))
                 params['Wrec']        = rng.gamma(k, 1/k, self.get_dim('Wrec'))
@@ -179,13 +186,15 @@ class GRU(Recurrent):
                 #params['Wrec_gates'] = rng.normal(size=self.get_dim('Wrec_gates'))
                 #params['Wrec']       = rng.normal(size=self.get_dim('Wrec'))
 
-                # Readout
+                # Output weights
                 if self.config['Wout'] > 0:
                     print("[ {} ] Initialize Wout to random normal.".format(self.name))
                     params['Wout'] = self.config['Wout']*rng.normal(size=self.get_dim('Wout'))
                 else:
                     print("[ {} ] Initialize Wout to zeros.".format(self.name))
                     params['Wout'] = np.zeros(self.get_dim('Wout'))
+
+                # Output biases
                 params['bout'] = self.config['bout']*np.ones(self.get_dim('bout'))
 
                 # Initial condition
