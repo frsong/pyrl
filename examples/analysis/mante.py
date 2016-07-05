@@ -238,7 +238,7 @@ def sort(trialsfile, all_plots, units=None, network='p', **kwargs):
 
     """
     # Load trials
-    trials, U, Z, Z_b, A, P, M, perf, r_p, r_v = tils.load(trialsfile)
+    trials, U, Z, Z_b, A, P, M, perf, r_p, r_v = utils.load(trialsfile)
 
     # Which network?
     if network == 'p':
