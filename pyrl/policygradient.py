@@ -445,9 +445,9 @@ class PolicyGradient(object):
         logpi_t = tensor.sum(log_z*A[1:],  axis=-1)*M[1:]
 
         # Entropy
-        entropy_0 = tensor.sum(tensor.exp(log_z_0)*log_z_0, axis=-1)*M[0]
-        entropy_t = tensor.sum(tensor.exp(log_z)*log_z, axis=-1)*M[1:]
-        entropy   = (tensor.sum(entropy_0) + tensor.sum(entropy_t))/tensor.sum(M)
+        #entropy_0 = tensor.sum(tensor.exp(log_z_0)*log_z_0, axis=-1)*M[0]
+        #entropy_t = tensor.sum(tensor.exp(log_z)*log_z, axis=-1)*M[1:]
+        #entropy   = (tensor.sum(entropy_0) + tensor.sum(entropy_t))/tensor.sum(M)
 
         #def f(x):
         #    return -x**2/2/self.sigma**2
@@ -477,7 +477,7 @@ class PolicyGradient(object):
         J -= Jb0 + Jb
 
         # Objective function
-        obj = -J + self.policy_net.get_regs(x0_, r, M) - 0.005*entropy
+        obj = -J + self.policy_net.get_regs(x0_, r, M)# + 0.0005*entropy
 
         # SGD
         self.policy_sgd = Adam(self.policy_net.trainables, accumulators=accumulators)
