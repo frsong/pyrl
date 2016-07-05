@@ -678,7 +678,7 @@ class PolicyGradient(object):
 
                         # Run trials
                         (U, Q, Q_b, Z, Z_b, A, R, M, init_, init_b_, x0_, x0_b_,
-                         perf_) = self.run_trials(trials)
+                         perf_) = self.run_trials(trials, progress_bar=True)
 
                         # Termination condition
                         terminate = False
