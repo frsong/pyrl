@@ -131,7 +131,6 @@ plot.ylim(-1, 1)
 plot.xlabel(r'Number of trials ($\times$' + '{})'.format(T))
 plot.ylabel('Reward per trial')
 
-mean = np.mean(num_trials)
 if len(num_trials) > 1:
     mean = np.mean(num_trials)
     sd   = np.std(num_trials, ddof=1)
