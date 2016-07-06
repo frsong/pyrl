@@ -20,8 +20,8 @@ inputs = tasktools.to_map('FIXATION', 'LEFT', 'RIGHT', 'SURE')
 # Actions
 actions = tasktools.to_map('FIXATE', 'CHOOSE-LEFT', 'CHOOSE-RIGHT', 'CHOOSE-SURE')
 
-# Firing-rate regularization
-L2_r = 0.002
+# Connection probability
+baseline_p0 = 1
 
 # Trial conditions
 wagers       = [True, False]

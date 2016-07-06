@@ -138,13 +138,14 @@ class PolicyGradient(object):
             #baseline_Win = 1/np.sqrt(p_in*baseline)
             '''
 
+            K = config['baseline_p0']*config['N']
             baseline_Nin = self.policy_net.N + len(config['actions'])
             self.baseline_config = {
                 'network_type': config['network_type'],
                 'Nin':          baseline_Nin,
                 'N':            config['N'],
                 'Nout':         1,
-                'p0':           config['p0'],
+                'p0':           config['baseline_p0'],
                 'rho':          config['baseline_rho'],
                 'f_out':        'linear',
                 'Win':          config['baseline_Win']*np.sqrt(K)/baseline_Nin,
@@ -577,7 +578,8 @@ class PolicyGradient(object):
         items['GPU']                      = gpu
         items['Network type']             = self.config['network_type']
         items['N']                        = self.config['N']
-        items['Connection probability']   = self.config['p0']
+        items['Conn. prob. (policy)']     = self.config['p0']
+        items['Conn. prob. (baseline)']   = self.config['baseline_p0']
         items['dt']                       = str(self.dt) + ' ms'
         items['tau_reward']               = str(self.config['tau_reward']) + ' ms'
         items['var_rec (policy)']         = self.config['var_rec']
