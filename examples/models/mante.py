@@ -28,7 +28,7 @@ cohs         = [5, 15, 50]
 n_conditions = len(contexts) * (len(left_rights)*len(cohs))**2
 
 # Sample logarithmically to get symmetric psychometric curves
-log_min_coh = np.log(min(cohs)/1.5)
+log_min_coh = np.log(min(cohs)/2)
 log_max_coh = np.log(max(cohs)*1.5)
 
 # Training
