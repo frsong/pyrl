@@ -27,6 +27,10 @@ n_conditions = len(mods) * len(freqs)
 # Discrimination boundary
 boundary = 12.5
 
+# Sample logarithmically to get symmetric psychometric curves
+log_min_offset = np.log(0.5/1.5)
+log_max_offset = np.log((max(freqs) - boundary)*1.5)
+
 # Training
 n_gradient   = n_conditions
 n_validation = 50*n_conditions
@@ -77,7 +81,7 @@ def get_condition(rng, dt, context={}):
 
     freq = context.get('freq')
     if freq is None:
-        freq = rng.uniform(freqs[0], freqs[-1])#rng.choice(freqs)
+        freq = boundary + rng.choice([-1, 1])*np.exp(rng.uniform(log_min_coh, log_max_coh))#rng.choice(freqs)
 
     return {
         'durations': durations,
