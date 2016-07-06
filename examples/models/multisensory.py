@@ -38,10 +38,6 @@ n_validation = 50*n_conditions
 # Input noise
 sigma = np.sqrt(2*100*0.01)
 
-# Connection probability
-p0 = 1
-
-'''
 # Separate visual and auditory inputs
 N    = 100
 Wins = []
@@ -55,7 +51,6 @@ for i in xrange(3):
     Wins.append(Win)
 Win      = np.concatenate(Wins, axis=1)
 Win_mask = Win.copy()
-'''
 
 # Epoch durations
 fixation = 750
