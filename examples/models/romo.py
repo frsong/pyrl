@@ -31,12 +31,6 @@ n_validation = 20*n_conditions
 # Input noise
 sigma = np.sqrt(2*100*0.001)
 
-# Connection probability
-p0 = 0.2
-
-# Recurrent noise
-var_rec = 0.02
-
 # Epoch durations
 fixation  = 750
 f1        = 500
