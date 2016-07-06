@@ -52,6 +52,7 @@ times = []
 xall  = []
 original   = [modelname]
 additional = [modelname+'_s'+str(i) for i in [101, 102, 103, 104, 105]]
+num_trials = []
 for name in additional + original:
     # Training history
     datapath = os.path.join(parent, 'examples', 'work', 'data', name)
@@ -111,6 +112,7 @@ for name in additional + original:
     xall.append(ntrials)
 
     print("{}: {} trials".format(name, ntrials[-1]*T))
+    num_trials.append(ntrials[-1]*T)
 
     #-------------------------------------------------------------------------------------
     # Percent correct
@@ -128,6 +130,17 @@ plot.xlim(0, max([max(x) for x in xall]))
 plot.ylim(-1, 1)
 plot.xlabel(r'Number of trials ($\times$' + '{})'.format(T))
 plot.ylabel('Reward per trial')
+
+mean = np.mean(num_trials)
+if len(num_trials) > 1:
+    mean = np.mean(num_trials)
+    sd   = np.std(num_trials, ddof=1)
+    plot.text_lower_right(r'{:.1f} $\pm$ {:.1f} trials'.format(mean, sd), dy=0.03,
+                          fontsize=10, color=Figure.colors('green'))
+else:
+    mean = int(num_trials[0])
+    plot.text_lower_right('{} trials'.format(mean), dy=0.03,
+                          fontsize=10, color=Figure.colors('green'))
 
 '''
 if len(times) > 0:
