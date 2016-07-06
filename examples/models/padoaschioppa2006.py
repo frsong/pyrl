@@ -30,6 +30,9 @@ n_conditions = len(juices) * len(offers)
 n_gradient   = n_conditions
 n_validation = 50*n_conditions
 
+# Recurrent noise
+var_rec = 0.02
+
 # Durations
 fixation     = 750
 offer_on_min = 1000
