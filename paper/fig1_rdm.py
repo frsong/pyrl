@@ -233,14 +233,14 @@ plot = fig['on-stimulus']
 
 unit = 61
 
-kwargs = {'on-stimulus-tmin': -100, 'on-stimulus-tmax': 400, 'colors': 'kiani',
+kwargs = {'on-stimulus-tmin': -200, 'on-stimulus-tmax': 450, 'colors': 'kiani',
           'dashes': [3.5, 2]}
 rdm_analysis.sort(rdm_fixed_activity, {'on-stimulus': plot}, unit=unit, **kwargs)
 
-plot.xlim(-100, 400)
-plot.xticks([0, 200, 400])
+plot.xlim(-200, 450)
+plot.xticks([-200, 0, 200, 400])
 
-plot.ylim(0, 2.5)
+plot.ylim(0, 2)
 plot.yticks([0, 1, 2])
 
 plot.xlabel('Time from stimulus (ms)')
@@ -249,7 +249,7 @@ plot.ylabel('Firing rate (a.u.)')
 # Legend
 props = {'prop': {'size': 6}, 'handlelength': 1.2,
          'handletextpad': 1.1, 'labelspacing': 0.7}
-plot.legend(bbox_to_anchor=(0.41, 1.2), **props)
+plot.legend(bbox_to_anchor=(0.43, 1.2), **props)
 
 #=========================================================================================
 
