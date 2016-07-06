@@ -189,12 +189,10 @@ class PolicyGradient(object):
 
         # Discount future reward
         if np.isfinite(self.config['tau_reward']):
-            print("tau_reward = {}".format(self.config['tau_reward']))
             self.alpha_reward = self.dt/self.config['tau_reward']
             def discount_factor(t):
                 return np.exp(-t*self.alpha_reward)
         else:
-            print("No future discount.")
             def discount_factor(t):
                 return 1
         self.discount_factor = discount_factor
