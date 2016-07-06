@@ -36,6 +36,9 @@ n_validation = 50*n_conditions
 # Input noise
 sigma = np.sqrt(2*100*0.01)
 
+# Recurrent noise
+var_rec = 0.02
+
 # Durations
 fixation      = 750
 stimulus_min  = 100
