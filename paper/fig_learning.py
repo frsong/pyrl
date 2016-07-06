@@ -129,6 +129,7 @@ plot.ylim(-1, 1)
 plot.xlabel(r'Number of trials ($\times$' + '{})'.format(T))
 plot.ylabel('Reward per trial')
 
+'''
 if len(times) > 0:
     mean = np.mean(times)
     if len(times) > 1:
@@ -137,6 +138,7 @@ if len(times) > 0:
         sd = 0
     plot.text_lower_right(r'{:.1f} $\pm$ {:.1f} mins'.format(mean, sd), dy=0.03,
                           fontsize=10, color=Figure.colors('green'))
+'''
 
 plot = fig['correct']
 plot.xlim(0, max([max(x) for x in xall]))
