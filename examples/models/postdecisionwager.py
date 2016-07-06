@@ -21,12 +21,16 @@ inputs = tasktools.to_map('FIXATION', 'LEFT', 'RIGHT', 'SURE')
 actions = tasktools.to_map('FIXATE', 'CHOOSE-LEFT', 'CHOOSE-RIGHT', 'CHOOSE-SURE')
 
 # Connection probability
-p0 = 0.2
+p0 = 1
+
+# Recurrent noise
+var_rec = 0.05
 
 # Trial conditions
 wagers       = [True, False]
 left_rights  = [-1, 1]
 cohs         = [0, 3.2, 6.4, 12.8, 25.6, 51.2]
+tr_cohs      = cohs
 n_conditions = len(wagers) * len(left_rights) * len(cohs)
 
 # Training
@@ -35,9 +39,6 @@ n_validation = 50*n_conditions
 
 # Input noise
 sigma = np.sqrt(2*100*0.01)
-
-# Recurrent noise
-var_rec = 0.02
 
 # Durations
 fixation      = 750
@@ -190,4 +191,4 @@ def terminate(perf):
     p_correct = tasktools.divide(perf.n_correct, perf.n_decision)
     p_sure    = tasktools.divide(perf.n_sure, perf.n_sure_decision)
 
-    return p_answer >= 0.99 and p_correct >= 0.75 and 0.4 < p_sure < 0.6
+    return p_answer >= 0.99 and p_correct >= 0.8 and 0.4 < p_sure < 0.6
