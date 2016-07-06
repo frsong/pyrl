@@ -31,7 +31,7 @@ n_gradient   = n_conditions
 n_validation = 50*n_conditions
 
 # Recurrent noise
-baseline_var_rec = 0.015
+var_rec = 0.015
 
 # Durations
 fixation     = 750
