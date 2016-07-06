@@ -20,11 +20,8 @@ inputs = tasktools.to_map('FIXATION', 'LEFT', 'RIGHT', 'SURE')
 # Actions
 actions = tasktools.to_map('FIXATE', 'CHOOSE-LEFT', 'CHOOSE-RIGHT', 'CHOOSE-SURE')
 
-# Connection probability
-p0 = 1
-
-# Recurrent noise
-var_rec = 0.05
+# Firing-rate regularization
+#L2_r = 0.002
 
 # Trial conditions
 wagers       = [True, False]
