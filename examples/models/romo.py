@@ -35,7 +35,7 @@ sigma = np.sqrt(2*100*0.001)
 fixation  = 750
 f1        = 500
 delay_min = 3000 - 300
-delay_max = 3000# + 300
+delay_max = 3000 + 300
 f2        = 500
 decision  = 500
 tmax      = fixation + f1 + delay_max + f2 + decision
@@ -47,8 +47,7 @@ def get_condition(rng, dt, context={}):
 
     delay = context.get('delay')
     if delay is None:
-        delay = delay_max
-        #delay = tasktools.uniform(rng, dt, delay_min, delay_max)
+        delay = tasktools.uniform(rng, dt, delay_min, delay_max)
 
     durations = {
         'fixation':   (0, fixation),
