@@ -26,6 +26,9 @@ n_validation = 100*n_conditions
 # Input noise
 sigma = np.sqrt(2*100*0.01)
 
+# Reward discount
+tau_reward = 15000
+
 # Durations
 fixation = 750
 stimulus = 2000
