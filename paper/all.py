@@ -150,7 +150,7 @@ ntrials_a = 50
 
 if 'rdm_rt' in args:
     print("=> Perceptual decision-making (RT)")
-    seed = 1000
+    seed = 1001
     train(model, seed=seed, main=True)
     trials(model, 'b', ntrials_b)
     do_action(model, 'psychometric')
