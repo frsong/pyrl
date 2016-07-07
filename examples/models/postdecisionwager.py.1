@@ -24,6 +24,7 @@ actions = tasktools.to_map('FIXATE', 'CHOOSE-LEFT', 'CHOOSE-RIGHT', 'CHOOSE-SURE
 wagers       = [True, False]
 left_rights  = [-1, 1]
 cohs         = [0, 3.2, 6.4, 12.8, 25.6, 51.2]
+tr_cohs      = cohs
 n_conditions = len(wagers) * len(left_rights) * len(cohs)
 
 # Training
@@ -33,7 +34,9 @@ n_validation = 50*n_conditions
 # Input noise
 sigma = np.sqrt(2*100*0.01)
 
-'''
+# Connection probability
+p0 = 0.2
+
 # Separate inputs
 N    = 100
 Wins = []
@@ -45,7 +48,6 @@ for i in xrange(3):
     Win[inputs['SURE'],N//2:]  = 1
     Wins.append(Win)
 Win = np.concatenate(Wins, axis=1)
-'''
 
 # Durations
 fixation      = 750
@@ -66,38 +68,27 @@ R_ABORTED = -1
 R_CORRECT = +1
 R_SURE    = 0.7*R_CORRECT
 
-# Performance measure
-from pyrl.performance import PerformancePostdecisionWager as Performance
-
 # Input scaling
 def scale(coh):
     return (1 + coh/100)/2
 
 class Task(object):
-    def __init__(self):
-        self.R_SURE = 0.5
-
-    def update(self, perf):
-        if perf is not None:
-            self.R_SURE = tasktools.divide(perf.n_correct, perf.n_decision)
-
     def get_condition(self, rng, dt, context={}):
-        #---------------------------------------------------------------------------------
+        #-------------------------------------------------------------------------------------
         # Wager or no wager?
-        #---------------------------------------------------------------------------------
+        #-------------------------------------------------------------------------------------
 
         wager = context.get('wager')
         if wager is None:
             wager = rng.choice(wagers)
 
-        #---------------------------------------------------------------------------------
+        #-------------------------------------------------------------------------------------
         # Epochs
-        #---------------------------------------------------------------------------------
+        #-------------------------------------------------------------------------------------
 
         stimulus = context.get('stimulus')
         if stimulus is None:
-            stimulus = stimulus_min + tasktools.truncated_exponential(rng, dt,
-                                                                      stimulus_mean,
+            stimulus = stimulus_min + tasktools.truncated_exponential(rng, dt, stimulus_mean,
                                                                       xmax=stimulus_max)
 
         delay = context.get('delay')
@@ -122,9 +113,9 @@ class Task(object):
             durations['sure'] = (fixation + stimulus + sure_onset, tmax)
         time, epochs = tasktools.get_epochs_idx(dt, durations)
 
-        #---------------------------------------------------------------------------------
+        #-------------------------------------------------------------------------------------
         # Trial
-        #---------------------------------------------------------------------------------
+        #-------------------------------------------------------------------------------------
 
         left_right = context.get('left_right')
         if left_right is None:
@@ -144,9 +135,9 @@ class Task(object):
             }
 
     def get_step(self, rng, dt, trial, t, a):
-        #---------------------------------------------------------------------------------
+        #-------------------------------------------------------------------------------------
         # Reward
-        #---------------------------------------------------------------------------------
+        #-------------------------------------------------------------------------------------
 
         epochs = trial['epochs']
         status = {'continue': True}
@@ -175,13 +166,13 @@ class Task(object):
                 if trial['wager']:
                     status['choice']   = 'S'
                     status['t_choice'] = t-1
-                    reward = self.R_SURE
+                    reward = R_SURE
                 else:
                     reward = R_ABORTED
 
-        #---------------------------------------------------------------------------------
+        #-------------------------------------------------------------------------------------
         # Inputs
-        #---------------------------------------------------------------------------------
+        #-------------------------------------------------------------------------------------
 
         if trial['left_right'] < 0:
             high = inputs['LEFT']
@@ -199,7 +190,7 @@ class Task(object):
         if trial['wager'] and t in epochs['sure']:
             u[inputs['SURE']] = 1
 
-        #---------------------------------------------------------------------------------
+        #-------------------------------------------------------------------------------------
 
         return u, reward, status
 

@@ -660,6 +660,8 @@ class PolicyGradient(object):
         try:
             for iter in xrange(iter_start, max_iter):
                 if iter % checkfreq == 0:
+                    if hasattr(self.task, 'n_validation'):
+                        n_validation = self.task.n_validation
                     if n_validation > 0:
                         #-----------------------------------------------------------------
                         # Validation
@@ -679,6 +681,8 @@ class PolicyGradient(object):
                         # Run trials
                         (U, Q, Q_b, Z, Z_b, A, R, M, init_, init_b_, x0_, x0_b_,
                          perf_) = self.run_trials(trials, progress_bar=True)
+                        if hasattr(self.task, 'update'):
+                            self.task.update(perf_)
 
                         # Termination condition
                         terminate = False
@@ -815,6 +819,8 @@ class PolicyGradient(object):
                 #-------------------------------------------------------------------------
 
                 # Trials
+                if hasattr(self.task, 'n_gradient'):
+                    n_gradient = self.task.n_gradient
                 trials = [self.task.get_condition(self.rng, self.dt)
                           for i in xrange(n_gradient)]
 

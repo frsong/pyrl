@@ -835,6 +835,28 @@ def statespace(trialsfile, plots=None, dt_reg=50, **kwargs):
     print(" done!")
 
     #-------------------------------------------------------------------------------------
+    # Normalize within conditions
+    #-------------------------------------------------------------------------------------
+
+    for s in sorted_trials:
+        # Normalize
+        X  = 0
+        X2 = 0
+        n  = 0
+        for cond, r_ in sorted_trials[s].items():
+            r   = r_.T
+            X  += np.sum(r,    axis=1)
+            X2 += np.sum(r**2, axis=1)
+            n  += r.shape[1]
+        mean = X/n
+        std  = np.sqrt(X2/n - mean**2)
+
+        mean = np.tile(mean, (ntime, 1)).T
+        sd   = np.tile(sd,   (ntime, 1)).T
+        for cond, r in sorted_trials[s].items():
+            sorted_trials[s][cond] = (r - mean)/std
+
+    #-------------------------------------------------------------------------------------
     # Denoising matrix
     #-------------------------------------------------------------------------------------
 
@@ -920,11 +942,11 @@ def statespace(trialsfile, plots=None, dt_reg=50, **kwargs):
         mew_filled = 0.5
         mew_empty  = 0.5
 
-        y  = 1.2
+        y  = (fig['c1'].bottom + fig['m1'].top)/2
         dx = 0.08
         dy = 0.06
 
-        fontsize = 4.75
+        fontsize = 5.5
 
         for context, plot, basecolor in zip(['Motion', 'Color'],
                                             [fig['c1'], fig['c3']],
