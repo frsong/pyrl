@@ -39,7 +39,6 @@ n_validation = 50*n_conditions
 sigma = np.sqrt(2*100*0.01)
 
 # Separate visual and auditory inputs
-'''
 N    = 100
 Wins = []
 for i in xrange(3):
@@ -52,7 +51,6 @@ for i in xrange(3):
     Wins.append(Win)
 Win      = np.concatenate(Wins, axis=1)
 Win_mask = Win.copy()
-'''
 
 # Epoch durations
 fixation = 750
@@ -162,4 +160,4 @@ def get_step(rng, dt, trial, t, a):
 def terminate(perf):
     p_decision, p_correct = tasktools.correct_2AFC(perf)
 
-    return p_decision >= 0.99 and p_correct >= 0.8
+    return p_decision >= 0.99 and p_correct >= 0.85
