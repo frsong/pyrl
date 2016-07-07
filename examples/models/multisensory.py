@@ -32,7 +32,7 @@ n_gradient   = n_conditions
 n_validation = 50*n_conditions
 
 # Input noise
-sigma = np.sqrt(2*100*0.015)
+sigma = np.sqrt(2*100*0.02)
 
 # Separate visual and auditory inputs
 N    = 100
@@ -45,8 +45,7 @@ for i in xrange(3):
     Win[inputs['AUDITORY-P'],-N//3:] = 1
     Win[inputs['AUDITORY-N'],-N//3:] = 1
     Wins.append(Win)
-Win      = np.concatenate(Wins, axis=1)
-#Win_mask = Win.copy()
+Win = np.concatenate(Wins, axis=1)
 
 # Epoch durations
 fixation = 750
@@ -90,8 +89,8 @@ R_ABORTED = -1
 R_CORRECT = +1
 
 # Input scaling
-fmin = 0
-fmax = 2*boundary
+fmin = 4
+fmax = 2*boundary - fmin
 
 def scale(f):
     return (f - fmin)/(fmax - fmin)
@@ -156,4 +155,4 @@ def get_step(rng, dt, trial, t, a):
 def terminate(perf):
     p_decision, p_correct = tasktools.correct_2AFC(perf)
 
-    return p_decision >= 0.99 and p_correct >= 0.82
+    return p_decision >= 0.99 and p_correct >= 0.85

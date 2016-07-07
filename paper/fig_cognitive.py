@@ -3,6 +3,8 @@ from __future__ import division
 import imp
 import os
 
+import numpy as np
+
 from pyrl          import utils
 from pyrl.figtools import Figure
 
@@ -168,7 +170,7 @@ plot.xlabel('Percent color coherence')
 
 #=========================================================================================
 
-units     = [44, 45, 52, 86]
+units     = [2, 74, 90, 63]
 all_plots = []
 for i in xrange(len(units)):
     plots = {
@@ -213,21 +215,28 @@ lims = {
         #    plot.yticks()
 
 lims = {
-    0: (-0.5, 2.5),
-    1: (0, 2.5),
-    2: (-1, 2),
-    3: (-1, 2.5)
+    0: [(-0.6, 0.6), (-1, 1.8), (-0.8, 0.4), (-0.8, 1.2)],
+    1: [(-0.8, 0.8), (-1, 0.8), (-1, 0.8), (-1, 0.6)],
+    2: [(-0.2, 0.6), (-0.8, 0.2), (0, 2), (-1, 1.5)],
+    3: [(-0.8, 0.8), (-0.8, 1.2), (-0.8, 0.4), (-0.8, 0.8)]
+    }
+ticks = {
+    0: [(-0.6, 0, 0.6), (-1, 0, 1), (-0.8, -0.4, 0, 0.4), (-0.8, 0, 0.8)],
+    1: [(-0.8, 0, 0.8), (-0.8, 0, 0.8), (-0.8, 0, 0.8), (-0.6, 0, 0.6)],
+    2: [(0, 0.4), (-0.8, -0.4, 0), (0, 1, 2), (-1, 0, 1)],
+    3: [(-0.8, 0, 0.8), (-0.8, 0, 0.8), (-0.8, -0.4, 0, 0.4), (-0.8, 0, 0.8)]
     }
 for i in xrange(len(units)):
-    for k in ['choice', 'motion-choice', 'color-choice', 'context-choice']:
+    for j, k in enumerate(['choice', 'motion-choice', 'color-choice', 'context-choice']):
         plot = fig['mante-{}-{}'.format(k, i)]
-        plot.ylim(lims[i])
+        plot.ylim(lims[i][j])
+        plot.yticks(ticks[i][j])
 
 def custom_axislabel(name, s1, s2, color2='k'):
     plot = fig[name]
-    plot.text(-1.15, 0.5+0.13, s1, ha='center', va='center', fontsize=7,
+    plot.text(-1.25, 0.5+0.13, s1, ha='center', va='center', fontsize=7,
               transform=plot.transAxes)
-    plot.text(-1.15, 0.5-0.13, s2, ha='center', va='center', fontsize=7, color=color2,
+    plot.text(-1.25, 0.5-0.13, s2, ha='center', va='center', fontsize=7, color=color2,
               transform=plot.transAxes)
 
 custom_axislabel('mante-choice-0', 'choice', r'\textit{all trials}')

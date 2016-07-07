@@ -204,15 +204,16 @@ def compute_dprime(trials, perf, r):
 
     return -utils.div(mean_L - mean_R, np.sqrt((var_L + var_R)/2))
 
-def get_preferred_targets(trials, perf, r):
+def get_preferred_targets(trials, perf, r, verbose=False):
     """
     Determine preferred targets.
 
     """
     dprime = compute_dprime(trials, perf, r)
-    for i in xrange(len(dprime)):
-        if abs(dprime[i]) > 0.5:
-            print(i, dprime[i])
+    if verbose:
+        for i in xrange(len(dprime)):
+            if abs(dprime[i]) > 0.5:
+                print(i, dprime[i])
 
     return 2*(dprime > 0) - 1
 
@@ -354,10 +355,11 @@ def sort(trialsfile, all_plots, units=None, network='p', **kwargs):
 
     def plot_choice(plot, unit, w):
         t = time_a[w]
-        y = [[1]]
+        y = [[0, 0.5]]
         for (choice,), r_cond in sorted_trials['choice'].items():
             plot.plot(t, r_cond[w,unit], linestyles[choice], color=Figure.colors('red'), lw=lw)
             y.append(r_cond[w,unit])
+        plot.lim('y', y)
 
         return t, y
 
@@ -368,7 +370,7 @@ def sort(trialsfile, all_plots, units=None, network='p', **kwargs):
         cohs = sorted(list(set(cohs)))
 
         t = time_a[w]
-        y = [[1]]
+        y = [[0, 0.5]]
         for (choice, signed_coh, context), r_cond in sorted_trials['motion-choice'].items():
             if context != 'm':
                 continue
@@ -384,6 +386,7 @@ def sort(trialsfile, all_plots, units=None, network='p', **kwargs):
 
             plot.plot(t, r_cond[w,unit], linestyles[choice], color=color, lw=lw)
             y.append(r_cond[w,unit])
+        plot.lim('y', y)
 
         return t, y
 
@@ -394,7 +397,7 @@ def sort(trialsfile, all_plots, units=None, network='p', **kwargs):
         cohs = sorted(list(set(cohs)))
 
         t = time_a[w]
-        y = [[1]]
+        y = [[0, 0.5]]
         for (choice, signed_coh, context), r_cond in sorted_trials['color-choice'].items():
             if context != 'c':
                 continue
@@ -410,12 +413,13 @@ def sort(trialsfile, all_plots, units=None, network='p', **kwargs):
 
             plot.plot(t, r_cond[w,unit], linestyles[choice], color=color, lw=lw)
             y.append(r_cond[w,unit])
+        plot.lim('y', y)
 
         return t, y
 
     def plot_context_choice(plot, unit, w):
         t = time_a[w]
-        y = [[1]]
+        y = [[0, 0.5]]
         for (choice, context), r_cond in sorted_trials['context-choice'].items():
             if context == 'm':
                 color = 'k'
@@ -424,6 +428,7 @@ def sort(trialsfile, all_plots, units=None, network='p', **kwargs):
 
             plot.plot(t, r_cond[w,unit], linestyles[choice], color=color, lw=lw)
             y.append(r_cond[w, unit])
+        plot.lim('y', y)
 
         return t, y
 
@@ -507,14 +512,14 @@ def sort(trialsfile, all_plots, units=None, network='p', **kwargs):
 def is_active(r):
     return np.std(r, axis=0) > 0.1
 
-def get_active_units(r, M, N):
-    M_ = (np.tile(M.T, (N, 1, 1))).T
-    Mb = np.sum(M, axis=1)
-    Rb = np.sum(r, axis=1)/np.sum(M, axis=1)
+def get_active_units(r, M):
+    N   = r.shape[-1]
+    M_  = (np.tile(M.T, (N, 1, 1))).T
+    r_  = r*M_
+    n   = np.sum(M)
+    var = (r_**2).sum(axis=0).sum(axis=0)/n - (r_.sum(axis=0).sum(axis=0)/n)**2
 
-    #np.sum(Rb**2, axis=0)/np.sum(Mb, axis=0) - (np.sum(Rb)/)
-
-    return np.where(sd > 0.1)[0]
+    return np.where(np.sqrt(var) > 0.2)[0]
 
 def statespace(trialsfile, plots=None, dt_reg=50, **kwargs):
     """
@@ -539,13 +544,15 @@ def statespace(trialsfile, plots=None, dt_reg=50, **kwargs):
     #=====================================================================================
 
     # Active units
-    units = get_active_units(r, M, N)
-    print(units)
-    #print("[ mante.statespace ] Performing regression on {} active units."
-    #      .format(len(units)))
+    units = get_active_units(r, M)
+    print("[ mante.statespace ] Performing regression on {} active units."
+          .format(len(units)))
 
     # Preferred targets for active units
-    #preferred_targets = get_preferred_targets(trials, perf, r)[units]
+    preferred_targets = get_preferred_targets(trials, perf, r)[units]
+
+    # Stimulus period
+
 
     #=====================================================================================
 
