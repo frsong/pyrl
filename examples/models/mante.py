@@ -27,16 +27,12 @@ left_rights  = [-1, 1]
 cohs         = [5, 15, 50]
 n_conditions = len(contexts) * (len(left_rights)*len(cohs))**2
 
-# Sample logarithmically to get symmetric psychometric curves
-log_min_coh = np.log(min(cohs)/2)
-log_max_coh = np.log(max(cohs)*1.5)
-
 # Training
 n_gradient   = n_conditions
 n_validation = 50*n_conditions
 
 # Input noise
-sigma = np.sqrt(2*100*0.02)
+sigma = np.sqrt(2*100*0.025)
 
 # Rewards
 R_ABORTED = -1
@@ -88,11 +84,11 @@ def get_condition(rng, dt, context={}):
 
     coh_m = context.get('coh_m')
     if coh_m is None:
-        coh_m = np.exp(rng.uniform(log_min_coh, log_max_coh))#rng.choice(cohs)
+        coh_m = rng.choice(cohs)
 
     coh_c = context.get('coh_c')
     if coh_c is None:
-        coh_c = np.exp(rng.uniform(log_min_coh, log_max_coh))#rng.choice(cohs)
+        coh_c = rng.choice(cohs)
 
     return {
         'durations':    durations,
@@ -182,4 +178,4 @@ def get_step(rng, dt, trial, t, a):
 def terminate(perf):
     p_decision, p_correct = tasktools.correct_2AFC(perf)
 
-    return p_decision >= 0.99 and p_correct >= 0.8
+    return p_decision >= 0.99 and p_correct >= 0.85
