@@ -233,7 +233,6 @@ if 'romo' in args:
     do_action(model, 'performance')
     trials(model, 'a', ntrials_a)
     do_action(model, 'sort')
-    do_action(model, 'sort', args='value')
 
 if 'romo-seeds' in args:
     for seed in xrange(start_seed, start_seed+ntrain):
