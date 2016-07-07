@@ -20,7 +20,7 @@ default  = {
     'tau':               100,
     'tau_reward':        np.inf,
     'var_rec':           0.01,
-    'baseline_var_rec':  0.02,
+    'baseline_var_rec':  0.01,
     'L2_r':              0,
     'baseline_L2_r':     0,
     'Win':               1,
