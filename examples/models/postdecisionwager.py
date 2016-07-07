@@ -20,9 +20,6 @@ inputs = tasktools.to_map('FIXATION', 'LEFT', 'RIGHT', 'SURE')
 # Actions
 actions = tasktools.to_map('FIXATE', 'CHOOSE-LEFT', 'CHOOSE-RIGHT', 'CHOOSE-SURE')
 
-# Connection probability
-baseline_p0 = 1
-
 # Trial conditions
 wagers       = [True, False]
 left_rights  = [-1, 1]
@@ -36,6 +33,9 @@ n_validation = 50*n_conditions
 
 # Input noise
 sigma = np.sqrt(2*100*0.01)
+
+# Recurrent noise
+baseline_var_rec = 0.01
 
 # Durations
 fixation      = 750
