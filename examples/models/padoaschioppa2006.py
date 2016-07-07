@@ -42,6 +42,9 @@ R_ABORTED = -1
 R_B       = 0.2
 R_A       = A_to_B * R_B
 
+# Recurrent noise
+baseline_var_rec = 0.02
+
 # Input scaling
 def scale(x):
     return x/5
@@ -158,4 +161,4 @@ def get_step(rng, dt, trial, t, a):
 def terminate(perf):
     p_decision, p_correct = tasktools.correct_2AFC(perf)
 
-    return p_decision >= 0.99 and p_correct >= 0.9
+    return p_decision >= 0.99 and p_correct >= 0.95

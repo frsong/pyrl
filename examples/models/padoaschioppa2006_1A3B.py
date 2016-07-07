@@ -42,6 +42,9 @@ R_ABORTED = -1
 R_B       = 0.2
 R_A       = A_to_B * R_B
 
+# Recurrent noise
+baseline_var_rec = 0.02
+
 # Input scaling
 def scale(x):
     return x/5
