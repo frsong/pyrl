@@ -27,7 +27,7 @@ n_validation = 100*n_conditions
 sigma = np.sqrt(2*100*0.01)
 
 # Reward discount
-tau_reward = 15000
+tau_reward = 10000
 
 # Durations
 fixation = 750
