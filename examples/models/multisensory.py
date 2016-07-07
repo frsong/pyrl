@@ -46,7 +46,7 @@ for i in xrange(3):
     Win[inputs['AUDITORY-N'],-N//3:] = 1
     Wins.append(Win)
 Win      = np.concatenate(Wins, axis=1)
-Win_mask = Win.copy()
+#Win_mask = Win.copy()
 
 # Epoch durations
 fixation = 750
@@ -156,4 +156,4 @@ def get_step(rng, dt, trial, t, a):
 def terminate(perf):
     p_decision, p_correct = tasktools.correct_2AFC(perf)
 
-    return p_decision >= 0.99 and p_correct >= 0.8
+    return p_decision >= 0.99 and p_correct >= 0.82
