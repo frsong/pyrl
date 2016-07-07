@@ -167,10 +167,10 @@ elif modelname == 'rdm_rt':
     target = 80
     plot.hline(target, color=target_color, zorder=1)
 elif modelname == 'mante':
-    target = 85
+    target = 80
     plot.hline(target, color=target_color, zorder=1)
 elif modelname == 'multisensory':
-    target = 80
+    target = 85
     plot.hline(target, color=target_color, zorder=1)
 elif modelname == 'romo':
     target = 90
