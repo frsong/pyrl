@@ -28,6 +28,10 @@ n_conditions = len(gt_lts) * len(fpairs)
 n_gradient   = n_conditions
 n_validation = 20*n_conditions
 
+# Slow down the learning
+lr          = 0.002
+baseline_lr = 0.002
+
 # Input noise
 sigma = np.sqrt(2*100*0.001)
 
@@ -146,4 +150,4 @@ def get_step(rng, dt, trial, t, a):
 def terminate(perf):
     p_decision, p_correct = tasktools.correct_2AFC(perf)
 
-    return p_decision >= 0.99 and p_correct >= 0.90
+    return p_decision >= 0.99 and p_correct >= 0.97

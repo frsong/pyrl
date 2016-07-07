@@ -296,9 +296,18 @@ plot.ylabel('$f_2$ (Hz)')
 
 kwargs = {'lw': 1}
 
-units = [93, 27, 73]
+units = [42, 4, 81]
 plots = [fig['romo-'+str(i)] for i in xrange(len(units))]
 romo_analysis.sort(romo_activity, plots, units=units, **kwargs)
+
+plots[0].ylim(0, 2)
+plots[0].yticks([0, 1, 2])
+
+plots[1].ylim(3, 7)
+plots[1].yticks([3, 4, 5, 6, 7])
+
+plots[2].ylim(0, 3)
+plots[2].yticks([0, 1, 2, 3])
 
 for p in ['romo-0', 'romo-1', 'romo-2']:
     plot = fig[p]

@@ -230,6 +230,11 @@ def sort_func(s, preferred_targets, target, trial):
         return [(choice, coh, trial['context']) for choice, coh in zip(choices, cohs)]
     elif s == 'context-choice':
         return [(choice, trial['context']) for choice in choices]
+    elif s == 'all':
+        cohs_m = preferred_targets*trial['left_right_m']*trial['coh_m']
+        cohs_c = preferred_targets*trial['left_right_c']*trial['coh_c']
+        return [(choice, coh_m, coh_c, trial['context'])
+                for choice, coh_m, coh_c in zip(choices, cohs_m, cohs_c)]
     else:
         raise ValueError
 
@@ -268,7 +273,7 @@ def sort(trialsfile, all_plots, units=None, network='p', **kwargs):
     # Sort trials
     #=====================================================================================
 
-    sortby = ['choice', 'motion-choice', 'color-choice', 'context-choice']
+    sortby = ['choice', 'motion-choice', 'color-choice', 'context-choice', 'all']
 
     #-------------------------------------------------------------------------------------
     # Sort
@@ -521,20 +526,211 @@ def get_active_units(r, M):
 
     return np.where(np.sqrt(var) > 0.2)[0]
 
+# Regression coefficients
+CHOICE         = 0
+MOTION         = 1
+COLOUR         = 2
+CONTEXT        = 3
+CONSTANT       = 4
+CHOICE_MOTION  = 5
+CHOICE_COLOUR  = 6
+CHOICE_CONTEXT = 7
+MOTION_COLOUR  = 8
+MOTION_CONTEXT = 9
+COLOUR_CONTEXT = 10
+nreg           = 11
+
+def plot_taskaxes(plot, yax, p_vc, basecolor):
+    abscohs = []
+    for choice, coh, context in p_vc:
+        abscohs.append(abs(coh))
+    abscohs = sorted(list(set(abscohs)))
+
+    #-------------------------------------------------------------------------------------
+    # Subtract mean
+    #-------------------------------------------------------------------------------------
+
+    p = p_vc.values()[0]
+    Xchoice = np.zeros_like(p[CHOICE])
+    Xmotion = np.zeros_like(p[MOTION])
+    Xcolour = np.zeros_like(p[COLOUR])
+
+    for p in p_vc.values():
+        Xchoice += p[CHOICE]
+        Xmotion += p[MOTION]
+        Xcolour += p[COLOUR]
+    mean_choice = Xchoice/len(p_vc)
+    mean_motion = Xmotion/len(p_vc)
+    mean_colour = Xcolour/len(p_vc)
+
+    for cond, p in p_vc.items():
+        p[CHOICE] -= mean_choice
+        p[MOTION] -= mean_motion
+        p[COLOUR] -= mean_colour
+
+    #-------------------------------------------------------------------------------------
+
+    xall = []
+    yall = []
+    for cond, p in p_vc.items():
+        idx = abscohs.index(abs(cond[1]))
+        if idx == 0:
+            color = apply_alpha(basecolor, 0.4)
+        elif idx == 1:
+            color = apply_alpha(basecolor, 0.7)
+        else:
+            color = apply_alpha(basecolor, 1)
+
+        if cond[1] > 0:
+            prop = dict(mfc=color, mec=color, ms=2.5, mew=0.5)
+        else:
+            prop = dict(mfc='w', mec=color, ms=2.5, mew=0.5)
+
+        plot.plot(p[CHOICE],      p[yax],      '-', color=color, lw=0.75)
+        plot.plot(p[CHOICE][::2], p[yax][::2], 'o', color=color, **prop)
+
+        xall.append(p[CHOICE])
+        yall.append(p[yax])
+
+    if yax == MOTION:
+        plot.ylabel('Motion')
+    elif yax == COLOUR:
+        plot.ylabel('Color')
+
+    return np.concatenate(xall), np.concatenate(yall)
+
+def plot_statespace(units, t, sorted_trials, Q, plots):
+    # Task axes
+    M = Q.T
+
+    # Epoch to plot
+    w, = np.where((0 <= t) & (t <= 800))
+
+    # Down-sample
+    dt   = t[1] - t[0]
+    step = int(50/dt)
+    w    = w[::step]
+
+    # Colors
+    color_m = 'k'
+    color_c = Figure.colors('darkblue')
+
+    xall = []
+    yall = []
+
+    #-------------------------------------------------------------------------------------
+    # Labels
+    #-------------------------------------------------------------------------------------
+
+    plots['c1'].xlabel('Choice')
+
+    #-------------------------------------------------------------------------------------
+    # Motion context: motion vs. choice, sorted by coherence
+    #-------------------------------------------------------------------------------------
+
+    plot = plots['m1']
+
+    p_vc = {}
+    for cond, r in sorted_trials['motion-choice'].items():
+        if cond[2] == 'm':
+            p_vc[cond] = M.dot(r.T[units,:][:,w])
+    x, y = plot_taskaxes(plot, MOTION, p_vc, color_m)
+    xall.append(x)
+    yall.append(y)
+
+    plot.ylabel('Motion')
+
+    #-------------------------------------------------------------------------------------
+    # Motion context: motion vs. choice, sorted by coherence
+    #-------------------------------------------------------------------------------------
+
+    plot = plots['m2']
+    p_vc = {}
+    for cond, r in sorted_trials['motion-choice'].items():
+        if cond[2] == 'm':
+            p_vc[cond] = M.dot(r.T[units,:][:,w])
+    x, y = plot_taskaxes(plot, COLOUR, p_vc, color_m)
+    xall.append(x)
+    yall.append(y)
+
+    #-------------------------------------------------------------------------------------
+    # Motion context: colour vs. choice, sorted by colour
+    #-------------------------------------------------------------------------------------
+
+    plot = plots['m3']
+    p_vc = {}
+    for cond, r in sorted_trials['color-choice'].items():
+        if cond[2] == 'm':
+            p_vc[cond] = M.dot(r.T[units,:][:,w])
+    x, y = plot_taskaxes(plot, COLOUR, p_vc, color_c)
+    xall.append(x)
+    yall.append(y)
+
+    #-------------------------------------------------------------------------------------
+    # Colour context: motion vs. choice, sorted by motion
+    #-------------------------------------------------------------------------------------
+
+    plot = plots['c1']
+    p_vc = {}
+    for cond, r in sorted_trials['motion-choice'].items():
+        if cond[2] == 'c':
+            p_vc[cond] = M.dot(r.T[units,:][:,w])
+    x, y = plot_taskaxes(plot, MOTION, p_vc, color_m)
+    xall.append(x)
+    yall.append(y)
+
+    #-------------------------------------------------------------------------------------
+    # Colour context: motion vs. choice, sorted by colour
+    #-------------------------------------------------------------------------------------
+
+    plot = plots['c2']
+    p_vc = {}
+    for cond, r in sorted_trials['color-choice'].items():
+        if cond[2] == 'c':
+            p_vc[cond] = M.dot(r.T[units,:][:,w])
+    x, y = plot_taskaxes(plot, MOTION, p_vc, color_c)
+    xall.append(x)
+    yall.append(y)
+
+    #-------------------------------------------------------------------------------------
+    # Colour context: colour vs. choice, sorted by colour
+    #-------------------------------------------------------------------------------------
+
+    plot = plots['c3']
+    p_vc = {}
+    for cond, r in sorted_trials['color-choice'].items():
+        if cond[2] == 'c':
+            p_vc[cond] = M.dot(r.T[units,:][:,w])
+    x, y = plot_taskaxes(plot, COLOUR, p_vc, color_c)
+    xall.append(x)
+    yall.append(y)
+
+    #-------------------------------------------------------------------------------------
+    # Shared axes
+    #-------------------------------------------------------------------------------------
+
+    xall = np.concatenate(xall)
+    yall = np.concatenate(yall)
+
+    for plot in plots.values():
+        #plot.aspect(1.5)
+        plot.lim('x', xall)
+        plot.lim('y', yall)
+
 def statespace(trialsfile, plots=None, dt_reg=50, **kwargs):
     """
     State-space analysis.
 
     """
     # Load trials
-    trials, U, Z, Z_b, A, P, M, perf, r_p, r_v = utils.load(trialsfile)
+    trials_, U, Z, Z_b, A, P, M, perf, r_p, r_v = utils.load(trialsfile)
 
     # Use policy network for this analysis
     r = r_p
     N = r.shape[-1]
 
     # Time step
-    time  = trials[0]['time']
+    time  = trials_[0]['time']
     Ntime = len(time)
     dt    = time[1] - time[0]
     step  = int(dt_reg/dt)
@@ -549,22 +745,151 @@ def statespace(trialsfile, plots=None, dt_reg=50, **kwargs):
           .format(len(units)))
 
     # Preferred targets for active units
-    preferred_targets = get_preferred_targets(trials, perf, r)[units]
+    preferred_targets = get_preferred_targets(trials_, perf, r)[units]
 
     # Stimulus period
+    stimulus = np.asarray(trials_[0]['epochs']['stimulus'])[::step]
 
+    trials = []
+    cohs_m = []
+    cohs_c = []
+    for n, trial_ in enumerate(trials_):
+        if perf.choices[n] is None:
+            continue
+
+        cohs_m.append(trial_['coh_m'])
+        cohs_c.append(trial_['coh_c'])
+
+        trial           = {}
+        trial['target'] = +1 if perf.choices[n] == 'R' else -1
+        trial['t']      = time[stimulus]
+        trial['r']      = r[stimulus,n,:][:,units].T
+        trials.append(trial)
+    maxcoh_m = max(cohs_m)
+    maxcoh_c = max(cohs_c)
+
+    #-------------------------------------------------------------------------------------
+    # Normalize
+    #-------------------------------------------------------------------------------------
+
+    X  = 0
+    X2 = 0
+    n  = 0
+    for trial in trials:
+        r   = trial['r']
+        X  += np.sum(r,    axis=1)
+        X2 += np.sum(r**2, axis=1)
+        n  += r.shape[1]
+    mean = X/n
+    sd   = np.sqrt(X2/n - mean**2)
+
+    mean = np.tile(mean, (r.shape[1], 1)).T
+    sd   = np.tile(sd,   (r.shape[1], 1)).T
+    for trial in trials:
+        trial['r'] = (trial['r'] - mean)/sd
+
+    #-------------------------------------------------------------------------------------
+    # Regress
+    #-------------------------------------------------------------------------------------
+
+    nunits, ntime = trials[0]['r'].shape
+    ntrials = len(trials)
+
+    # Coefficient matrix
+    r = np.zeros((nunits, ntime, ntrials))
+    F = np.zeros((nunits, nreg, ntrials))
+    for i, trial in enumerate(trials):
+        info = trials_[i]
+
+        # First-order terms
+        r[:,:,i]       = trial['r']
+        F[:,CHOICE,i]  = preferred_targets*trial['target']
+        F[:,MOTION,i]  = preferred_targets*info['left_right_m']*info['coh_m']/maxcoh_m
+        F[:,COLOUR,i]  = preferred_targets*info['left_right_c']*info['coh_c']/maxcoh_c
+        F[:,CONTEXT,i] = +1 if info['context'] == 'm' else -1
+
+        # Interaction terms
+        F[:,CHOICE_MOTION, i] = F[:,CHOICE,i]*F[:,MOTION,i]
+        F[:,CHOICE_COLOUR, i] = F[:,CHOICE,i]*F[:,COLOUR,i]
+        F[:,CHOICE_CONTEXT,i] = F[:,CHOICE,i]*F[:,CONTEXT,i]
+        F[:,MOTION_COLOUR, i] = F[:,MOTION,i]*F[:,COLOUR,i]
+        F[:,MOTION_CONTEXT,i] = F[:,MOTION,i]*F[:,CONTEXT,i]
+        F[:,COLOUR_CONTEXT,i] = F[:,COLOUR,i]*F[:,CONTEXT,i]
+    F[:,CONSTANT,:] = 1
+
+    # Regression coefficients
+    beta = np.zeros((nunits, ntime, nreg))
+    for i in xrange(nunits):
+        A = np.linalg.inv(F[i].dot(F[i].T)).dot(F[i])
+        for k in xrange(ntime):
+            beta[i,k] = A.dot(r[i,k])
+            if np.any(np.isnan(beta[i,k])):
+                raise RuntimeError("[ mante.regress ] Regression failed.")
+
+    #-------------------------------------------------------------------------------------
+    # Sort trials
+    #-------------------------------------------------------------------------------------
+
+    utils.println("[ mante.statespace ] Sorting trials ...")
+    time_a, sorted_trials = sort(trialsfile, None)
+    print(" done!")
+
+    #-------------------------------------------------------------------------------------
+    # Denoising matrix
+    #-------------------------------------------------------------------------------------
+
+    '''
+    all_conditions = sorted_trials['all']
+    for cond, r in all_conditions.items():
+        all_conditions[cond] = r.T[units,::step]
+
+    # Data matrix
+    X = np.zeros((all_conditions.values()[0].shape[0],
+                  len(all_conditions)*all_conditions.values()[0].shape[1]))
+    c = 0
+    for cond, r in sorted_trials['all'].items():
+        X[:,c:c+r.shape[1]] = r
+        c += r.shape[1]
+
+    U, S, V = np.linalg.svd(X.T)
+    assert np.all(S[:-1] >= S[1:])
+
+    npca = 12
+    W    = V[:npca,:]
+    D    = (W.T).dot(W)
+    assert np.all(D.T == D)
+    '''
+
+    #-------------------------------------------------------------------------------------
+    # Task axes
+    #-------------------------------------------------------------------------------------
+
+    # Rearrange from (units, time, reg) to (reg, time, units)
+    beta = np.swapaxes(beta, 0, 2)
+
+    # Denoise
+    # beta = beta.dot(D.T)
+
+    # Time-independent regression vectors
+    beta_max = np.zeros((nreg, nunits))
+    for v in xrange(nreg):
+        imax        = np.argmax(np.linalg.norm(beta[v], axis=1))
+        beta_max[v] = beta[v,imax]
+
+    Bmax = beta_max[:4].T
+    Q, R = np.linalg.qr(Bmax)
+    Q    = Q*np.sign(np.diag(R))
 
     #=====================================================================================
 
-    exit()
     if isinstance(plots, dict):
-        pass
+        plot_statespace(units, time_a, sorted_trials, Q, plots)
     else:
         figspath, name = plots
 
         w = utils.mm_to_inch(174)
-        r = 0.55
-        fig = Figure(w=w, r=r, thickness=0.8, axislabelsize=8.5, ticklabelsize=7,
+        r = 0.65
+        fig = Figure(w=w, r=r, thickness=0.8, axislabelsize=9, ticklabelsize=7,
                      labelpadx=4.5, labelpady=4.5)
 
         w  = 0.24
@@ -572,7 +897,7 @@ def statespace(trialsfile, plots=None, dt_reg=50, **kwargs):
         x0 = 0.1
         y0 = 0.11
         dx = 0.07
-        dy = 0.1
+        dy = 0.15
 
         fig.add('c1', [x0, y0, w, h])
         fig.add('c2', [fig[-1].right+dx, fig[-1].y, w, h])
@@ -581,9 +906,57 @@ def statespace(trialsfile, plots=None, dt_reg=50, **kwargs):
         fig.add('m2', [fig[-1].right+dx, fig[-1].y, w, h])
         fig.add('m3', [fig[-1].right+dx, fig[-1].y, w, h])
 
-        #-----------------------------------------------------------------------------
+        #---------------------------------------------------------------------------------
 
+        plot_statespace(units, time_a, sorted_trials, Q, fig.plots)
 
+        #---------------------------------------------------------------------------------
+        # Legend
+        #---------------------------------------------------------------------------------
+
+        ms_filled = 2.5
+        ms_empty  = 2.5
+
+        mew_filled = 0.5
+        mew_empty  = 0.5
+
+        y  = 1.2
+        dx = 0.08
+        dy = 0.06
+
+        fontsize = 4.75
+
+        for context, plot, basecolor in zip(['Motion', 'Color'],
+                                            [fig['c1'], fig['c3']],
+                                            ['k', Figure.colors('darkblue')]):
+            transform = plot.ax.transAxes
+            colors    = [apply_alpha(basecolor, alpha) for alpha in [0.4, 0.7, 1]]
+            for i in xrange(3):
+                plot.plot(0.5+(i+0.5)*dx, y, 'o', mfc=colors[i], mec=colors[i],
+                          ms=ms_filled, mew=mew_filled, transform=transform)
+                plot.plot(0.5-(i+0.5)*dx, y, 'o', mfc='none', mec=colors[i],
+                          ms=ms_empty, mew=mew_empty, transform=transform)
+
+            # Strength label
+            plot.text(0.5, y+dy, 'Weak', ha='center', va='bottom', fontsize=fontsize,
+                      color=colors[0], transform=transform)
+            plot.text(0.5+2.5*dx, y+dy, 'Strong', ha='center', va='bottom',
+                      fontsize=fontsize, color=colors[-1], transform=transform)
+            plot.text(0.5-2.5*dx, y+dy, 'Strong', ha='center', va='bottom',
+                      fontsize=fontsize, color=colors[-1], transform=transform)
+
+            if context == 'Motion':
+                plot.text(0.5-5*dx, y, context, ha='right', va='center',
+                          fontsize=1.2*fontsize, color=colors[-1], transform=transform)
+            else:
+                plot.text(0.5+5*dx, y, context, ha='left', va='center',
+                          fontsize=1.2*fontsize, color=colors[-1], transform=transform)
+
+            # Choice label
+            plot.text(0.5+2.5*dx, y-dy, 'To choice 1', ha='center', va='top',
+                      fontsize=fontsize, color='k', transform=transform)
+            plot.text(0.5-2.5*dx, y-dy, 'To choice 2', ha='center', va='top',
+                      fontsize=fontsize, color='k', transform=transform)
 
         #-----------------------------------------------------------------------------
 

@@ -28,11 +28,14 @@ tr_cohs      = cohs
 n_conditions = len(wagers) * len(left_rights) * len(cohs)
 
 # Training
-n_gradient   = 2*n_conditions
+n_gradient   = n_conditions
 n_validation = 50*n_conditions
 
 # Input noise
 sigma = np.sqrt(2*100*0.01)
+
+# Connection probability
+p0 = 0.2
 
 # Separate inputs
 N    = 100
@@ -197,4 +200,4 @@ def terminate(perf):
     p_correct = tasktools.divide(perf.n_correct, perf.n_decision)
     p_sure    = tasktools.divide(perf.n_sure, perf.n_sure_decision)
 
-    return p_answer >= 0.99 and p_correct >= 0.8 and 0.4 < p_sure < 0.6
+    return p_answer >= 0.99 and p_correct >= 0.8 and 0.45 < p_sure < 0.55
