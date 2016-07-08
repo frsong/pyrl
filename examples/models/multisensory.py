@@ -91,8 +91,8 @@ R_ABORTED = -1
 R_CORRECT = +1
 
 # Input scaling
-fmin = 0
-fmax = 2*boundary - fmin
+fmin = min(tr_freqs)#0
+fmax = max(tr_freqs)#2*boundary - fmin
 
 def scale(f):
     return (f - fmin)/(fmax - fmin)

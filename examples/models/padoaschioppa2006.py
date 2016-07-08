@@ -43,7 +43,11 @@ R_B       = 0.2
 R_A       = A_to_B * R_B
 
 # Recurrent noise
-baseline_var_rec = 0.02
+#baseline_var_rec = 0.02
+
+# Slow down the learning
+lr          = 0.002
+baseline_lr = 0.002
 
 # Input scaling
 def scale(x):
