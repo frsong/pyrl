@@ -1,3 +1,5 @@
+from __future__ import division
+
 import imp
 import os
 import sys
@@ -66,10 +68,10 @@ fig.add('task',                      [x0, y0, w_task, h_task]),
 fig.add('sure-stimulus-duration',    [x0, y1, w_behavior, h_behavior]),
 fig.add('correct-stimulus-duration', [fig[-1].right+DX, y1, w_behavior, h_behavior]),
 fig.add('noTs-stimulus',             [x0, y2, w_fr, h_fr]),
-fig.add('noTs-choice',               [fig[-1].right+dx, y2, w_fr, h_fr]),
-fig.add('Ts-stimulus',               [fig[-1].right+DX, y2, w_fr, h_fr]),
+fig.add('noTs-choice',               [fig[-1].right+dx, y2, 5/8*w_fr, h_fr]),
+fig.add('Ts-stimulus',               [fig[-1].right+1.1*DX, y2, w_fr, h_fr]),
 fig.add('Ts-sure',                   [fig[-1].right+dx, y2, w_fr, h_fr]),
-fig.add('Ts-choice',                 [fig[-1].right+dx, y2, w_fr, h_fr])
+fig.add('Ts-choice',                 [fig[-1].right+dx, y2, 5/8*w_fr, h_fr])
 
 pl_x0 = 0.025
 pl_y0 = 0.945
@@ -287,7 +289,7 @@ plot.ylim(y_timeline, y_sure_Ts+0.2+0.35)
 
 plot = fig['sure-stimulus-duration']
 
-savefile = os.path.join(here, 'data', 'sure_stimulus_duration.pkl')
+savefile = os.path.join(here, 'work', 'data', 'sure_stimulus_duration.pkl')
 
 if 'fast' in sys.argv and os.path.isfile(savefile):
     print("Plotting data in {}".format(savefile))
@@ -304,7 +306,7 @@ plot.xticks([100, 300, 500, 700])
 plot.yticks([0, 0.2, 0.4, 0.6, 0.8])
 
 plot.xlim(100, 700)
-plot.ylim(0, 0.9)
+plot.ylim(0, 0.8)
 
 plot.xlabel('Stimulus duration (ms)')
 plot.ylabel('Probability sure target')
@@ -318,7 +320,7 @@ plot.legend(bbox_to_anchor=(3, 0.98), **props)
 
 plot = fig['correct-stimulus-duration']
 
-savefile = os.path.join(here, 'data', 'correct_stimulus_duration.pkl')
+savefile = os.path.join(here, 'work', 'data', 'correct_stimulus_duration.pkl')
 
 if 'fast' in sys.argv and os.path.isfile(savefile):
     print("Plotting data in {}".format(savefile))

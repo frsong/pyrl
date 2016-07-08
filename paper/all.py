@@ -41,10 +41,11 @@ modelspath    = join(parent, 'examples', 'models')
 analysispath  = join(parent, 'examples', 'analysis')
 paperpath     = join(parent, 'paper')
 timespath     = join(paperpath, 'times')
+paperdatapath = join(paperpath, 'work', 'data')
 paperfigspath = join(paperpath, 'work', 'figs')
 
 # Make paths
-for path in [timespath, paperfigspath]:
+for path in [timespath, paperdatapath, paperfigspath]:
     utils.mkdir_p(path)
 
 def call(s):
@@ -248,7 +249,7 @@ if 'romo-seeds' in args:
 #-----------------------------------------------------------------------------------------
 
 model     = 'postdecisionwager'
-ntrials_b = 5000
+ntrials_b = 2500
 ntrials_a = 100
 
 if 'postdecisionwager' in args:

@@ -175,6 +175,9 @@ elif modelname == 'multisensory':
 elif modelname == 'romo':
     target = 97
     plot.hline(target, color=target_color, zorder=1)
+elif modelname == 'postdecisionwager':
+    target = 80
+    plot.hline(target, color=target_color, zorder=1)
 elif modelname == 'padoaschioppa2006':
     target = 95
     plot.hline(target, color=target_color, zorder=1)
