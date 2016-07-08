@@ -20,17 +20,18 @@ inputs = tasktools.to_map('FIXATION', 'VISUAL-P', 'VISUAL-N', 'AUDITORY-P', 'AUD
 actions = tasktools.to_map('FIXATE', 'CHOOSE-LOW', 'CHOOSE-HIGH')
 
 # Trial conditions
-mods         = ['v', 'a', 'va']
-freqs        = range(9, 16+1)
-tr_freqs     = [6, 7, 8] + freqs + [17, 18, 19]
-n_conditions = len(mods) * len(freqs)
+mods            = ['v', 'a', 'va']
+freqs           = range(9, 16+1)
+tr_freqs        = [5, 6, 7, 8] + freqs + [17, 18, 19, 20]
+n_conditions    = len(mods) * len(freqs)
+tr_n_conditions = len(mods) * len(tr_freqs)
 
 # Discrimination boundary
 boundary = 12.5
 
 # Training
-n_gradient   = n_conditions
-n_validation = 50*n_conditions
+n_gradient   = tr_n_conditions
+n_validation = 50*tr_n_conditions
 
 # Input noise
 sigma = np.sqrt(2*100*0.02)
