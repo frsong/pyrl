@@ -243,6 +243,18 @@ if 'romo-seeds' in args:
         trials(model, 'b', ntrials_b, seed=seed)
         do_action(model, 'performance', seed=seed)
 
+model     = 'romo2'
+ntrials_b = 100
+ntrials_a = 50
+
+if 'romo2' in args:
+    print("=> Parametric working memory")
+    train('romo2')
+    trials(model, 'b', ntrials_b)
+    do_action(model, 'performance')
+    trials(model, 'a', ntrials_a)
+    do_action(model, 'sort')
+
 #-----------------------------------------------------------------------------------------
 # Postdecision wager
 #-----------------------------------------------------------------------------------------
