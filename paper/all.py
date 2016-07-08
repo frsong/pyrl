@@ -253,7 +253,7 @@ ntrials_a = 100
 
 if 'postdecisionwager' in args:
     print("=> Postdecision wager")
-    train(model)
+    #train(model)
     trials(model, 'b', ntrials_b)
     do_action(model, 'sure_stimulus_duration')
     do_action(model, 'correct_stimulus_duration')

@@ -89,7 +89,7 @@ R_ABORTED = -1
 R_CORRECT = +1
 
 # Input scaling
-fmin = 2
+fmin = 5
 fmax = 2*boundary - fmin
 
 def scale(f):
@@ -155,4 +155,4 @@ def get_step(rng, dt, trial, t, a):
 def terminate(perf):
     p_decision, p_correct = tasktools.correct_2AFC(perf)
 
-    return p_decision >= 0.99 and p_correct >= 0.85
+    return p_decision >= 0.99 and p_correct >= 0.90

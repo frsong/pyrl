@@ -170,7 +170,7 @@ elif modelname == 'mante':
     target = 85
     plot.hline(target, color=target_color, zorder=1)
 elif modelname == 'multisensory':
-    target = 85
+    target = 90
     plot.hline(target, color=target_color, zorder=1)
 elif modelname == 'romo':
     target = 97
