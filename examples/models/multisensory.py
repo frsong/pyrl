@@ -89,7 +89,7 @@ R_ABORTED = -1
 R_CORRECT = +1
 
 # Input scaling
-fmin = 4
+fmin = 2
 fmax = 2*boundary - fmin
 
 def scale(f):
