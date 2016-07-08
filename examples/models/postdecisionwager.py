@@ -33,7 +33,6 @@ n_validation = 50*n_conditions
 # Input noise
 sigma = np.sqrt(2*100*0.01)
 
-'''
 # Separate inputs
 N    = 100
 Wins = []
@@ -45,7 +44,6 @@ for i in xrange(3):
     Win[inputs['SURE'],N//2:]  = 1
     Wins.append(Win)
 Win = np.concatenate(Wins, axis=1)
-'''
 
 # Durations
 fixation      = 750
@@ -79,7 +77,8 @@ class Task(object):
 
     def update(self, perf):
         if perf is not None:
-            self.R_SURE = tasktools.divide(perf.n_correct, perf.n_decision)
+            self.R_SURE = max(tasktools.divide(perf.n_correct, perf.n_decision), 0.6)
+            print("R_SURE = {}".format(self.R_SURE))
 
     def get_condition(self, rng, dt, context={}):
         #---------------------------------------------------------------------------------
