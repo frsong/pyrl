@@ -539,9 +539,7 @@ class PolicyGradient(object):
             args = []
         args += [U, Q, R, M, lr]
 
-        return theano.function(args, [z_all[:,:,0], norm], updates=updates)#,
-                               #mode=NanGuardMode(nan_is_error=True, inf_is_error=True,
-                            #                     big_is_error=True))
+        return theano.function(args, [z_all[:,:,0], norm], updates=updates)
 
     def train(self, savefile, recover=False):
         """

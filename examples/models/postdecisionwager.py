@@ -38,10 +38,10 @@ N    = 100
 Wins = []
 for i in xrange(3):
     Win = np.zeros((len(inputs), N))
-    Win[inputs['FIXATION']]    = 1
-    Win[inputs['LEFT'],:N//2]  = 1
+    Win[inputs['FIXATION']]      = 1
+    Win[inputs['LEFT'], :N//2] = 1
     Win[inputs['RIGHT'],:N//2] = 1
-    Win[inputs['SURE'],N//2:]  = 1
+    Win[inputs['SURE'], N//2:] = 1
     Wins.append(Win)
 Win = np.concatenate(Wins, axis=1)
 
@@ -64,147 +64,136 @@ R_ABORTED = -1
 R_CORRECT = +1
 R_SURE    = 0.7*R_CORRECT
 
-# Performance measure
-from pyrl.performance import PerformancePostdecisionWager as Performance
-
 # Input scaling
 def scale(coh):
     return (1 + coh/100)/2
 
-class Task(object):
-    def __init__(self):
-        self.R_SURE = 0.5
+def get_condition(rng, dt, context={}):
+    #-------------------------------------------------------------------------------------
+    # Wager or no wager?
+    #-------------------------------------------------------------------------------------
 
-    def update(self, perf):
-        if perf is not None:
-            self.R_SURE = max(tasktools.divide(perf.n_correct, perf.n_decision), 0.6)
-            print("R_SURE = {}".format(self.R_SURE))
+    wager = context.get('wager')
+    if wager is None:
+        wager = rng.choice(wagers)
 
-    def get_condition(self, rng, dt, context={}):
-        #---------------------------------------------------------------------------------
-        # Wager or no wager?
-        #---------------------------------------------------------------------------------
+    #-------------------------------------------------------------------------------------
+    # Epochs
+    #-------------------------------------------------------------------------------------
 
-        wager = context.get('wager')
-        if wager is None:
-            wager = rng.choice(wagers)
+    stimulus = context.get('stimulus')
+    if stimulus is None:
+        stimulus = stimulus_min + tasktools.truncated_exponential(rng, dt, stimulus_mean,
+                                                                  xmax=stimulus_max)
 
-        #---------------------------------------------------------------------------------
-        # Epochs
-        #---------------------------------------------------------------------------------
+    delay = context.get('delay')
+    if delay is None:
+        delay = tasktools.truncated_exponential(rng, dt, delay_mean,
+                                                xmin=delay_min, xmax=delay_max)
 
-        stimulus = context.get('stimulus')
-        if stimulus is None:
-            stimulus = stimulus_min + tasktools.truncated_exponential(rng, dt,
-                                                                      stimulus_mean,
-                                                                      xmax=stimulus_max)
+    if wager:
+        sure_onset = context.get('sure_onset')
+        if sure_onset is None:
+            sure_onset = tasktools.truncated_exponential(rng, dt, sure_mean,
+                                                         xmin=sure_min, xmax=sure_max)
 
-        delay = context.get('delay')
-        if delay is None:
-            delay = tasktools.truncated_exponential(rng, dt, delay_mean,
-                                                    xmin=delay_min, xmax=delay_max)
+    durations = {
+        'fixation':  (0, fixation),
+        'stimulus':  (fixation, fixation + stimulus),
+        'delay':     (fixation + stimulus, fixation + stimulus + delay),
+        'decision':  (fixation + stimulus + delay, tmax),
+        'tmax':      tmax
+        }
+    if wager:
+        durations['sure'] = (fixation + stimulus + sure_onset, tmax)
+    time, epochs = tasktools.get_epochs_idx(dt, durations)
 
-        if wager:
-            sure_onset = context.get('sure_onset')
-            if sure_onset is None:
-                sure_onset = tasktools.truncated_exponential(rng, dt, sure_mean,
-                                                             xmin=sure_min, xmax=sure_max)
+    #-------------------------------------------------------------------------------------
+    # Trial
+    #-------------------------------------------------------------------------------------
 
-        durations = {
-            'fixation':  (0, fixation),
-            'stimulus':  (fixation, fixation + stimulus),
-            'delay':     (fixation + stimulus, fixation + stimulus + delay),
-            'decision':  (fixation + stimulus + delay, tmax),
-            'tmax':      tmax
-            }
-        if wager:
-            durations['sure'] = (fixation + stimulus + sure_onset, tmax)
-        time, epochs = tasktools.get_epochs_idx(dt, durations)
+    left_right = context.get('left_right')
+    if left_right is None:
+        left_right = rng.choice(left_rights)
 
-        #---------------------------------------------------------------------------------
-        # Trial
-        #---------------------------------------------------------------------------------
+    coh = context.get('coh')
+    if coh is None:
+        coh = rng.choice(cohs)
 
-        left_right = context.get('left_right')
-        if left_right is None:
-            left_right = rng.choice(left_rights)
+    return {
+        'durations':  durations,
+        'time':       time,
+        'epochs':     epochs,
+        'wager':      wager,
+        'left_right': left_right,
+        'coh':        coh
+        }
 
-        coh = context.get('coh')
-        if coh is None:
-            coh = rng.choice(cohs)
+def get_step(rng, dt, trial, t, a):
+    #-------------------------------------------------------------------------------------
+    # Reward
+    #-------------------------------------------------------------------------------------
 
-        return {
-            'durations':  durations,
-            'time':       time,
-            'epochs':     epochs,
-            'wager':      wager,
-            'left_right': left_right,
-            'coh':        coh
-            }
-
-    def get_step(self, rng, dt, trial, t, a):
-        #---------------------------------------------------------------------------------
-        # Reward
-        #---------------------------------------------------------------------------------
-
-        epochs = trial['epochs']
-        status = {'continue': True}
-        reward = 0
-        if t-1 not in epochs['decision']:
-            if a != actions['FIXATE']:
-                status['continue'] = False
+    epochs = trial['epochs']
+    status = {'continue': True}
+    reward = 0
+    if t-1 not in epochs['decision']:
+        if a != actions['FIXATE']:
+            status['continue'] = False
+            reward = R_ABORTED
+    elif t-1 in epochs['decision']:
+        if a == actions['CHOOSE-LEFT']:
+            status['continue'] = False
+            status['choice']   = 'L'
+            status['t_choice'] = t-1
+            status['correct']  = (trial['left_right'] < 0)
+            if status['correct']:
+                reward = R_CORRECT
+        elif a == actions['CHOOSE-RIGHT']:
+            status['continue'] = False
+            status['choice']   = 'R'
+            status['t_choice'] = t-1
+            status['correct']  = (trial['left_right'] > 0)
+            if status['correct']:
+                reward = R_CORRECT
+        elif a == actions['CHOOSE-SURE']:
+            status['continue'] = False
+            if trial['wager']:
+                status['choice']   = 'S'
+                status['t_choice'] = t-1
+                reward = R_SURE
+            else:
                 reward = R_ABORTED
-        elif t-1 in epochs['decision']:
-            if a == actions['CHOOSE-LEFT']:
-                status['continue'] = False
-                status['choice']   = 'L'
-                status['t_choice'] = t-1
-                status['correct']  = (trial['left_right'] < 0)
-                if status['correct']:
-                    reward = R_CORRECT
-            elif a == actions['CHOOSE-RIGHT']:
-                status['continue'] = False
-                status['choice']   = 'R'
-                status['t_choice'] = t-1
-                status['correct']  = (trial['left_right'] > 0)
-                if status['correct']:
-                    reward = R_CORRECT
-            elif a == actions['CHOOSE-SURE']:
-                status['continue'] = False
-                if trial['wager']:
-                    status['choice']   = 'S'
-                    status['t_choice'] = t-1
-                    reward = self.R_SURE
-                else:
-                    reward = R_ABORTED
 
-        #---------------------------------------------------------------------------------
-        # Inputs
-        #---------------------------------------------------------------------------------
+    #-------------------------------------------------------------------------------------
+    # Inputs
+    #-------------------------------------------------------------------------------------
 
-        if trial['left_right'] < 0:
-            high = inputs['LEFT']
-            low  = inputs['RIGHT']
-        else:
-            high = inputs['RIGHT']
-            low  = inputs['LEFT']
+    if trial['left_right'] < 0:
+        high = inputs['LEFT']
+        low  = inputs['RIGHT']
+    else:
+        high = inputs['RIGHT']
+        low  = inputs['LEFT']
 
-        u = np.zeros(len(inputs))
-        if t in epochs['fixation'] or t in epochs['stimulus'] or t in epochs['delay']:
-            u[inputs['FIXATION']] = 1
-        if t in epochs['stimulus']:
-            u[high] = scale(+trial['coh']) + rng.normal(scale=sigma)/np.sqrt(dt)
-            u[low]  = scale(-trial['coh']) + rng.normal(scale=sigma)/np.sqrt(dt)
-        if trial['wager'] and t in epochs['sure']:
-            u[inputs['SURE']] = 1
+    u = np.zeros(len(inputs))
+    if t in epochs['fixation'] or t in epochs['stimulus'] or t in epochs['delay']:
+        u[inputs['FIXATION']] = 1
+    if t in epochs['stimulus']:
+        u[high] = scale(+trial['coh']) + rng.normal(scale=sigma)/np.sqrt(dt)
+        u[low]  = scale(-trial['coh']) + rng.normal(scale=sigma)/np.sqrt(dt)
+    if trial['wager'] and t in epochs['sure']:
+        u[inputs['SURE']] = 1
 
-        #---------------------------------------------------------------------------------
+    #-------------------------------------------------------------------------------------
 
-        return u, reward, status
+    return u, reward, status
 
-    def terminate(self, perf):
-        p_answer  = perf.n_answer/perf.n_trials
-        p_correct = tasktools.divide(perf.n_correct, perf.n_decision)
-        p_sure    = tasktools.divide(perf.n_sure, perf.n_sure_decision)
+from pyrl.performance import PerformancePostdecisionWager as Performance
 
-        return p_answer >= 0.99 and p_correct >= 0.8 and 0.45 < p_sure < 0.55
+def terminate(perf):
+    p_answer  = perf.n_answer/perf.n_trials
+    p_correct = tasktools.divide(perf.n_correct, perf.n_decision)
+    p_sure    = tasktools.divide(perf.n_sure, perf.n_sure_decision)
+
+    return p_answer >= 0.99 and p_correct >= 0.8 and 0.4 < p_sure <= 0.5
