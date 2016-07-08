@@ -475,7 +475,7 @@ def sort(trialsfile, plots, unit=None, network='p', **kwargs):
             plot.vline(0)
 
             plot = fig['noTs-choice']
-            y += plot_noTs(noTs_choice, plot, unit, -500, 200)
+            y += plot_noTs(noTs_choice, plot, unit, -500, 0)
             plot.vline(0)
 
             plot = fig['Ts-stimulus']
@@ -487,7 +487,7 @@ def sort(trialsfile, plots, unit=None, network='p', **kwargs):
             plot.vline(0)
 
             plot = fig['Ts-choice']
-            y += plot_Ts(Ts_choice, Ts_choice_sure, plot, unit, -500, 200)
+            y += plot_Ts(Ts_choice, Ts_choice_sure, plot, unit, -500, 0)
             plot.vline(0)
 
             for plot in fig.plots.values():

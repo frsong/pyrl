@@ -22,6 +22,7 @@ actions = tasktools.to_map('FIXATE', 'CHOOSE-LOW', 'CHOOSE-HIGH')
 # Trial conditions
 mods         = ['v', 'a', 'va']
 freqs        = range(9, 16+1)
+tr_freqs     = [6, 7, 8] + freqs + [17, 18, 19]
 n_conditions = len(mods) * len(freqs)
 
 # Discrimination boundary
@@ -74,7 +75,7 @@ def get_condition(rng, dt, context={}):
 
     freq = context.get('freq')
     if freq is None:
-        freq = rng.choice(freqs)
+        freq = rng.choice(tr_freqs)
 
     return {
         'durations': durations,
@@ -89,7 +90,7 @@ R_ABORTED = -1
 R_CORRECT = +1
 
 # Input scaling
-fmin = 5
+fmin = 0
 fmax = 2*boundary - fmin
 
 def scale(f):

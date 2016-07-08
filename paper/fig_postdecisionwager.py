@@ -355,6 +355,9 @@ for plot in plots.values():
     ylim = plot.lim('y', y, lower=0)
     plot.vline(0, lw=thickness, linestyle='--', dashes=[3.5, 2])
 
+fig['noTs-choice'].xticks([-400, 0])
+fig['Ts-choice'].xticks([-400, 0])
+
 #=========================================================================================
 
 fontsize_epoch = 5
