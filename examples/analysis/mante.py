@@ -838,6 +838,7 @@ def statespace(trialsfile, plots=None, dt_reg=50, **kwargs):
     # Normalize within conditions
     #-------------------------------------------------------------------------------------
 
+    '''
     for s in sorted_trials:
         # Normalize
         X  = 0
@@ -855,6 +856,7 @@ def statespace(trialsfile, plots=None, dt_reg=50, **kwargs):
         sd   = np.tile(sd,   (ntime, 1)).T
         for cond, r in sorted_trials[s].items():
             sorted_trials[s][cond] = (r - mean)/std
+    '''
 
     #-------------------------------------------------------------------------------------
     # Denoising matrix
@@ -903,6 +905,75 @@ def statespace(trialsfile, plots=None, dt_reg=50, **kwargs):
     Q    = Q*np.sign(np.diag(R))
 
     #=====================================================================================
+    # Plot regression coefficients
+    #=====================================================================================
+
+    if isinstance(plots, tuple):
+        figspath, name = plots
+
+        w = 4.5
+        r = 1.4
+        fig = Figure(w=w, r=r)
+
+        x0 = 0.15
+        y0 = 0.1
+        w  = 0.3
+        h  = w/r
+        DX = 0.17
+        DY = 0.1
+
+        fig.add('context-motion', [x0, y0, w, h])
+        fig.add('context-color', [fig[-1].right+DX, y0, w, h])
+
+        fig.add('context-choice', [x0, fig[-1].top+DY, w, h])
+        fig.add('color-motion', [fig[-1].right+DX, fig[-1].y, w, h])
+
+        fig.add('motion-choice', [x0, fig[-1].top+DY, w, h])
+        fig.add('color-choice', [fig[-1].right+DX, fig[-1].y, w, h])
+
+        #---------------------------------------------------------------------------------
+
+        regaxes = {'choice': CHOICE, 'motion': MOTION,
+                   'color': COLOUR, 'context': CONTEXT}
+        xall = []
+        yall = []
+        for k, plot in fig.plots.items():
+            Y, X = k.split('-')
+
+            plot.equal()
+            plot.xlabel(X.capitalize())
+            plot.ylabel(Y.capitalize())
+
+            x = Q[:,regaxes[X]]
+            y = Q[:,regaxes[Y]]
+            plot.plot(x, y, 'o', mfc='0.2', mec='w', ms=2.5, mew=0.3, zorder=10)
+            xall += [x, -x]
+            yall += [y, -y]
+
+            #M = 0.4
+            #assert np.all(abs(x) <= M)
+            #assert np.all(abs(y) <= M)
+
+            #plot.xlim(-M, M)
+            #plot.xticks([-M, 0, M])
+
+            #plot.ylim(-M, M)
+            #plot.yticks([-M, 0, M])
+
+        # Limits
+        for k, plot in fig.plots.items():
+            plot.lim('x', xall)
+            plot.lim('y', yall)
+
+            plot.hline(0, lw=0.5, color='k', zorder=1)
+            plot.vline(0, lw=0.5, color='k', zorder=1)
+
+        #---------------------------------------------------------------------------------
+
+        fig.save(path=figspath, name='regress_coeffs')
+        fig.close()
+
+    #=====================================================================================
 
     if isinstance(plots, dict):
         plot_statespace(units, time_a, sorted_trials, Q, plots)
@@ -910,14 +981,14 @@ def statespace(trialsfile, plots=None, dt_reg=50, **kwargs):
         figspath, name = plots
 
         w = utils.mm_to_inch(174)
-        r = 0.65
-        fig = Figure(w=w, r=r, thickness=0.8, axislabelsize=9, ticklabelsize=7,
+        r = 0.7
+        fig = Figure(w=w, r=r, thickness=0.8, axislabelsize=9, ticklabelsize=7.5,
                      labelpadx=4.5, labelpady=4.5)
 
         w  = 0.24
         h  = 0.35
         x0 = 0.1
-        y0 = 0.11
+        y0 = 0.1
         dx = 0.07
         dy = 0.15
 
@@ -933,20 +1004,24 @@ def statespace(trialsfile, plots=None, dt_reg=50, **kwargs):
         plot_statespace(units, time_a, sorted_trials, Q, fig.plots)
 
         #---------------------------------------------------------------------------------
-        # Legend
+        # Legends
         #---------------------------------------------------------------------------------
 
-        ms_filled = 2.5
-        ms_empty  = 2.5
+        fig['m2'].text_upper_center('Motion context', dy=0.03, fontsize=8.5, color='k')
+        fig['c2'].text_upper_center('Color context', dy=0.03, fontsize=8.5,
+                                    color=Figure.colors('darkblue'))
+
+        ms_filled = 3
+        ms_empty  = 3
 
         mew_filled = 0.5
         mew_empty  = 0.5
 
-        y  = (fig['c1'].bottom + fig['m1'].top)/2
+        y  = 1.13
         dx = 0.08
         dy = 0.06
 
-        fontsize = 5.5
+        fontsize = 6
 
         for context, plot, basecolor in zip(['Motion', 'Color'],
                                             [fig['c1'], fig['c3']],

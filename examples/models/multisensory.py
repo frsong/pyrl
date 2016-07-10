@@ -22,7 +22,7 @@ actions = tasktools.to_map('FIXATE', 'CHOOSE-LOW', 'CHOOSE-HIGH')
 # Trial conditions
 mods            = ['v', 'a', 'va']
 freqs           = range(9, 16+1)
-tr_freqs        = [5, 6, 7, 8] + freqs + [17, 18, 19, 20]
+tr_freqs        = freqs
 n_conditions    = len(mods) * len(freqs)
 tr_n_conditions = len(mods) * len(tr_freqs)
 
@@ -30,8 +30,8 @@ tr_n_conditions = len(mods) * len(tr_freqs)
 boundary = 12.5
 
 # Training
-n_gradient   = tr_n_conditions
-n_validation = 50*tr_n_conditions
+n_gradient   = 2*n_conditions
+n_validation = 50*n_conditions
 
 # Input noise
 sigma = np.sqrt(2*100*0.02)
@@ -76,7 +76,7 @@ def get_condition(rng, dt, context={}):
 
     freq = context.get('freq')
     if freq is None:
-        freq = rng.choice(tr_freqs)
+        freq = rng.choice(freqs)
 
     return {
         'durations': durations,
@@ -91,8 +91,8 @@ R_ABORTED = -1
 R_CORRECT = +1
 
 # Input scaling
-fmin = min(tr_freqs)#0
-fmax = max(tr_freqs)#2*boundary - fmin
+fmin = 0
+fmax = 2*boundary - fmin
 
 def scale(f):
     return (f - fmin)/(fmax - fmin)
@@ -157,4 +157,4 @@ def get_step(rng, dt, trial, t, a):
 def terminate(perf):
     p_decision, p_correct = tasktools.correct_2AFC(perf)
 
-    return p_decision >= 0.99 and p_correct >= 0.90
+    return p_decision >= 0.99 and p_correct >= 0.85

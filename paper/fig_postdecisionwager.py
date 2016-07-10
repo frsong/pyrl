@@ -20,7 +20,7 @@ parent = utils.get_parent(here)
 scratchpath = os.environ.get('SCRATCH')
 if scratchpath is None:
     scratchpath = os.path.join(os.environ['HOME'], 'scratch')
-trialspath   = os.path.join(scratchpath, 'work', 'pyrl')
+trialspath   = os.path.join(scratchpath, 'work', 'pyrl', 'examples')
 analysispath = os.path.join(parent, 'examples', 'analysis')
 modelspath   = os.path.join(parent, 'examples', 'models')
 
@@ -345,7 +345,7 @@ plot.ylabel('Probability correct')
 # Plot unit
 #=========================================================================================
 
-unit = 14
+unit = 63
 
 plots = {name: fig[name]
          for name in ['noTs-stimulus', 'noTs-choice',

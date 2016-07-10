@@ -175,6 +175,103 @@ def correct_stimulus_duration(trialsfile, plot, saved=None, **kwargs):
 
 #/////////////////////////////////////////////////////////////////////////////////////////
 
+def value_stimulus_duration(trialsfile, plot, saved=None, **kwargs):
+    if saved is not None:
+        value_by_duration_by_coh, value_by_duration_by_coh_wager = saved
+    else:
+        # Load trials
+        trials, U, Z, Z_b, A, P, M, perf, r_p, r_v = utils.load(trialsfile)
+
+        # Time
+        time = trials[0]['time']
+
+        # Sort
+        trials_by_cond       = {}
+        trials_by_cond_wager = {}
+        for n, trial in enumerate(trials):
+            coh = trial['coh']
+            if coh == 0 or perf.choices[n] not in ['L', 'R']:
+                continue
+
+            cond     = coh
+            duration = np.ptp(trial['durations']['stimulus'])
+
+            delay_start, _ = trial['durations']['delay']
+            before_sure,   = np.where((delay_start <= time) & (time < delay_start+500))
+            value          = np.mean(Z_b[before_sure,n])
+            if trial['wager']:
+                trials_by_cond_wager.setdefault(cond, {'durations': [], 'values': []})
+                trials_by_cond_wager[cond]['durations'].append(duration)
+                trials_by_cond_wager[cond]['values'].append(value)
+            else:
+                trials_by_cond.setdefault(cond, {'durations': [], 'values': []})
+                trials_by_cond[cond]['durations'].append(duration)
+                trials_by_cond[cond]['values'].append(value)
+
+        # Number of bins
+        nbins = kwargs.get('nbins', 10)
+
+        # Average no-wager trials
+        value_by_duration_by_coh = {}
+        for coh, v in trials_by_cond.items():
+            (xbins, ybins, xedges,
+             binsizes) = datatools.partition(v['durations'], v['values'], nbins=nbins)
+            duration = [np.mean(xbin) for xbin in xbins]
+            value    = [np.mean(ybin) for ybin in ybins]
+            value_by_duration_by_coh[coh] = (duration, value)
+
+        # Average wager trials
+        value_by_duration_by_coh_wager = {}
+        for coh, v in trials_by_cond_wager.items():
+            (xbins, ybins, xedges,
+             binsizes) = datatools.partition(v['durations'], v['values'], nbins=nbins)
+            duration = [np.mean(xbin) for xbin in xbins]
+            value    = [np.mean(ybin) for ybin in ybins]
+            value_by_duration_by_coh_wager[coh] = (duration, value)
+
+    #=====================================================================================
+    # Plot
+    #=====================================================================================
+
+    lineprop = {'ls':     '--',
+                'lw':     kwargs.get('lw', 1),
+                'dashes': kwargs.get('dashes', [9, 4])}
+    dataprop = {'mew': kwargs.get('mew', 1)}
+    dataprop['ms'] = kwargs.get('ms', 6) + dataprop['mew']/2
+
+    lineprop_wager = {'lw':  kwargs.get('lw', 1)}
+    dataprop_wager = {'ms':  kwargs.get('ms', 7),
+                      'mew': kwargs.get('mew', 0)}
+
+    colors = kwargs.get('colors', kiani2009_colors)
+
+    # No-wager trials
+    cohs = sorted(value_by_duration_by_coh)
+    for coh in cohs:
+        duration, value = value_by_duration_by_coh[coh]
+
+        plot.plot(duration, value, color=colors[coh], zorder=10, **lineprop)
+        plot.plot(duration, value, 'o', mfc='w', mec=colors[coh],
+                  zorder=10, **dataprop)
+
+    # Wager trials
+    cohs = sorted(value_by_duration_by_coh_wager)
+    for coh in cohs:
+        duration, value = value_by_duration_by_coh_wager[coh]
+
+        plot.plot(duration, value, color=colors[coh], zorder=5, **lineprop_wager)
+        plot.plot(duration, value, 'o', mfc=colors[coh], mec=colors[coh],
+                  zorder=5, **dataprop_wager)
+
+    plot.xlim(100, 800)
+    #plot.ylim(0.5, 1)
+
+    #=====================================================================================
+
+    return value_by_duration_by_coh, value_by_duration_by_coh_wager
+
+#/////////////////////////////////////////////////////////////////////////////////////////
+
 def compute_dprime(trials, perf, r):
     """
     Compute d' for choice.
@@ -562,6 +659,21 @@ def do(action, args, config):
 
         plot.xlabel('Stimulus duration (ms)')
         plot.ylabel('Probability correct')
+
+        fig.save(path=config['figspath'], name=action)
+
+    #=====================================================================================
+
+    elif action == 'value_stimulus_duration':
+        trialsfile = runtools.activityfile(config['trialspath'])
+
+        fig  = Figure()
+        plot = fig.add()
+
+        value_stimulus_duration(trialsfile, plot)
+
+        plot.xlabel('Stimulus duration (ms)')
+        plot.ylabel('Expected reward')
 
         fig.save(path=config['figspath'], name=action)
 

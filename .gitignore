@@ -18,6 +18,7 @@ paper/times/
 talks/
 tests/
 work/
-pyrl2/
 logtest.py
 rvtest.py
+environment/
+pyrl2/

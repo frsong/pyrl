@@ -748,11 +748,13 @@ def sort_return(trialsfile, plots=None, **kwargs):
 
         return yall
 
-    def on_choice(plot, tmin=-600, tmax=100):
+    def on_choice(plot, tmin=-600, tmax=100, clrs=colors):
         w, = np.where((time_a >= tmin) & (time_a <= tmax))
-        t, yall = plot_sorted(plot, w, r_by_cond_choice)
+        t, yall = plot_sorted(plot, w, r_by_cond_choice, clrs)
 
         plot.xlim(t[0], t[-1])
+
+        plot.lim('y', yall, lower=0)
 
         return yall
 
@@ -762,13 +764,15 @@ def sort_return(trialsfile, plots=None, **kwargs):
         else:
             clrs = colors_kiani2009
 
-        tmin = kwargs.get('on-stimulus-tmin', -200)
-        tmax = kwargs.get('on-stimulus-tmax', 1000)
         if 'on-stimulus' in plots:
+            tmin = kwargs.get('on-stimulus-tmin', -200)
+            tmax = kwargs.get('on-stimulus-tmax', 1000)
             on_stimulus(plots['on-stimulus'], tmin, tmax, clrs)
 
         if 'on-choice' in plots:
-            on_choice(plots['on-choice'])
+            tmin = kwargs.get('on-choice-tmin', -600)
+            tmax = kwargs.get('on-choice-tmax', 100)
+            on_choice(plots['on-choice'], tmin, tmax, clrs)
     else:
         name = plots
 

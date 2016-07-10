@@ -30,6 +30,9 @@ n_conditions = len(juices) * len(offers)
 n_gradient   = n_conditions
 n_validation = 50*n_conditions
 
+# Input noise
+sigma = np.sqrt(2*100*0.001)
+
 # Durations
 fixation     = 750
 offer_on_min = 1000
@@ -43,7 +46,11 @@ R_B       = 0.2
 R_A       = A_to_B * R_B
 
 # Recurrent noise
-baseline_var_rec = 0.02
+#baseline_var_rec = 0.02
+
+# Slow down the learning
+lr          = 0.002
+baseline_lr = 0.002
 
 # Input scaling
 def scale(x):
@@ -104,7 +111,6 @@ def get_step(rng, dt, trial, t, a):
     epochs = trial['epochs']
     status = {'continue': True}
     reward = 0
-
     if t-1 in epochs['fixation'] or t-1 in epochs['offer-on']:
         if a != actions['FIXATE']:
             status['continue'] = False
@@ -152,8 +158,8 @@ def get_step(rng, dt, trial, t, a):
         u[inputs['L-'+juiceL]] = 1
         u[inputs['R-'+juiceR]] = 1
 
-        u[inputs['N-L']] = scale(trial['nL'])
-        u[inputs['N-R']] = scale(trial['nR'])
+        u[inputs['N-L']] = scale(trial['nL']) + rng.normal(scale=sigma)/np.sqrt(dt)
+        u[inputs['N-R']] = scale(trial['nR']) + rng.normal(scale=sigma)/np.sqrt(dt)
 
     #-------------------------------------------------------------------------------------
 

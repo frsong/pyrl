@@ -186,9 +186,9 @@ if 'mante' in args:
     do_action(model, 'sort')
 
 if 'mante-seeds' in args:
-    for seed in xrange(start_seed, start_seed+ntrain):
-        print("=> TRAIN: Context-dependent integration (seed = {})".format(seed))
-        train(model, seed=seed)
+    #for seed in xrange(start_seed, start_seed+ntrain):
+    #    print("=> TRAIN: Context-dependent integration (seed = {})".format(seed))
+    #    train(model, seed=seed)
     for seed in xrange(start_seed, start_seed+ntrain):
         print("=> TEST: Context-dependent integration (seed = {})".format(seed))
         trials(model, 'b', ntrials_b, seed=seed)
@@ -254,7 +254,7 @@ ntrials_a = 100
 
 if 'postdecisionwager' in args:
     print("=> Postdecision wager")
-    #train(model)
+    train(model)
     trials(model, 'b', ntrials_b)
     do_action(model, 'sure_stimulus_duration')
     do_action(model, 'correct_stimulus_duration')
@@ -319,6 +319,9 @@ if 'fig_postdecisionwager' in args:
 
 if 'fig_padoaschioppa2006' in args:
     figure('fig_padoaschioppa2006')
+
+if 'fig_rdm_value' in args:
+    figure('fig_rdm_value')
 
 if 'fig_rdm_rt' in args:
     figure('fig_rdm_rt')
