@@ -22,7 +22,7 @@ actions = tasktools.to_map('FIXATE', 'CHOOSE-LOW', 'CHOOSE-HIGH')
 # Trial conditions
 mods            = ['v', 'a', 'va']
 freqs           = range(9, 16+1)
-tr_freqs        = freqs
+tr_freqs        = [freqs[0]-1] + freqs + [frequs[-1]+1]
 n_conditions    = len(mods) * len(freqs)
 tr_n_conditions = len(mods) * len(tr_freqs)
 
@@ -30,8 +30,8 @@ tr_n_conditions = len(mods) * len(tr_freqs)
 boundary = 12.5
 
 # Training
-n_gradient   = 2*n_conditions
-n_validation = 50*n_conditions
+n_gradient   = tr_n_conditions
+n_validation = 50*tr_n_conditions
 
 # Input noise
 sigma = np.sqrt(2*100*0.02)

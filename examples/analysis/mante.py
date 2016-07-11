@@ -514,6 +514,282 @@ def sort(trialsfile, all_plots, units=None, network='p', **kwargs):
 
 #/////////////////////////////////////////////////////////////////////////////////////////
 
+def sort_statespace(trialsfile, all_plots, units=None, network='p', **kwargs):
+    """
+    Sort trials (for state-space analysis).
+
+    """
+    # Load trials
+    trials, U, Z, Z_b, A, P, M, perf, r_p, r_v = utils.load(trialsfile)
+
+    # Which network?
+    if network == 'p':
+        r = r_p
+    else:
+        r = r_v
+
+    # Number of units
+    N = r.shape[-1]
+
+    # Same for every trial
+    time  = trials[0]['time']
+    Ntime = len(time)
+
+    # Aligned time
+    time_a  = np.concatenate((-time[1:][::-1], time))
+    Ntime_a = len(time_a)
+
+    #=====================================================================================
+    # Preferred targets
+    #=====================================================================================
+
+    preferred_targets = get_preferred_targets(trials, perf, r)
+
+    #=====================================================================================
+    # Sort trials
+    #=====================================================================================
+
+    sortby = ['choice', 'motion-choice', 'color-choice', 'context-choice', 'all']
+
+    #-------------------------------------------------------------------------------------
+    # Sort
+    #-------------------------------------------------------------------------------------
+
+    sorted_trials = {s: {} for s in sortby}
+    X  = 0
+    X2 = 0
+    NX = 0
+    for n, trial in enumerate(trials):
+        if perf.choices[n] == 'R':
+            target = +1
+        else:
+            target = -1
+
+        if perf.corrects[n]:
+            for s in sortby:
+                sorted_trial = sort_func(s, preferred_targets, target, trial)
+                for u, cond in enumerate(sorted_trial):
+                    sorted_trials[s].setdefault(cond, []).append((n, u))
+
+        # For normalizing
+        Mn  = np.tile(M[:,n], (N,1)).T
+        Rn  = r[:,n]*Mn
+        X  += np.sum(Rn,    axis=0)
+        X2 += np.sum(Rn**2, axis=0)
+        NX += np.sum(Mn,    axis=0)
+    mean = X/NX
+    sd   = np.sqrt(X2/NX - mean**2)
+
+    #-------------------------------------------------------------------------------------
+    # Average within conditions
+    #-------------------------------------------------------------------------------------
+
+    for s in sorted_trials:
+        # Collect
+        trials_by_cond = {}
+        for cond, n_u in sorted_trials[s].items():
+            # Storage
+            trials_by_cond.setdefault(cond, {'r': np.zeros((Ntime_a, N)),
+                                             'n': np.zeros((Ntime_a, N))})
+            for n, u in n_u:
+                # Firing rates
+                Mn  = M[:,n]
+                Rnu = r[:,n,u]*Mn
+
+                # Normalize
+                Rnu = (Rnu - mean[u])/sd[u]
+
+                # Align point
+                t0 = trials[n]['epochs']['stimulus'][0] - 1
+
+                # Before
+                n_b = Rnu[:t0].shape[0]
+                trials_by_cond[cond]['r'][Ntime-1-n_b:Ntime-1,u] += Rnu[:t0]
+                trials_by_cond[cond]['n'][Ntime-1-n_b:Ntime-1,u] += Mn[:t0]
+
+                # After
+                n_a = Rnu[t0:].shape[0]
+                trials_by_cond[cond]['r'][Ntime-1:Ntime-1+n_a,u] += Rnu[t0:]
+                trials_by_cond[cond]['n'][Ntime-1:Ntime-1+n_a,u] += Mn[t0:]
+
+        # Average
+        for cond in trials_by_cond:
+            trials_by_cond[cond] = utils.div(trials_by_cond[cond]['r'],
+                                             trials_by_cond[cond]['n'])
+
+        # Save
+        sorted_trials[s] = trials_by_cond
+
+    if all_plots is None:
+        return time_a, sorted_trials
+
+    #=====================================================================================
+    # Plot functions
+    #=====================================================================================
+
+    lw = kwargs.get('lw', 1)
+
+    linestyles = {
+        +1: '-',
+        -1: '--'
+        }
+
+    def plot_choice(plot, unit, w):
+        t = time_a[w]
+        y = [[0, 0.5]]
+        for (choice,), r_cond in sorted_trials['choice'].items():
+            plot.plot(t, r_cond[w,unit], linestyles[choice], color=Figure.colors('red'), lw=lw)
+            y.append(r_cond[w,unit])
+        plot.lim('y', y)
+
+        return t, y
+
+    def plot_motion_choice(plot, unit, w):
+        cohs = []
+        for (choice, signed_coh, context) in sorted_trials['motion-choice']:
+            cohs.append(abs(signed_coh))
+        cohs = sorted(list(set(cohs)))
+
+        t = time_a[w]
+        y = [[0, 0.5]]
+        for (choice, signed_coh, context), r_cond in sorted_trials['motion-choice'].items():
+            if context != 'm':
+                continue
+
+            idx = cohs.index(abs(signed_coh))
+            basecolor = 'k'
+            if idx == 0:
+                color = apply_alpha(basecolor, 0.4)
+            elif idx == 1:
+                color = apply_alpha(basecolor, 0.7)
+            else:
+                color = apply_alpha(basecolor, 1)
+
+            plot.plot(t, r_cond[w,unit], linestyles[choice], color=color, lw=lw)
+            y.append(r_cond[w,unit])
+        plot.lim('y', y)
+
+        return t, y
+
+    def plot_color_choice(plot, unit, w):
+        cohs = []
+        for (choice, signed_coh, context) in sorted_trials['color-choice']:
+            cohs.append(abs(signed_coh))
+        cohs = sorted(list(set(cohs)))
+
+        t = time_a[w]
+        y = [[0, 0.5]]
+        for (choice, signed_coh, context), r_cond in sorted_trials['color-choice'].items():
+            if context != 'c':
+                continue
+
+            idx = cohs.index(abs(signed_coh))
+            basecolor = Figure.colors('darkblue')
+            if idx == 0:
+                color = apply_alpha(basecolor, 0.4)
+            elif idx == 1:
+                color = apply_alpha(basecolor, 0.7)
+            else:
+                color = apply_alpha(basecolor, 1)
+
+            plot.plot(t, r_cond[w,unit], linestyles[choice], color=color, lw=lw)
+            y.append(r_cond[w,unit])
+        plot.lim('y', y)
+
+        return t, y
+
+    def plot_context_choice(plot, unit, w):
+        t = time_a[w]
+        y = [[0, 0.5]]
+        for (choice, context), r_cond in sorted_trials['context-choice'].items():
+            if context == 'm':
+                color = 'k'
+            else:
+                color = Figure.colors('darkblue')
+
+            plot.plot(t, r_cond[w,unit], linestyles[choice], color=color, lw=lw)
+            y.append(r_cond[w, unit])
+        plot.lim('y', y)
+
+        return t, y
+
+    #=====================================================================================
+    # Plot
+    #=====================================================================================
+
+    if units is not None:
+        tmin = kwargs.get('tmin', 100)
+        tmax = kwargs.get('tmax', 850)
+        w, = np.where((tmin <= time_a ) & (time_a <= tmax))
+
+        for plots, unit in zip(all_plots, units):
+            yall = []
+
+            plot = plots['choice']
+            t, y = plot_choice(plot, unit, w)
+            yall += y
+
+            plot = plots['motion-choice']
+            t, y = plot_motion_choice(plot, unit, w)
+            yall += y
+
+            plot = plots['color-choice']
+            t, y = plot_color_choice(plot, unit, w)
+            yall += y
+
+            plot = plots['context-choice']
+            t, y = plot_context_choice(plot, unit, w)
+            yall += y
+    else:
+        figspath, name = all_plots
+        for unit in xrange(N):
+            w   = 2.5
+            h   = 6
+            fig = Figure(w=w, h=h, axislabelsize=7.5, ticklabelsize=6.5)
+
+            w  = 0.55
+            h  = 0.17
+            x0 = 0.3
+            y0 = 0.77
+            dy = 0.06
+
+            fig.add('choice',         [x0, y0, w, h])
+            fig.add('motion-choice',  [x0, fig['choice'].y-dy-h, w, h])
+            fig.add('color-choice',   [x0, fig['motion-choice'].y-dy-h, w, h])
+            fig.add('context-choice', [x0, fig['color-choice'].y-dy-h, w, h])
+
+            #-----------------------------------------------------------------------------
+
+            w, = np.where((-100 <= time_a ) & (time_a <= 750))
+
+            yall = []
+
+            plot = fig['choice']
+            t, y = plot_choice(plot, unit, w)
+            yall += y
+
+            plot = fig['motion-choice']
+            t, y = plot_motion_choice(plot, unit, w)
+            yall += y
+
+            plot = fig['color-choice']
+            t, y = plot_color_choice(plot, unit, w)
+            yall += y
+
+            plot = fig['context-choice']
+            t, y = plot_context_choice(plot, unit, w)
+            yall += y
+
+            for plot in fig.plots.values():
+                plot.lim('y', yall)
+
+            #-----------------------------------------------------------------------------
+
+            fig.save(path=figspath, name=name+'_{}{:03d}'.format(network, unit))
+            fig.close()
+
+#/////////////////////////////////////////////////////////////////////////////////////////
+
 def is_active(r):
     return np.std(r, axis=0) > 0.1
 
@@ -831,7 +1107,7 @@ def statespace(trialsfile, plots=None, dt_reg=50, **kwargs):
     #-------------------------------------------------------------------------------------
 
     utils.println("[ mante.statespace ] Sorting trials ...")
-    time_a, sorted_trials = sort(trialsfile, None)
+    time_a, sorted_trials = sort_statespace(trialsfile, None)
     print(" done!")
 
     #-------------------------------------------------------------------------------------

@@ -46,7 +46,10 @@ R_B       = 0.2
 R_A       = A_to_B * R_B
 
 # Recurrent noise
-baseline_var_rec = 0.015
+#baseline_var_rec = 0.015
+
+# Connectivity
+baseline_p0 = 0.1
 
 # Input scaling
 def scale(x):

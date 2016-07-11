@@ -144,6 +144,23 @@ if 'rdm_fixed-seeds' in args:
         do_action(model, 'correct_stimulus_duration', seed=seed)
 
 #-----------------------------------------------------------------------------------------
+# RDM (FD), but small dt
+#-----------------------------------------------------------------------------------------
+
+model     = 'rdm_fixed_dt'
+ntrials_b = 2500
+ntrials_a = 50
+
+if 'rdm_fixed_dt' in args:
+    print("=> Perceptual decision-making (FD), dt = 1 ms")
+    train(model)
+    trials(model, 'b', ntrials_b, analysis='rdm', args='--dt-save 10')
+    do_action(model, 'psychometric', analysis='rdm')
+    do_action(model, 'correct_stimulus_duration', analysis='rdm')
+
+#-----------------------------------------------------------------------------------------
+# RDM (RT)
+#-----------------------------------------------------------------------------------------
 
 model     = 'rdm_rt'
 ntrials_b = 2500
@@ -151,8 +168,7 @@ ntrials_a = 50
 
 if 'rdm_rt' in args:
     print("=> Perceptual decision-making (RT)")
-    seed = 100
-    train(model, seed=seed, main=True)
+    train(model)
     trials(model, 'b', ntrials_b)
     do_action(model, 'psychometric')
     do_action(model, 'chronometric')
@@ -204,7 +220,7 @@ ntrials_a = 100
 
 if 'multisensory' in args:
     print("=> Multisensory integration")
-    train(model)
+    #train(model)
     trials(model, 'b', ntrials_b)
     do_action(model, 'psychometric')
     trials(model, 'a', ntrials_a)
@@ -325,6 +341,12 @@ if 'fig_rdm_value' in args:
 
 if 'fig_rdm_rt' in args:
     figure('fig_rdm_rt')
+
+if 'fig-learning-rdm_fixed' in args:
+    figure('fig_learning', args='rdm_fixed')
+
+if 'fig-learning-rdm_rt' in args:
+    figure('fig_learning', args='rdm_rt')
 
 if 'fig-learning-mante' in args:
     figure('fig_learning', args='mante')
