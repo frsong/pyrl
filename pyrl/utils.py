@@ -5,6 +5,7 @@ import datetime
 import errno
 import os
 import signal
+import subprocess
 import sys
 
 from collections import OrderedDict
@@ -56,6 +57,14 @@ def print_dict(settings_, indent=2, title=None):
     for k, v in settings.items():
         print(indent*' ' + '{}:{}{}'.format(k, (maxlen - len(k) + 1)*' ', v))
     sys.stdout.flush()
+
+def copy_to_clipboard(s):
+    try:
+        proc = subprocess.Popen('pbcopy', env={'LANG': 'en_US.UTF-8'},
+                                stdin=subprocess.PIPE)
+        proc.communicate(s.encode('utf-8'))
+    except:
+        pass
 
 #=========================================================================================
 # Safe division

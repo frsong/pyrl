@@ -148,8 +148,7 @@ if 'rdm_fixed-seeds' in args:
 #-----------------------------------------------------------------------------------------
 
 model     = 'rdm_fixed_dt'
-ntrials_b = 2500
-ntrials_a = 50
+ntrials_b = 1000
 
 if 'rdm_fixed_dt' in args:
     print("=> Perceptual decision-making (FD), dt = 1 ms")
@@ -220,7 +219,7 @@ ntrials_a = 100
 
 if 'multisensory' in args:
     print("=> Multisensory integration")
-    #train(model)
+    train(model)
     trials(model, 'b', ntrials_b)
     do_action(model, 'psychometric')
     trials(model, 'a', ntrials_a)

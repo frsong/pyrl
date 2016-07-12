@@ -1667,7 +1667,7 @@ def do(action, args, config):
                 'coh':        cohs[k.pop(0)]
                 }
             trials.append(task.get_condition(pg.rng, pg.dt, context))
-        runtools.run(action, trials, pg, config['trialspath'])
+        runtools.run(action, trials, pg, config['trialspath'], dt_save=config['dt-save'])
 
     elif action == 'psychometric':
         trialsfile = runtools.behaviorfile(config['trialspath'])

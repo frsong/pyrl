@@ -597,7 +597,10 @@ class Figure(object):
         fname = join(path, name + '.' + self.p['format'])
         plt.figure(self.fig.number)
         plt.savefig(fname, transparent=transparent, **kwargs)
-        print("[ {}.Figure.save ] ".format(THIS) + fname)
+        print("[ Figure.save ] " + fname)
+
+        # Copy to clipboard if possible
+        utils.copy_to_clipboard(fname)
 
     def close(self):
         plt.close(self.fig)

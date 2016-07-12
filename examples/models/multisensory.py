@@ -22,7 +22,7 @@ actions = tasktools.to_map('FIXATE', 'CHOOSE-LOW', 'CHOOSE-HIGH')
 # Trial conditions
 mods            = ['v', 'a', 'va']
 freqs           = range(9, 16+1)
-tr_freqs        = [freqs[0]-1] + freqs + [frequs[-1]+1]
+tr_freqs        = [freqs[0]-1] + freqs + [freqs[-1]+1]
 n_conditions    = len(mods) * len(freqs)
 tr_n_conditions = len(mods) * len(tr_freqs)
 
