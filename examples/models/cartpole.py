@@ -125,4 +125,4 @@ if __name__ == '__main__':
     env.monitor.start('openai/cartpole', force=True)
     model.train()
     env.monitor.close()
-    gym.upload('openai/cartpole', api_key='sk_BbLks5hQIOpDviRfJCPFA')
+    #gym.upload('openai/cartpole', api_key='sk_BbLks5hQIOpDviRfJCPFA')

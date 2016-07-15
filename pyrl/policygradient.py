@@ -579,7 +579,8 @@ class PolicyGradient(object):
         items = OrderedDict()
         items['GPU']                      = gpu
         items['Network type']             = self.config['network_type']
-        items['N']                        = self.config['N']
+        items['N (policy)']               = self.config['N']
+        items['N (baseline)']             = self.config['baseline_N']
         items['Conn. prob. (policy)']     = self.config['p0']
         items['Conn. prob. (baseline)']   = self.config['baseline_p0']
         items['dt']                       = str(self.dt) + ' ms'

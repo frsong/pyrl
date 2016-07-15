@@ -21,5 +21,6 @@ work/
 logtest.py
 rvtest.py
 environment/
+examples2/
 pyrl2/
 openai/
