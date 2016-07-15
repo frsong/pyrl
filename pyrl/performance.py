@@ -4,6 +4,16 @@ from collections import OrderedDict
 
 from . import utils
 
+class DefaultPerformance(object):
+    def __init__(self):
+        pass
+
+    def update(self, trial, status):
+        pass
+
+    def display(output=True):
+        pass
+
 class Performance2AFC(object):
     def __init__(self):
         self.decisions = []

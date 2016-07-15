@@ -12,14 +12,25 @@ from .               import configs
 from .performance    import Performance2AFC
 from .policygradient import PolicyGradient
 
+class Struct():
+    """
+    Treat a dictionary like a module.
+
+    """
+    def __init__(self, **entries):
+        self.__dict__.update(entries)
+
 class Model(object):
-    def __init__(self, modelfile):
+    def __init__(self, modelfile=None, **kwargs):
         # Load model specification as module
-        try:
-            self.spec = imp.load_source('model', modelfile)
-        except IOError:
-            print("Couldn't load model file {}".format(modelfile))
-            sys.exit()
+        if modelfile is not None:
+            try:
+                self.spec = imp.load_source('model', modelfile)
+            except IOError:
+                print("Couldn't load model file {}".format(modelfile))
+                sys.exit(1)
+        else:
+            self.spec = Struct(**kwargs)
 
         # Task definition
         if 'Task' in vars(self.spec):
@@ -62,15 +73,15 @@ class Model(object):
             self.config['Performance'] = Performance2AFC
 
         # For online learning, make some adjustments.
-        if self.config['mode'] == 'continuous':
-            self.config['fix'] += ['states_0']
-        if False and self.config['mode'] == 'continuous':
-            if self.config['n_gradient'] != 1:
-                print("Setting n_gradient = 1.")
-                self.config['n_gradient'] = 1
-            if self.config['baseline_split'] != 1:
-                print("Setting baseline_split = 1.")
-                self.config['baseline_split'] = 1
+        #if self.config['mode'] == 'continuous':
+        #    self.config['fix'] += ['states_0']
+        #if False and self.config['mode'] == 'continuous':
+        #    if self.config['n_gradient'] != 1:
+        #        print("Setting n_gradient = 1.")
+        #        self.config['n_gradient'] = 1
+        #    if self.config['baseline_split'] != 1:
+        #        print("Setting baseline_split = 1.")
+        #        self.config['baseline_split'] = 1
 
         # For trial-by-trial learning, decrease the learning rate
         if self.config['n_gradient'] == 1:
@@ -84,7 +95,7 @@ class Model(object):
     def get_pg(self, config_or_savefile, seed=1, dt=None, load='best'):
         return PolicyGradient(self.Task, config_or_savefile, seed=seed, dt=dt, load=load)
 
-    def train(self, savefile, seed, recover=False):
+    def train(self, savefile='savefile.pkl', seed=1, recover=False):
         """
         Train the network.
 

@@ -204,10 +204,14 @@ if 'mante-seeds' in args:
     #for seed in xrange(start_seed, start_seed+ntrain):
     #    print("=> TRAIN: Context-dependent integration (seed = {})".format(seed))
     #    train(model, seed=seed)
+    #for seed in xrange(start_seed, start_seed+ntrain):
+    #    print("=> TEST: Context-dependent integration (seed = {})".format(seed))
+    #    trials(model, 'b', ntrials_b, seed=seed)
+    #    do_action(model, 'psychometric', seed=seed)
     for seed in xrange(start_seed, start_seed+ntrain):
         print("=> TEST: Context-dependent integration (seed = {})".format(seed))
-        trials(model, 'b', ntrials_b, seed=seed)
-        do_action(model, 'psychometric', seed=seed)
+        trials(model, 'a', ntrials_a, seed=seed)
+        do_action(model, 'statespace', seed=seed)
 
 #-----------------------------------------------------------------------------------------
 # Multisensory integration

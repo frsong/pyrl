@@ -276,7 +276,7 @@ for e, label in zip(['fixation', 'stimulus', 'delay', 'decision'],
 
 # Epoch durations
 for e, label in zip(['fixation', 'stimulus', 'delay', 'decision'],
-                    ['250-750 ms', '100-900 ms',
+                    ['750 ms', '100-900 ms',
                      '1200-1800 ms\n(Sure target onset 500-750 ms)', '500 ms']):
     plot.text(np.mean(durations[e]), y_timeline-0.11, label, ha='center', va='top',
               fontsize=fontsize+0.5)

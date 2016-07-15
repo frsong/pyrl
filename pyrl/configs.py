@@ -15,6 +15,8 @@ default  = {
     'mode':              'episodic',
     'network_type':      'gru',
     'R_ABORTED':         -1,
+    'R_TERMINAL':        None,
+    'abort_on_last_t':   True,
     'checkfreq':         50,
     'dt':                10,
     'tau':               100,

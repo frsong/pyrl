@@ -198,6 +198,11 @@ class PolicyGradient(object):
         self.discount_factor = discount_factor
 
         # Reward on aborted trials
+        self.abort_on_last_t = self.config['abort_on_last_t']
+        if self.config['R_TERMINAL'] is not None:
+            self.R_TERMINAL = self.config['R_TERMINAL']
+        else:
+            self.R_TERMINAL = self.config['R_ABORTED']
         self.R_ABORTED = self.config['R_ABORTED']
 
         # Random number generator
@@ -383,13 +388,13 @@ class PolicyGradient(object):
                 #A[t,n,0] = a_t
 
                 # Trial step
-                if t < self.Tmax-1:
+                if self.abort_on_last_t and t == self.Tmax-1:
+                    U[t,n] = 0
+                    R[t,n] = self.R_TERMINAL
+                    status = {'continue': False, 'reward': R[t,n]}
+                else:
                     U[t,n], R[t,n], status = self.task.get_step(self.rng, self.dt,
                                                                 trial, t+1, a_t)
-                else:
-                    U[t,n] = 0
-                    R[t,n] = self.R_ABORTED
-                    status = {'continue': False}
                 R[t,n] *= self.discount_factor(t)
 
                 u_t    = U[t,n]
@@ -517,8 +522,9 @@ class PolicyGradient(object):
         lr = tensor.scalar('lr')
 
         # Reward prediction error
-        M  = tensor.matrix('M')
-        L2 = tensor.sum((tensor.sqr(z_all[:,:,0] - R))*M)/tensor.sum(M)
+        M    = tensor.matrix('M')
+        L2   = tensor.sum((tensor.sqr(z_all[:,:,0] - R))*M)/tensor.sum(M)
+        RMSE = tensor.sqrt(L2)
 
         # Objective function
         obj = L2 + self.baseline_net.get_regs(x0_, r, M)
@@ -539,7 +545,7 @@ class PolicyGradient(object):
             args = []
         args += [U, Q, R, M, lr]
 
-        return theano.function(args, [z_all[:,:,0], norm], updates=updates)
+        return theano.function(args, [z_all[:,:,0], norm, RMSE], updates=updates)
 
     def train(self, savefile, recover=False):
         """
@@ -775,6 +781,7 @@ class PolicyGradient(object):
                             print("Termination criterion satisfied.")
                             return
                     else:
+                        '''
                         #-----------------------------------------------------------------
                         # Ongoing learning
                         #-----------------------------------------------------------------
@@ -804,13 +811,27 @@ class PolicyGradient(object):
                             'baseline_sgd':            self.baseline_sgd.get_values()
                             }
                         utils.save(savefile, save)
+                        '''
+                        if perf is not None:
+                            perf.display()
 
+                        # Termination condition
+                        terminate = False
+                        if hasattr(self.task, 'terminate'):
+                            if perf is not None and self.task.terminate(perf):
+                                terminate = True
+                        '''
                         # Report
                         if iter % 100 == 1:
                             elapsed = utils.elapsed_time(tstart)
                             print("After {} iterations ({})".format(iter, elapsed))
                             if perf is not None:
                                 perf.display()
+                        '''
+                        # Terminate
+                        if terminate:
+                            print("Termination criterion satisfied.")
+                            return
 
                 #-------------------------------------------------------------------------
                 # Run trials
@@ -844,7 +865,8 @@ class PolicyGradient(object):
                 else:
                     args = []
                 args += [baseline_inputs[:-1], Q_b, R_b, M, baseline_lr]
-                b, norm_b = update_baseline(*args)
+                b, norm_b, rmse = update_baseline(*args)
+                #print("Prediction error = {}".format(rmse))
 
                 norm_b = float(norm_b)
                 #print("norm_b = {}".format(norm_b))
