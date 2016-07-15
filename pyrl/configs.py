@@ -5,6 +5,7 @@ default  = {
     'Performance':       None,
     'N':                 100,
     'p0':                0.1,
+    'baseline_N':        100,
     'baseline_p0':       1,
     'lr':                0.004,
     'baseline_lr':       0.004,

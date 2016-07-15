@@ -22,4 +22,4 @@ logtest.py
 rvtest.py
 environment/
 pyrl2/
-training_dir
+openai/

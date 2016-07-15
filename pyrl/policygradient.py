@@ -143,7 +143,7 @@ class PolicyGradient(object):
             self.baseline_config = {
                 'network_type': config['network_type'],
                 'Nin':          baseline_Nin,
-                'N':            config['N'],
+                'N':            config['baseline_N'],
                 'Nout':         1,
                 'p0':           config['baseline_p0'],
                 'rho':          config['baseline_rho'],
