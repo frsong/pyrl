@@ -59,13 +59,15 @@ for name in additional + original:
     savefile = os.path.join(datapath, name+'.pkl')
     if not os.path.isfile(savefile):
         continue
+    if name == 'postdecisionwager_s105':
+        continue
+
     training_history = utils.load(savefile)['training_history']
 
     # Time
     timefile = os.path.join(timespath, name+'.txt')
     if os.path.isfile(timefile):
         times.append(np.loadtxt(timefile))
-
     #-------------------------------------------------------------------------------------
 
     if name in original:

@@ -198,8 +198,8 @@ class PolicyGradient(object):
         self.discount_factor = discount_factor
 
         # Reward on aborted trials
-        self.abort_on_last_t = self.config['abort_on_last_t']
-        if self.config['R_TERMINAL'] is not None:
+        self.abort_on_last_t = self.config.get('abort_on_last_t', True)
+        if 'R_TERMINAL' in self.config and self.config['R_TERMINAL'] is not None:
             self.R_TERMINAL = self.config['R_TERMINAL']
         else:
             self.R_TERMINAL = self.config['R_ABORTED']
