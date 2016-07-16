@@ -206,7 +206,7 @@ class PolicyGradient(object):
         self.R_ABORTED = self.config['R_ABORTED']
 
         # Random number generator
-        self.rng = nptools.get_rng(seed, __file__)
+        self.rng = nptools.get_rng(seed, __name__)
 
         # Compile functions
         self.step_0          = self.policy_net.func_step_0()

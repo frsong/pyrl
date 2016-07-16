@@ -129,7 +129,7 @@ class GRU(Recurrent):
             # Random number generator
             #-----------------------------------------------------------------------------
 
-            rng = nptools.get_rng(seed, __file__)
+            rng = nptools.get_rng(seed, __name__)
 
             #-----------------------------------------------------------------------------
             # Connection masks
