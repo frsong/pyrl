@@ -105,20 +105,19 @@ class PolicyGradient(object):
             # Policy network
             K = config['p0']*config['N']
             self.policy_config = {
-                'network_type': config['network_type'],
-                'Nin':          config['Nin'],
-                'N':            config['N'],
-                'Nout':         config['Nout'],
-                'p0':           config['p0'],
-                'rho':          config['rho'],
-                'f_out':        'softmax',
-                'Win':          config['Win']*np.sqrt(K)/config['Nin'],
-                'Win_mask':     config['Win_mask'],
-                'fix':          config['fix'],
-                'L2_r':         config['L2_r'],
-                'L1_Wrec':      config['L1_Wrec'],
-                'L2_Wrec':      config['L2_Wrec'],
-                'alpha':        alpha
+                'Nin':      config['Nin'],
+                'N':        config['N'],
+                'Nout':     config['Nout'],
+                'p0':       config['p0'],
+                'rho':      config['rho'],
+                'f_out':    'softmax',
+                'Win':      config['Win']*np.sqrt(K)/config['Nin'],
+                'Win_mask': config['Win_mask'],
+                'fix':      config['fix'],
+                'L2_r':     config['L2_r'],
+                'L1_Wrec':  config['L1_Wrec'],
+                'L2_Wrec':  config['L2_Wrec'],
+                'alpha':    alpha
                 }
             self.policy_net = Network(self.policy_config,
                                       seed=config['policy_seed'], name='policy')
@@ -141,21 +140,20 @@ class PolicyGradient(object):
             K = config['baseline_p0']*config['N']
             baseline_Nin = self.policy_net.N + len(config['actions'])
             self.baseline_config = {
-                'network_type': config['network_type'],
-                'Nin':          baseline_Nin,
-                'N':            config['baseline_N'],
-                'Nout':         1,
-                'p0':           config['baseline_p0'],
-                'rho':          config['baseline_rho'],
-                'f_out':        'linear',
-                'Win':          config['baseline_Win']*np.sqrt(K)/baseline_Nin,
-                'Win_mask':     config['baseline_Win_mask'],
-                'bout':         config['baseline_bout'],
-                'fix':          config['baseline_fix'],
-                'L2_r':         config['baseline_L2_r'],
-                'L1_Wrec':      config['L1_Wrec'],
-                'L2_Wrec':      config['L2_Wrec'],
-                'alpha':        alpha
+                'Nin':      baseline_Nin,
+                'N':        config['baseline_N'],
+                'Nout':     1,
+                'p0':       config['baseline_p0'],
+                'rho':      config['baseline_rho'],
+                'f_out':    'linear',
+                'Win':      config['baseline_Win']*np.sqrt(K)/baseline_Nin,
+                'Win_mask': config['baseline_Win_mask'],
+                'bout':     config['baseline_bout'],
+                'fix':      config['baseline_fix'],
+                'L2_r':     config['baseline_L2_r'],
+                'L1_Wrec':  config['L1_Wrec'],
+                'L2_Wrec':  config['L2_Wrec'],
+                'alpha':    alpha
                 }
             if self.baseline_config['bout'] is None:
                 self.baseline_config['bout'] = config['R_ABORTED']
