@@ -20,24 +20,22 @@ inputs = tasktools.to_map('FIXATION', 'VISUAL-P', 'VISUAL-N', 'AUDITORY-P', 'AUD
 actions = tasktools.to_map('FIXATE', 'CHOOSE-LOW', 'CHOOSE-HIGH')
 
 # Trial conditions
-mods            = ['v', 'a', 'va']
-freqs           = range(9, 16+1)
-tr_freqs        = [] + freqs + []
-n_conditions    = len(mods) * len(freqs)
-tr_n_conditions = len(mods) * len(tr_freqs)
+mods         = ['v', 'a', 'va']
+freqs        = range(9, 16+1)
+n_conditions = len(mods) * len(freqs)
 
 # Discrimination boundary
 boundary = 12.5
 
 # Training
-n_gradient   = 2*tr_n_conditions
-n_validation = 50*tr_n_conditions
+n_gradient   = n_conditions
+n_validation = 50*n_conditions
 
 # Input noise
-sigma = np.sqrt(2*100*0.015)
+sigma = np.sqrt(2*100*0.022)
 
 # Separate visual and auditory inputs
-N    = 150
+N    = 100
 Wins = []
 for i in xrange(3):
     Win = np.zeros((len(inputs), N))
@@ -157,4 +155,4 @@ def get_step(rng, dt, trial, t, a):
 def terminate(perf):
     p_decision, p_correct = tasktools.correct_2AFC(perf)
 
-    return p_decision >= 0.99 and p_correct >= 0.82
+    return p_decision >= 0.99 and p_correct >= 0.8

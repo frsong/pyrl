@@ -300,7 +300,7 @@ class PolicyGradient(object):
             if n < len(trials):
                 trial = trials[n]
             else:
-                trial = task.get_condition(self.rng, self.dt)
+                trial = self.task.get_condition(self.rng, self.dt)
                 trials.append(trial)
 
             #-----------------------------------------------------------------------------
