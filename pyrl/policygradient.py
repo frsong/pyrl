@@ -1,8 +1,8 @@
 from __future__ import absolute_import, division
 
+from   collections import OrderedDict
 import datetime
 import sys
-from   collections import OrderedDict
 
 import numpy as np
 
@@ -35,12 +35,12 @@ class PolicyGradient(object):
             # Model summary
             print("[ PolicyGradient ]")
             print("  Loading {}".format(savefile))
-            print("  Last saved after {} iterations.".format(save['iter']))
+            print("  Last saved after {} updates.".format(save['iter']))
 
             # Performance
             items = OrderedDict()
-            items['Best reward'] = '{} (after {} iterations)'.format(save['best_reward'],
-                                                                     save['best_iter'])
+            items['Best reward'] = '{} (after {} updates)'.format(save['best_reward'],
+                                                                  save['best_iter'])
             if save['best_perf'] is not None:
                 items.update(save['best_perf'].display(output=False))
             utils.print_dict(items)
@@ -207,8 +207,8 @@ class PolicyGradient(object):
         self.rng = nptools.get_rng(seed, __name__)
 
         # Compile functions
-        self.step_0          = self.policy_net.func_step_0()
-        self.step_t          = self.policy_net.func_step_t()
+        self.policy_step_0   = self.policy_net.func_step_0()
+        self.policy_step_t   = self.policy_net.func_step_t()
         self.baseline_step_0 = self.baseline_net.func_step_0()
         self.baseline_step_t = self.baseline_net.func_step_t()
 
@@ -309,7 +309,7 @@ class PolicyGradient(object):
 
             t = 0
             if init is None:
-                z_t,   x_t[0]   = self.step_0()
+                z_t,   x_t[0]   = self.policy_step_0()
                 z_t_b, x_t_b[0] = self.baseline_step_0()
             else:
                 z_t,   x_t[0]   = init
@@ -354,7 +354,7 @@ class PolicyGradient(object):
                     break
 
                 # Policy
-                z_t, x_t[0] = self.step_t(u_t[None,:], q_t[None,:], x_t)
+                z_t, x_t[0] = self.policy_step_t(u_t[None,:], q_t[None,:], x_t)
                 Z[t,n] = z_t
 
                 # Baseline
@@ -409,7 +409,7 @@ class PolicyGradient(object):
 
             # Save next state if necessary
             if self.mode == 'continuous':
-                init   = self.step_t(u_t[None,:], q_t[None,:], x_t)
+                init   = self.policy_step_t(u_t[None,:], q_t[None,:], x_t)
                 init_b = self.baseline_step_t(u_t_b[None,:], q_t_b[None,:], x_t_b)
         if progress_bar:
             print("100")
@@ -605,7 +605,7 @@ class PolicyGradient(object):
 
             # Resume training from here
             iter_start = self.save['iter']
-            print("Last saved was after {} iterations.".format(self.save['iter']))
+            print("Last saved was after {} updates.".format(self.save['iter']))
 
             # Random number generator
             print("Resetting RNG state.")
@@ -661,8 +661,8 @@ class PolicyGradient(object):
 
         tstart = datetime.datetime.now()
         try:
-            for iter in xrange(iter_start, max_iter):
-                if iter % checkfreq == 0:
+            for iter_ in xrange(iter_start, max_iter+1):
+                if iter_ % checkfreq == 0 or iter_ == max_iter:
                     if hasattr(self.task, 'n_validation'):
                         n_validation = self.task.n_validation
                     if n_validation > 0:
@@ -672,7 +672,7 @@ class PolicyGradient(object):
 
                         # Report
                         elapsed = utils.elapsed_time(tstart)
-                        print("After {} iterations ({})".format(iter, elapsed))
+                        print("After {} updates ({})".format(iter_, elapsed))
 
                         # RNG state
                         rng_state = self.rng.get_state()
@@ -696,13 +696,13 @@ class PolicyGradient(object):
                         # Save
                         mean_reward = np.sum(R*M)/n_validation
                         record = {
-                            'iter':        iter,
+                            'iter':        iter_,
                             'mean_reward': mean_reward,
                             'n_trials':    trials_tot,
                             'perf':        perf_
                             }
                         if mean_reward > best_reward or terminate:
-                            best_iter   = iter
+                            best_iter   = iter_
                             best_reward = mean_reward
                             best_perf   = perf_
                             best_params          = self.policy_net.get_values()
@@ -716,7 +716,7 @@ class PolicyGradient(object):
 
                         # Save
                         save = {
-                            'iter':                    iter,
+                            'iter':                    iter_,
                             'config':                  self.config,
                             'policy_config':           self.policy_net.config,
                             'baseline_config':         self.baseline_net.config,
@@ -823,7 +823,7 @@ class PolicyGradient(object):
                         # Report
                         if iter % 100 == 1:
                             elapsed = utils.elapsed_time(tstart)
-                            print("After {} iterations ({})".format(iter, elapsed))
+                            print("After {} updates ({})".format(iter, elapsed))
                             if perf is not None:
                                 perf.display()
                         '''
@@ -832,11 +832,15 @@ class PolicyGradient(object):
                             print("Termination criterion satisfied.")
                             return
 
+                if iter_ == max_iter:
+                    print("Reached maximum number of iterations ({}).".format(iter_))
+                    sys.exit(0)
+
                 #-------------------------------------------------------------------------
                 # Run trials
                 #-------------------------------------------------------------------------
 
-                # Trials
+                # Trial conditions
                 if hasattr(self.task, 'n_gradient'):
                     n_gradient = self.task.n_gradient
                 trials = [self.task.get_condition(self.rng, self.dt)
@@ -873,7 +877,7 @@ class PolicyGradient(object):
                     grad_norms_baseline.append(float(norm_b))
 
                 #-------------------------------------------------------------------------
-                # Update parameters
+                # Update policy
                 #-------------------------------------------------------------------------
 
                 if use_x0:
@@ -893,6 +897,7 @@ class PolicyGradient(object):
                 #-------------------------------------------------------------------------
 
             print("Reached maximum number of iterations ({}).".format(max_iter))
+
         except KeyboardInterrupt:
-            print("Training interrupted by user during iteration {}.".format(iter))
-            sys.exit()
+            print("Training interrupted by user during iteration {}.".format(iter_))
+            sys.exit(0)
