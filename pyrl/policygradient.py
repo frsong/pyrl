@@ -894,10 +894,6 @@ class PolicyGradient(object):
 
                 trials_tot += n_gradient
 
-                #-------------------------------------------------------------------------
-
-            print("Reached maximum number of iterations ({}).".format(max_iter))
-
         except KeyboardInterrupt:
             print("Training interrupted by user during iteration {}.".format(iter_))
             sys.exit(0)
