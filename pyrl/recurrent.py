@@ -1,5 +1,5 @@
-import sys
 from   collections import OrderedDict
+import sys
 
 import numpy as np
 

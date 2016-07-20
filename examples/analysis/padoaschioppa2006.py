@@ -58,6 +58,19 @@ def choice_pattern(trialsfile, offers, plot, **kwargs):
     plot.xlim(0, len(offers)-1)
     plot.ylim(0, 100)
 
+#/////////////////////////////////////////////////////////////////////////////////////////
+
+def classify_units(epochs_by_cond):
+    """
+    Determine units' selectivity to offer value, choice value, and choice units.
+
+    """
+    unit_types = []
+
+    return unit_types
+
+#/////////////////////////////////////////////////////////////////////////////////////////
+
 def sort_epoch(trialsfile, epoch, offers, plots, units=None, network='p',
                separate_by_choice=False, **kwargs):
     """

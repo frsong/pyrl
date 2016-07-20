@@ -42,15 +42,11 @@ tmax         = fixation + offer_on_max + decision
 
 # Rewards
 R_ABORTED = -1
-R_B       = 0.2
+R_B       = 0.1
 R_A       = A_to_B * R_B
 
-# Recurrent noise
-#baseline_var_rec = 0.02
-
-# Slow down the learning
-lr          = 0.002
-baseline_lr = 0.002
+# Increase initial pi -> v weights
+baseline_Win = 10
 
 # Input scaling
 def scale(x):
