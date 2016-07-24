@@ -105,19 +105,19 @@ plot.text_upper_left('1A = {}B'.format(model2.A_to_B), fontsize=7.5,
 kwargs = {'ms': 4.5, 'lw': 1.25}
 
 plots = [fig['activity-1'], fig['activity-2'], fig['activity-3']]
-units = [28, 47, 1]
-analysis.sort_epoch(trialsfile_a, 'prechoice', model.offers, plots, units, network='v',
-                    **kwargs)
+units = [87, 22, 51]
+analysis.sort_epoch(trialsfile_b, trialsfile_a, 'prechoice', model.offers, plots, units,
+                    network='v', **kwargs)
 
 plots = [fig['activity-4'], fig['activity-5']]
-units = [17, 30]
-analysis.sort_epoch(trialsfile_a, 'prechoice', model.offers, plots, units, network='v',
-                    **kwargs)
+units = [42, 30]
+analysis.sort_epoch(trialsfile_b, trialsfile_a, 'prechoice', model.offers, plots, units,
+                    network='v', **kwargs)
 
 plots = [fig['activity-6']]
-units = [21]
-analysis.sort_epoch(trialsfile_a, 'prechoice', model.offers, plots, units, network='v',
-                    separate_by_choice=True, **kwargs)
+units = [35]
+analysis.sort_epoch(trialsfile_b, trialsfile_a, 'prechoice', model.offers, plots, units,
+                    network='v', separate_by_choice=True, **kwargs)
 
 plot = fig['activity-4']
 plot.xlabel('Offer (\#B : \#A)')

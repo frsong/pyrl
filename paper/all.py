@@ -283,12 +283,10 @@ if 'postdecisionwager' in args:
     do_action(model, 'sort', args='value')
 
 if 'postdecisionwager-seeds' in args:
-    #for seed in xrange(start_seed, start_seed+ntrain):
-    #    print("=> TRAIN: Postdecision wager (seed = {})".format(seed))
-    #    train(model, seed=seed)
+    for seed in xrange(start_seed, start_seed+ntrain):
+        print("=> TRAIN: Postdecision wager (seed = {})".format(seed))
+        train(model, seed=seed)
     for seed in xrange(start_seed, start_seed+4):
-        if seed in [101, 102]:
-            continue
         print("=> TEST: Postdecision wager (seed = {})".format(seed))
         trials(model, 'b', ntrials_b, seed=seed)
         do_action(model, 'sure_stimulus_duration', seed=seed)
