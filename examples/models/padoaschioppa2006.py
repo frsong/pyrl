@@ -45,7 +45,7 @@ R_ABORTED = -1
 R_B       = 0.1
 R_A       = A_to_B * R_B
 
-# Increase initial pi -> v weights
+# Increase initial policy -> baseline weights
 baseline_Win = 10
 
 # Input scaling

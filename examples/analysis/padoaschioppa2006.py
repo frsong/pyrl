@@ -58,27 +58,156 @@ def choice_pattern(trialsfile, offers, plot, **kwargs):
     plot.xlim(0, len(offers)-1)
     plot.ylim(0, 100)
 
+def indifference_point(trialsfile, offers, plot=None, **kwargs):
+    # Load trials
+    trials, A, R, M, perf = utils.load(trialsfile)
+
+    B_by_offer    = {}
+    n_nondecision = 0
+    for n, trial in enumerate(trials):
+        if perf.choices[n] is None:
+            n_nondecision += 1
+            continue
+
+        juice_L, juice_R = trial['juice']
+        offer = trial['offer']
+
+        if perf.choices[n] == 'B':
+            B = 1
+        elif perf.choices[n] == 'A':
+            B = 0
+        else:
+            raise ValueError("invalid choice")
+
+        B_by_offer.setdefault(offer, []).append(B)
+    print("Non-decision trials: {}/{}".format(n_nondecision, len(trials)))
+
+    pB_by_offer = {}
+    for offer in B_by_offer:
+        Bs = B_by_offer[offer]
+        pB_by_offer[offer] = utils.divide(sum(Bs), len(Bs))
+        #print(offer, pB_by_offer[offer])
+
+    X = []
+    Y = []
+    for i, offer in enumerate(offers):
+        B, A = offer
+        X.append((B - A)/(B + A))
+        Y.append(pB_by_offer[offer])
+    X = np.asarray(X)
+    Y = np.asarray(Y)
+
+    idx = np.argsort(X)
+    X   = X[idx]
+    Y   = Y[idx]
+
+    #-------------------------------------------------------------------------------------
+    # Fit
+    #-------------------------------------------------------------------------------------
+
+    try:
+        popt, func = fittools.fit_psychometric(X, Y)
+
+        mu   = popt['mu']
+        idpt = (1+mu)/(1-mu)
+        print("Indifference point = {}".format(idpt))
+
+        fit_x = np.linspace(min(X), max(X), 201)
+        fit_y = func(fit_x, **popt)
+        fit   = fit_x, fit_y
+    except RuntimeError:
+        print("Unable to fit, drawing a line through the points.")
+        mu   = None
+        idpt = None
+        fit  = X, Y
+
+    #-------------------------------------------------------------------------------------
+    # Plot
+    #-------------------------------------------------------------------------------------
+
+    if plot is None:
+        return idpt
+
+    lw       = kwargs.get('lw', 1.5)
+    ms       = kwargs.get('ms', 7)
+    rotation = kwargs.get('rotation', 60)
+
+    plot.plot(fit_x, 100*fit_y, '-', color='k', lw=lw)
+    plot.plot(X, 100*Y, 'o', color='k', ms=ms)
+
+    plot.hline(50, color='0.5', zorder=2)
+    if mu is not None:
+        plot.text_upper_left('1A = {:.1f}B'.format(idpt), fontsize=10)
+        plot.vline(mu, color='0.5', zorder=2)
+
+    #plot.xticks(range(len(offers)))
+    #plot.xticklabels(['{}B:{}A'.format(*offer) for offer in offers], rotation=rotation)
+
+    #plot.xlim(0, len(offers)-1)
+    plot.ylim(0, 100)
+
+    return idpt
+
 #/////////////////////////////////////////////////////////////////////////////////////////
 
-def classify_units(epochs_by_cond):
+from scipy import stats
+
+_figpath = '/Users/francis/Dropbox/Postdoc/code/git/frsong/pyrl/examples/temp'
+
+def classify_units(trials, r, idpt):
     """
     Determine units' selectivity to offer value, choice value, and choice units.
 
     """
+    #normalized_offers = {}
+    #for offer in activity_by_offer:
+    #    B, A = offer
+    #    normalized_offers[offer] = (B - A)(B + A)
+
+    # Offer value by trial
+    offer_values = []
+    for trial in trials:
+        B, A = trial['offer']
+        x = (B - A)/(B + A)
+
+    print(idpt)
+    print(r.shape)
+
     unit_types = []
+    '''
+    N = len(activity_by_offer.values()[0])
+    for i in xrange(N):
+        fig  = Figure()
+        plot = fig.add()
+
+        x = []
+        y = []
+        for offer in activity_by_offer:
+            x.append(normalized_offers[offer])
+            y.append(activity_by_offer[offer][i])
+        idx = np.argsort(x)
+        x = np.asarray(x)[idx]
+        y = np.asarray(y)[idx]
+
+        plot.plot(x, y, '-', color=Figure.colors('blue'))
+        plot.plot(x, y, 'o', mfc=Figure.colors('blue'), mew=0)
+
+        fig.save(path=_figpath, name='classification_{:03d}'.format(i))
+        fig.close()
+    '''
 
     return unit_types
 
 #/////////////////////////////////////////////////////////////////////////////////////////
 
-def sort_epoch(trialsfile, epoch, offers, plots, units=None, network='p',
+def sort_epoch(behaviorfile, activityfile, epoch, offers, plots, units=None, network='p',
                separate_by_choice=False, **kwargs):
     """
     Sort trials.
 
     """
     # Load trials
-    data = utils.load(trialsfile)
+    data = utils.load(activityfile)
     if len(data) == 9:
         trials, U, Z, A, P, M, perf, r_p, r_v = data
     else:
@@ -188,6 +317,14 @@ def sort_epoch(trialsfile, epoch, offers, plots, units=None, network='p',
 
         for cond in events_by_cond[ev]:
             epochs_by_cond[e][cond] = np.mean(events_by_cond[ev][cond][w], axis=0)
+
+    #=====================================================================================
+    # Classify units
+    #=====================================================================================
+
+    idpt = indifference_point(behaviorfile, offers)
+    #unit_types = classify_units(trials, r, idpt)
+    #exit()
 
     #=====================================================================================
     # Plot
@@ -360,10 +497,29 @@ def do(action, args, config):
         fig.save(path=config['figspath'], name=action)
         fig.close()
 
+    elif action == 'indifference_point':
+        trialsfile = runtools.behaviorfile(config['trialspath'])
+
+        fig  = Figure()
+        plot = fig.add()
+
+        spec = config['model'].spec
+
+        indifference_point(trialsfile, spec.offers, plot)
+
+        plot.xlabel('$(n_B - n_A)/(n_B + n_A)$')
+        plot.ylabel('Percent choice B')
+
+        #plot.text_upper_left('1A = {}B'.format(spec.A_to_B), fontsize=10)
+
+        fig.save(path=config['figspath'], name=action)
+        fig.close()
+
     #=====================================================================================
 
     elif action == 'sort_epoch':
-        trialsfile = runtools.activityfile(config['trialspath'])
+        behaviorfile = runtools.behaviorfile(config['trialspath'])
+        activityfile = runtools.activityfile(config['trialspath'])
 
         epoch = args[0]
 
@@ -374,6 +530,6 @@ def do(action, args, config):
 
         separate_by_choice = ('separate-by-choice' in args)
 
-        sort_epoch(trialsfile, epoch, config['model'].spec.offers,
+        sort_epoch(behaviorfile, activityfile, epoch, config['model'].spec.offers,
                    os.path.join(config['figspath'], 'sorted'),
                    network=network, separate_by_choice=separate_by_choice)

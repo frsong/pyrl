@@ -304,10 +304,10 @@ ntrials_a = 500
 
 if 'padoaschioppa2006' in args:
     print("=> Padoa-Schioppa 2006")
-    seed = 100
-    train('padoaschioppa2006', seed=seed, main=True)
+    train('padoaschioppa2006')
     trials(model, 'b', ntrials_b)
     do_action(model, 'choice_pattern')
+    do_action(model, 'indifference_point')
     trials(model, 'a', ntrials_a)
     do_action(model, 'sort_epoch', args='prechoice value')
     do_action(model, 'sort_epoch', args='prechoice value separate-by-choice')
@@ -320,11 +320,13 @@ if 'padoaschioppa2006-seeds' in args:
         print("=> TEST: Padoa-Schioppa 2006 (seed = {})".format(seed))
         trials(model, 'b', ntrials_b, seed=seed)
         do_action(model, 'choice_pattern', seed=seed)
+        do_action(model, 'indifference_point', seed=seed)
 
 if 'padoaschioppa2006-1A3B' in args:
     train(model+'_1A3B')
     trials(model+'_1A3B', 'b', ntrials_b)
     do_action(model+'_1A3B', 'choice_pattern')
+    do_action(model+'_1A3B', 'indifference_point')
 
 #=========================================================================================
 # Paper figures
