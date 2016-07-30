@@ -126,7 +126,8 @@ ntrials_a = 50
 
 if 'rdm_fixed' in args:
     print("=> Perceptual decision-making (FD)")
-    train(model)
+    seed = 97
+    train(model, seed=seed, main=True)
     trials(model, 'b', ntrials_b)
     do_action(model, 'psychometric')
     do_action(model, 'correct_stimulus_duration')
@@ -223,7 +224,7 @@ ntrials_a = 100
 
 if 'multisensory' in args:
     print("=> Multisensory integration")
-    seed = 100
+    seed = 98
     train(model, seed=seed, main=True)
     trials(model, 'b', ntrials_b)
     do_action(model, 'psychometric')
@@ -234,7 +235,7 @@ if 'multisensory-seeds' in args:
     for seed in xrange(start_seed, start_seed+ntrain):
         print("=> TRAIN: Multisensory integration (seed = {})".format(seed))
         train(model, seed=seed)
-    for seed in xrange(start_seed, start_seed+ntrain):
+        #for seed in xrange(start_seed, start_seed+ntrain):
         print("=> TEST: Multisensory integration (seed = {})".format(seed))
         trials(model, 'b', ntrials_b, seed=seed)
         do_action(model, 'psychometric', seed=seed)

@@ -32,10 +32,10 @@ n_gradient   = n_conditions
 n_validation = 50*n_conditions
 
 # Input noise
-sigma = np.sqrt(2*100*0.022)
+sigma = np.sqrt(2*100*0.024)
 
 # Separate visual and auditory inputs
-N    = 100
+N    = 150
 Wins = []
 for i in xrange(3):
     Win = np.zeros((len(inputs), N))
@@ -89,7 +89,7 @@ R_ABORTED = -1
 R_CORRECT = +1
 
 # Input scaling
-fmin = 3
+fmin = 2
 fmax = 2*boundary - fmin
 
 def scale(f):
@@ -155,4 +155,4 @@ def get_step(rng, dt, trial, t, a):
 def terminate(perf):
     p_decision, p_correct = tasktools.correct_2AFC(perf)
 
-    return p_decision >= 0.99 and p_correct >= 0.84
+    return p_decision >= 0.99 and p_correct >= 0.8
