@@ -224,7 +224,7 @@ ntrials_a = 100
 
 if 'multisensory' in args:
     print("=> Multisensory integration")
-    seed = 97
+    seed = 96
     train(model, seed=seed, main=True)
     trials(model, 'b', ntrials_b)
     do_action(model, 'psychometric')
