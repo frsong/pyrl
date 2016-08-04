@@ -224,7 +224,7 @@ ntrials_a = 100
 
 if 'multisensory' in args:
     print("=> Multisensory integration")
-    seed = 96
+    seed = 99
     train(model, seed=seed, main=True)
     trials(model, 'b', ntrials_b)
     do_action(model, 'psychometric')
@@ -235,7 +235,7 @@ if 'multisensory-seeds' in args:
     for seed in xrange(start_seed, start_seed+ntrain):
         print("=> TRAIN: Multisensory integration (seed = {})".format(seed))
         train(model, seed=seed)
-        #for seed in xrange(start_seed, start_seed+ntrain):
+    for seed in xrange(start_seed, start_seed+ntrain):
         print("=> TEST: Multisensory integration (seed = {})".format(seed))
         trials(model, 'b', ntrials_b, seed=seed)
         do_action(model, 'psychometric', seed=seed)
