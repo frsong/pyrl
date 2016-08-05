@@ -143,17 +143,6 @@ else:
     plot.text_lower_right('{} trials'.format(mean), dy=0.03,
                           fontsize=10, color=Figure.colors('green'))
 
-'''
-if len(times) > 0:
-    mean = np.mean(times)
-    if len(times) > 1:
-        sd = np.std(times, ddof=1)
-    else:
-        sd = 0
-    plot.text_lower_right(r'{:.1f} $\pm$ {:.1f} mins'.format(mean, sd), dy=0.03,
-                          fontsize=10, color=Figure.colors('green'))
-'''
-
 plot = fig['correct']
 plot.xlim(0, max([max(x) for x in xall]))
 plot.ylim(40, 100)
