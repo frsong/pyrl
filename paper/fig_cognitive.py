@@ -19,11 +19,9 @@ parent = utils.get_parent(here)
 scratchpath = os.environ.get('SCRATCH')
 if scratchpath is None:
     scratchpath = os.path.join(os.environ['HOME'], 'scratch')
-trialspath   = os.path.join(scratchpath, 'work', 'pyrl')
+trialspath   = os.path.join(scratchpath, 'work', 'pyrl', 'examples')
 analysispath = os.path.join(parent, 'examples', 'analysis')
 modelspath   = os.path.join(parent, 'examples', 'models')
-
-trialspath2   = os.path.join(scratchpath, 'work', 'pyrl', 'examples')
 
 # analysis/rdm
 rdm_analysisfile = os.path.join(analysispath, 'rdm.py')
@@ -45,8 +43,8 @@ romo_analysis     = imp.load_source('romo_analysis',romo_analysisfile)
 # models/mante
 mante_modelfile  = os.path.join(modelspath, 'mante.py')
 mante_model      = imp.load_source('mante_model', mante_modelfile)
-mante_behavior   = os.path.join(trialspath2, 'mante', 'trials_behavior.pkl')
-mante_activity   = os.path.join(trialspath2, 'mante', 'trials_activity.pkl')
+mante_behavior   = os.path.join(trialspath, 'mante', 'trials_behavior.pkl')
+mante_activity   = os.path.join(trialspath, 'mante', 'trials_activity.pkl')
 
 # models/multisensory
 multisensory_modelfile = os.path.join(modelspath, 'multisensory.py')
@@ -57,8 +55,8 @@ multisensory_activity  = os.path.join(trialspath, 'multisensory', 'trials_activi
 # models/romo
 romo_modelfile = os.path.join(modelspath, 'romo.py')
 romo_model     = imp.load_source('romo_model', romo_modelfile)
-romo_behavior  = os.path.join(trialspath2, 'romo', 'trials_behavior.pkl')
-romo_activity  = os.path.join(trialspath2, 'romo', 'trials_activity.pkl')
+romo_behavior  = os.path.join(trialspath, 'romo', 'trials_behavior.pkl')
+romo_activity  = os.path.join(trialspath, 'romo', 'trials_activity.pkl')
 
 #=========================================================================================
 # Figure setup
@@ -250,7 +248,7 @@ custom_axislabel('mante-context-choice-0', 'context \& choice', r'\textit{all tr
 
 plot = fig['ms-behavior']
 
-kwargs = dict(ms=5, lw=1)
+kwargs = dict(ms=4, lw=1)
 multisensory_analysis.psychometric(multisensory_behavior, fig['ms-behavior'], **kwargs)
 
 # Legend
@@ -263,9 +261,9 @@ plot.ylabel('Percent high choices')
 
 #=========================================================================================
 
-kwargs = {'lw': 1.5, 'dashes': [3, 2]}
+kwargs = {'lw': 1.25, 'dashes': [3, 2]}
 
-units = [17, 6, 14]
+units = [95, 29, 92]
 plots = [fig['ms-'+str(i)] for i in xrange(len(units))]
 multisensory_analysis.sort(multisensory_activity, plots, units=units, **kwargs)
 
@@ -282,6 +280,10 @@ for p in ['ms-0', 'ms-1', 'ms-2']:
 plot = fig['ms-0']
 plot.xlabel('Time from stimulus onset (ms)')
 plot.ylabel('Firing rate (a.u.)')
+
+fig['ms-0'].ylim(0, 1)
+fig['ms-1'].ylim(0, 2)
+fig['ms-2'].ylim(1.5, 2.5)
 
 #=========================================================================================
 
