@@ -284,10 +284,10 @@ if 'postdecisionwager' in args:
     do_action(model, 'sort', args='value')
 
 if 'postdecisionwager-seeds' in args:
-    for seed in xrange(start_seed, start_seed+ntrain):
+    for seed in range(start_seed, start_seed+0) + [1000]:
         print("=> TRAIN: Postdecision wager (seed = {})".format(seed))
         train(model, seed=seed)
-    for seed in xrange(start_seed, start_seed+4):
+    for seed in range(start_seed, start_seed+0) + [1000]:
         print("=> TEST: Postdecision wager (seed = {})".format(seed))
         trials(model, 'b', ntrials_b, seed=seed)
         do_action(model, 'sure_stimulus_duration', seed=seed)
@@ -310,6 +310,7 @@ if 'padoaschioppa2006' in args:
     trials(model, 'a', ntrials_a)
     do_action(model, 'sort_epoch', args='prechoice value')
     do_action(model, 'sort_epoch', args='prechoice value separate-by-choice')
+    do_action(model, 'sort_epoch', args='prechoice policy')
 
 if 'padoaschioppa2006-seeds' in args:
     for seed in xrange(start_seed, start_seed+ntrain):

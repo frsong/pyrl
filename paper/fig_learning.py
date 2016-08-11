@@ -51,15 +51,16 @@ T = 1000
 times = []
 xall  = []
 original   = [modelname]
-additional = [modelname+'_s'+str(i) for i in [101, 102, 103, 104, 105]]
+if modelname == 'postdecisionwager':
+    additional = [modelname+'_s'+str(i) for i in [101, 102, 103, 104, 1000]]
+else:
+    additional = [modelname+'_s'+str(i) for i in [101, 102, 103, 104, 105]]
 num_trials = []
 for name in additional + original:
     # Training history
     datapath = os.path.join(parent, 'examples', 'work', 'data', name)
     savefile = os.path.join(datapath, name+'.pkl')
     if not os.path.isfile(savefile):
-        continue
-    if name == 'postdecisionwager_s105':
         continue
 
     training_history = utils.load(savefile)['training_history']

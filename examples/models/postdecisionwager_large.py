@@ -34,7 +34,7 @@ n_validation = 50*n_conditions
 sigma = np.sqrt(2*100*0.01)
 
 # Separate inputs
-N    = 200
+N    = 100
 Wins = []
 for i in xrange(3):
     Win = np.zeros((len(inputs), N))

@@ -4,6 +4,8 @@ import os
 
 import numpy as np
 
+from scipy import stats
+
 from pyrl          import datatools, fittools, runtools, tasktools, utils
 from pyrl.figtools import Figure
 
@@ -154,48 +156,97 @@ from scipy import stats
 
 _figpath = '/Users/francis/Dropbox/Postdoc/code/git/frsong/pyrl/examples/temp'
 
-def classify_units(trials, r, idpt):
+CHOSEN_VALUE  = 0
+OFFER_VALUE_A = 1
+OFFER_VALUE_B = 2
+CHOICE_A      = 3
+CHOICE_B      = 4
+CONSTANT      = 5
+nreg          = 6
+
+def classify_units(trials, perf, r, idpt):
     """
     Determine units' selectivity to offer value, choice value, and choice units.
 
     """
-    #normalized_offers = {}
-    #for offer in activity_by_offer:
-    #    B, A = offer
-    #    normalized_offers[offer] = (B - A)(B + A)
+    def get_prechoice_firing_rate(trial, t_choice, r_trial):
+        time     = trial['time']
+        t_choice = time[t_choice]
 
-    # Offer value by trial
-    offer_values = []
-    for trial in trials:
-        B, A = trial['offer']
-        x = (B - A)/(B + A)
+        idx = np.where((-500+t_choice <= time) & (time < t_choice))
 
-    print(idpt)
-    print(r.shape)
+        return np.mean(r_trial[idx], axis=0)
 
-    unit_types = []
-    '''
-    N = len(activity_by_offer.values()[0])
-    for i in xrange(N):
-        fig  = Figure()
-        plot = fig.add()
+    def rectify(x):
+        return x*(x > 0)
 
-        x = []
-        y = []
-        for offer in activity_by_offer:
-            x.append(normalized_offers[offer])
-            y.append(activity_by_offer[offer][i])
-        idx = np.argsort(x)
-        x = np.asarray(x)[idx]
-        y = np.asarray(y)[idx]
+    def step(x):
+        return 1*(x > 0)
 
-        plot.plot(x, y, '-', color=Figure.colors('blue'))
-        plot.plot(x, y, 'o', mfc=Figure.colors('blue'), mew=0)
+    valid_trials = [(n, trial) for n, trial in enumerate(trials)
+                    if perf.choices[n] is not None
+                    and trial['offer'][0] != 0 and trial['offer'][1] != 0]
+    ntrials = len(valid_trials)
+    print("Valid trials: {}".format(ntrials))
 
-        fig.save(path=_figpath, name='classification_{:03d}'.format(i))
-        fig.close()
-    '''
+    nunits = r.shape[-1]
+    #idx, = np.where(np.std(r, axis=(0, 1)) > 0.5)
+    #active_units = np.arange(nunits)[idx]
+    #print("Active units")
+    #print(active_units)
+    active_units = np.arange(nunits)
+    nunits = len(active_units)
 
+    x0 = (idpt - 1)/(idpt + 1)
+
+    unit_types = {}
+    for unit in active_units:
+        Y = np.zeros(ntrials)
+        X = {k: np.zeros(ntrials)
+             for k in ['chosen-value', 'offer-value-A', 'offer-value-B', 'choice']}
+        for i, (n, trial) in enumerate(valid_trials):
+            B, A = trial['offer']
+            x    = (B - A)/(B + A)
+
+            X['chosen-value'][i]  = abs(x - x0)
+            X['offer-value-A'][i] = -rectify(-(x - x0))
+            X['offer-value-B'][i] = +rectify(+(x - x0))
+            X['choice'][i]        = +1 if perf.choices[n] == 'B' else -1
+            Y[i] = get_prechoice_firing_rate(trial, perf.t_choices[n], r[:,n,unit])
+
+        psig  = 0.05
+        corr2 = {}
+        for k, v in X.items():
+            corr, pval = stats.pearsonr(v, Y)
+            if pval < psig and corr**2 >= 0.1:
+                corr2[k] = corr**2
+
+                slope, intercept, r_value, p_value, std_err = stats.linregress(v, Y)
+                assert np.isclose(corr**2, r_value**2)
+                assert np.isclose(pval, p_value)
+
+                #'''
+                fig  = Figure()
+                plot = fig.add()
+
+                x_fit = np.linspace(-1, 1, 201)
+                y_fit = slope*x_fit + intercept
+                plot.plot(x_fit, y_fit, color='k', lw=1, zorder=3)
+                plot.plot(v, Y, 'o', ms=4, mfc='k', mec='w', mew=0.5)
+
+                plot.text_upper_right(str(corr), zorder=5)
+                plot.text_lower_right(str(pval), zorder=5)
+
+                fig.save(path=_figpath, name='unit_type_{:03d}_{}'.format(unit, k))
+                fig.close()
+                #'''
+
+        # If there is a significant correlation, find the var with greatest correlation
+        if corr2:
+            unit_types[unit] = max(corr2, key=corr2.get)
+
+    #for k in sorted(unit_types.keys()):
+    #    print(k, unit_types[k])
     return unit_types
 
 #/////////////////////////////////////////////////////////////////////////////////////////
@@ -208,10 +259,7 @@ def sort_epoch(behaviorfile, activityfile, epoch, offers, plots, units=None, net
     """
     # Load trials
     data = utils.load(activityfile)
-    if len(data) == 9:
-        trials, U, Z, A, P, M, perf, r_p, r_v = data
-    else:
-        trials, U, Z, Z_b, A, P, M, perf, r_p, r_v = data
+    trials, U, Z, Z_b, A, P, M, perf, r_p, r_v = data
 
     if network == 'p':
         print("POLICY NETWORK")
@@ -323,8 +371,8 @@ def sort_epoch(behaviorfile, activityfile, epoch, offers, plots, units=None, net
     #=====================================================================================
 
     idpt = indifference_point(behaviorfile, offers)
-    #unit_types = classify_units(trials, r, idpt)
-    #exit()
+    #unit_types = classify_units(trials, perf, r, idpt)
+    unit_types = {}
 
     #=====================================================================================
     # Plot
@@ -434,6 +482,9 @@ def sort_epoch(behaviorfile, activityfile, epoch, offers, plots, units=None, net
                 suffix = '_sbc'
             else:
                 suffix = ''
+
+            if unit in unit_types:
+                plot.text_upper_right(unit_types[unit], fontsize=9)
 
             fig.save(name+'_{}{}_{}{:03d}'.format(epoch, suffix, network, unit))
             fig.close()
