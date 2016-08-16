@@ -226,7 +226,7 @@ plot.ylabel('Reaction time (ms)', labelpad=3)
 
 plot = fig['on-stimulus']
 
-unit = 61
+unit = 2#61
 
 kwargs = {'on-stimulus-tmin': -200, 'on-stimulus-tmax': 400, 'colors': 'kiani',
           'dashes': [3.5, 2]}
@@ -235,8 +235,8 @@ analysis.sort(activity, {'on-stimulus': plot}, unit=unit, **kwargs)
 plot.xlim(-200, 400)
 plot.xticks([-200, 0, 200, 400])
 
-plot.ylim(0, 1)
-plot.yticks([0, 1])
+plot.ylim(0, 2)
+plot.yticks([0, 1, 2])
 
 plot.xlabel('Time from stimulus (ms)')
 plot.ylabel('Firing rate (a.u.)')

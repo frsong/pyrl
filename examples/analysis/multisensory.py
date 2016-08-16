@@ -109,6 +109,8 @@ def psychometric(trialsfile, plot, **kwargs):
     plot.xlabel('Frequency (events/sec)')
     plot.ylabel('Percent high')
 
+    return [sigmas[k] for k in ['v', 'a', 'va']]
+
 #/////////////////////////////////////////////////////////////////////////////////////////
 
 def sort(trialsfile, plots, units=None, network='p', **kwargs):

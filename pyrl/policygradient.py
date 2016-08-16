@@ -45,9 +45,6 @@ class PolicyGradient(object):
                 items.update(save['best_perf'].display(output=False))
             utils.print_dict(items)
 
-            # Network type
-            Network = Networks[self.config['network_type']]
-
             # Time step
             self.dt = dt
             if self.dt is None:
@@ -74,12 +71,17 @@ class PolicyGradient(object):
             # Policy network
             self.policy_config = save['policy_config']
             self.policy_config['alpha'] = alpha
+
+            Network = Networks[self.config['network_type']]
             self.policy_net = Network(self.policy_config, params=params_p,
                                       masks=masks_p, name='policy')
 
             # Baseline network
             self.baseline_config = save['baseline_config']
             self.baseline_config['alpha'] = alpha
+
+            Network = Networks[self.config.get('baseline_network_type',
+                                               self.config['network_type'])]
             self.baseline_net = Network(self.baseline_config, params=params_b,
                                         masks=masks_b, name='baseline')
         else:
@@ -89,9 +91,6 @@ class PolicyGradient(object):
 
             config = config_or_savefile
             self.config = config
-
-            # Network type
-            Network = Networks[config['network_type']]
 
             # Time step
             self.dt = dt
@@ -119,6 +118,9 @@ class PolicyGradient(object):
                 'L2_Wrec':  config['L2_Wrec'],
                 'alpha':    alpha
                 }
+
+            # Network type
+            Network = Networks[config['network_type']]
             self.policy_net = Network(self.policy_config,
                                       seed=config['policy_seed'], name='policy')
 
@@ -157,6 +159,10 @@ class PolicyGradient(object):
                 }
             if self.baseline_config['bout'] is None:
                 self.baseline_config['bout'] = config['R_ABORTED']
+
+            # Network type
+            Network = Networks[self.config.get('baseline_network_type',
+                                               self.config['network_type'])]
             self.baseline_net = Network(self.baseline_config,
                                         seed=config['baseline_seed'], name='baseline')
 
@@ -576,7 +582,9 @@ class PolicyGradient(object):
         # Print settings
         items = OrderedDict()
         items['GPU']                      = gpu
-        items['Network type']             = self.config['network_type']
+        items['Network type (policy)']    = self.config['network_type']
+        items['Network type (baseline)']  = self.config.get('baseline_network_type',
+                                                            self.config['network_type'])
         items['N (policy)']               = self.config['N']
         items['N (baseline)']             = self.config['baseline_N']
         items['Conn. prob. (policy)']     = self.config['p0']

@@ -152,7 +152,7 @@ plot.ylabel('Percent correct\n(decision trials)')
 target_color = Figure.colors('red')
 
 plot = fig['correct']
-if modelname == 'rdm_fixed':
+if modelname.startswith('rdm_fixed'):
     target = 80
     plot.hline(target, color=target_color, zorder=1)
 elif modelname == 'rdm_rt':

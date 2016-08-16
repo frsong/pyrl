@@ -144,6 +144,28 @@ if 'rdm_fixed-seeds' in args:
         do_action(model, 'psychometric', seed=seed)
         do_action(model, 'correct_stimulus_duration', seed=seed)
 
+model = 'rdm_fixedlinearbaseline'
+
+if 'rdm_fixedlinearbaseline' in args:
+    print("=> Perceptual decision-making (FD), linear baseline")
+    seed = 97
+    train(model, seed=seed, main=True)
+    trials(model, 'b', ntrials_b)
+    do_action(model, 'psychometric')
+    do_action(model, 'correct_stimulus_duration')
+    trials(model, 'a', ntrials_a)
+    do_action(model, 'sort')
+
+if 'rdm_fixedlinearbaseline-seeds' in args:
+    for seed in xrange(start_seed, start_seed+ntrain):
+        print("=> TRAIN: Perceptual decision-making (FD), linear baseline (seed = {})".format(seed))
+        train(model, seed=seed)
+    for seed in xrange(start_seed, start_seed+ntrain):
+        print("=> TEST: Perceptual decision-making (FD), linear baseline (seed = {})".format(seed))
+        trials(model, 'b', ntrials_b, seed=seed)
+        do_action(model, 'psychometric', seed=seed)
+        do_action(model, 'correct_stimulus_duration', seed=seed)
+
 #-----------------------------------------------------------------------------------------
 # RDM (FD), but small dt
 #-----------------------------------------------------------------------------------------
@@ -293,6 +315,28 @@ if 'postdecisionwager-seeds' in args:
         do_action(model, 'sure_stimulus_duration', seed=seed)
         do_action(model, 'correct_stimulus_duration', seed=seed)
 
+model = 'postdecisionwager_linearbaseline'
+
+if 'postdecisionwager_linearbaseline' in args:
+    print("=> Postdecision wager, linear baseline")
+    train(model)
+    trials(model, 'b', ntrials_b)
+    do_action(model, 'sure_stimulus_duration')
+    do_action(model, 'correct_stimulus_duration')
+    trials(model, 'a', ntrials_a)
+    do_action(model, 'sort')
+    do_action(model, 'sort', args='value')
+
+if 'postdecisionwager_linearbaseline-seeds' in args:
+    for seed in range(start_seed, start_seed+0) + [1000]:
+        print("=> TRAIN: Postdecision wager, linear baseline (seed = {})".format(seed))
+        train(model, seed=seed)
+    for seed in range(start_seed, start_seed+0) + [1000]:
+        print("=> TEST: Postdecision wager, linear baseline (seed = {})".format(seed))
+        trials(model, 'b', ntrials_b, seed=seed)
+        do_action(model, 'sure_stimulus_duration', seed=seed)
+        do_action(model, 'correct_stimulus_duration', seed=seed)
+
 #-----------------------------------------------------------------------------------------
 # Economic choice
 #-----------------------------------------------------------------------------------------
@@ -352,6 +396,9 @@ if 'fig_rdm_rt' in args:
 
 if 'fig-learning-rdm_fixed' in args:
     figure('fig_learning', args='rdm_fixed')
+
+if 'fig-learning-rdm_fixedlinearbaseline' in args:
+    figure('fig_learning', args='rdm_fixedlinearbaseline')
 
 if 'fig-learning-rdm_rt' in args:
     figure('fig_learning', args='rdm_rt')
