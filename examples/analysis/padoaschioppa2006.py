@@ -218,14 +218,14 @@ def classify_units(trials, perf, r, idpt):
         corr2 = {}
         for k, v in X.items():
             corr, pval = stats.pearsonr(v, Y)
-            if pval < psig and corr**2 >= 0.1:
+            if pval < psig and corr**2 >= 0.05:#0.1:
                 corr2[k] = corr**2
 
                 slope, intercept, r_value, p_value, std_err = stats.linregress(v, Y)
                 assert np.isclose(corr**2, r_value**2)
                 assert np.isclose(pval, p_value)
 
-                #'''
+                '''
                 fig  = Figure()
                 plot = fig.add()
 
@@ -239,7 +239,7 @@ def classify_units(trials, perf, r, idpt):
 
                 fig.save(path=_figpath, name='unit_type_{:03d}_{}'.format(unit, k))
                 fig.close()
-                #'''
+                '''
 
         # If there is a significant correlation, find the var with greatest correlation
         if corr2:
@@ -371,8 +371,18 @@ def sort_epoch(behaviorfile, activityfile, epoch, offers, plots, units=None, net
     #=====================================================================================
 
     idpt = indifference_point(behaviorfile, offers)
-    #unit_types = classify_units(trials, perf, r, idpt)
-    unit_types = {}
+    unit_types = classify_units(trials, perf, r, idpt)
+    #unit_types = {}
+
+    numbers = {}
+    for v in unit_types.values():
+        numbers[v] = 0
+    for k, v in unit_types.items():
+        numbers[v] += 1
+
+    n_tot = np.sum(numbers.values())
+    for k, v in numbers.items():
+        print("{}: {}/{} = {}%".format(k, v, n_tot, 100*v/n_tot))
 
     #=====================================================================================
     # Plot
