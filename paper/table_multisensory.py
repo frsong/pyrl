@@ -40,7 +40,7 @@ fig  = Figure()
 plot = fig.add()
 
 sigmas = []
-for s in [''] + ['_s'+str(i) for i in xrange(100, 106)]:
+for s in [''] + ['_s'+str(i) for i in xrange(101, 106)]:
     behaviorfile = os.path.join(trialspath, 'multisensory'+s, 'trials_behavior.pkl')
     sigmas.append(multisensory_analysis.psychometric(behaviorfile, plot))
 
