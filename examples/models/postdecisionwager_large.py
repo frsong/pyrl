@@ -33,12 +33,14 @@ n_validation = 50*n_conditions
 # Input noise
 sigma = np.sqrt(2*100*0.01)
 
+N = 200
+
 # Separate inputs
 N    = 100
 Wins = []
 for i in xrange(3):
     Win = np.zeros((len(inputs), N))
-    Win[inputs['FIXATION']]    = 1
+    Win[inputs['FIXATION']]      = 1
     Win[inputs['LEFT'], :N//2] = 1
     Win[inputs['RIGHT'],:N//2] = 1
     Win[inputs['SURE'], N//2:] = 1

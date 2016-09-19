@@ -391,6 +391,9 @@ if 'fig_padoaschioppa2006' in args:
 if 'fig_rdm_value' in args:
     figure('fig_rdm_value')
 
+if 'fig_rdm_rt_value' in args:
+    figure('fig_rdm_rt_value')
+
 if 'fig_rdm_rt' in args:
     figure('fig_rdm_rt')
 
