@@ -56,7 +56,7 @@ rdm_analysis.sort_return(rdm_fixed_activity, fig.plots, **kwargs)
 plot = fig['on-stimulus']
 plot.xlim(-200, 600)
 plot.xticks([-200, 0, 200, 400, 600])
-plot.ylim(0.5, 1.2)
+plot.ylim(0.5, 1.1)
 #plot.yticks([0.5, 1])
 
 plot.xlabel('Time from stimulus (ms)')
@@ -70,7 +70,7 @@ plot.legend(bbox_to_anchor=(0.33, 1), **props)
 plot = fig['on-choice']
 plot.xlim(-400, 0)
 plot.xticks([-400, -200, 0])
-plot.ylim(0.5, 1.2)
+plot.ylim(0.5, 1.1)
 #plot.yticks([0.5, 1])
 
 plot.xlabel('Time from decision (ms)')
